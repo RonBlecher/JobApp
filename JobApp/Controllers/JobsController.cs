@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using JobApp.Data;
 using JobApp.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace JobApp.Controllers
 {
@@ -19,6 +20,7 @@ namespace JobApp.Controllers
             _context = context;
         }
 
+        [Authorize(Roles="Admin")]
         // GET: Jobs
         public async Task<IActionResult> Index()
         {
@@ -61,6 +63,9 @@ namespace JobApp.Controllers
                 _context.Add(job);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
+            } else
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors);
             }
             return View(job);
         }

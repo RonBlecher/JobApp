@@ -7,6 +7,10 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using JobApp.Data;
 using JobApp.Models;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 
 namespace JobApp.Controllers
 {
@@ -19,10 +23,73 @@ namespace JobApp.Controllers
             _context = context;
         }
 
+        [Authorize(Roles = "Publisher")]
         // GET: Publishers
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Publisher.ToListAsync());
+            var x = await _context.Publisher.ToListAsync();
+            return View(x);
+        }
+
+        [Authorize(Roles = "Admin")]
+        // GET: Publishers
+        public async Task<IActionResult> List()
+        {
+            var x = await _context.Publisher.ToListAsync();
+            return View(x);
+        }
+
+        public async Task<IActionResult> Registering(string name, string email, string phonenum, string password)
+        {
+            if (ModelState.IsValid)
+            {
+                Publisher publisher = new Publisher() { Name = name, Email = email, PhoneNum = phonenum, Password = password };
+                _context.Add(publisher);
+                await _context.SaveChangesAsync();
+                SignIn(publisher);
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View();
+        }
+
+        public IActionResult Register()
+        {
+            return View();
+        }
+
+     
+        public IActionResult Login(string name, string password)
+        {
+            var publishers = _context.Publisher.Where(publisher => publisher.Name == name && publisher.Password == password).ToList();
+            if (publishers != null && publishers.Count() > 0)
+            {
+                SignIn(publishers.First());
+                return RedirectToAction("Index");
+            }
+
+            return View();
+        }
+
+        private async void SignIn(User user)
+        {
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, user.Name),
+                new Claim(ClaimTypes.Role, "Publisher"),
+            };
+
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+            var authProperites = new AuthenticationProperties
+            {
+ 
+            };
+
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity),
+                authProperites);
         }
 
         // GET: Publishers/Details/5

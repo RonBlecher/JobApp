@@ -7,6 +7,10 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using JobApp.Data;
 using JobApp.Models;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 
 namespace JobApp.Controllers
 {
@@ -20,9 +24,91 @@ namespace JobApp.Controllers
         }
 
         // GET: Admins
-        public async Task<IActionResult> Index()
+        [Authorize(Roles = "Admin")]
+        public IActionResult Index()
         {
-            return View(await _context.Admin.ToListAsync());
+            return View();
+        }
+
+        public IActionResult PublisherIndex()
+        {
+            return RedirectToAction("List", "publishers");
+        }
+
+        public async Task<IActionResult> Registering(string name, string email, string phonenum, string password)
+        {
+            if (ModelState.IsValid)
+            {
+                Publisher publisher = new Publisher() { Name = name, Email = email, PhoneNum = phonenum, Password = password };
+                _context.Add(publisher);
+                await _context.SaveChangesAsync();
+                SignIn(publisher);
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View();
+        }
+
+        public IActionResult Register()
+        {
+            return View();
+        }
+
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync();
+            return RedirectToAction("Index", "home");
+        }
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> List()
+        {
+            var x = await _context.Admin.ToListAsync();
+            return View(x);
+        }
+
+        // GET: /<controller>/ 
+        public IActionResult Login(string name, string password)
+        {
+            var admins = _context.Admin.Where(publisher => publisher.Name == name && publisher.Password == password).ToList();
+            if (admins != null && admins.Count() > 0)
+            {
+                SignIn(admins.First());
+                return RedirectToAction("Index");
+            }
+
+            return View();
+        }
+
+        private async void SignIn(User user)
+        {
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, user.Name),
+                new Claim(ClaimTypes.Role, "Admin"),
+            };
+
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+            var authProperites = new AuthenticationProperties
+            {
+
+            };
+
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity),
+                authProperites);
+        }
+
+
+        public async Task<IActionResult> Search(string name)
+        {
+            var results = from admin in _context.Admin
+                          where admin.Name.ToLower().Contains(name.ToLower())
+                          select admin;
+
+            return View("Index", await results.ToListAsync());
         }
 
         // GET: Admins/Details/5

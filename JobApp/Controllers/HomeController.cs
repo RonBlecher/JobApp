@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using JobApp.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace JobApp.Controllers
 {
@@ -24,6 +25,21 @@ namespace JobApp.Controllers
         }
 
         public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        public IActionResult LoginPublishers()
+        {
+            return RedirectToAction("Login", "publishers");
+        }
+
+        public IActionResult LoginAdmins()
+        {
+            return RedirectToAction("Login", "admins");
+        }
+
+        public IActionResult LoginSeekers()
         {
             return View();
         }

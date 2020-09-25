@@ -20,7 +20,7 @@ namespace JobApp.Controllers
         }
 
         // GET: Seekers
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> List()
         {
             return View(await _context.Seeker.ToListAsync());
         }

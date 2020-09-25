@@ -1,8 +1,30 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
+    Layout = "_Layout_home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+    <div class="row">
+        <h1>Job App</h1>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <h4 class="card-title">Login As Admin</h4>
+            <a asp-action="LoginAdmins" class="alert alert-info alert-with-icon" data-notify="container">
+                <i asp-action="admins/login" class="material-icons" data-notify="icon">admin_panel_settings</i>
+            </a>
+        </div>
+
+        <div class="col-md-4">
+            <h4 class="card-title"> Login As Publisher</h4>
+            <a asp-action="LoginPublishers" class="alert alert-info alert-with-icon" data-notify="container">
+                <i class="material-icons" data-notify="icon">assignment_ind</i>
+            </a>
+        </div>
+
+        <div class="col-md-4">
+            <h4 class="card-title">Login As Seeker</h4>
+            <a  asp-action="LoginSeekers" class="alert alert-info alert-with-icon" data-notify="container">
+                <i class="material-icons" data-notify="icon">find_in_page</i>
+            </a>
+        </div>
+    </div>
