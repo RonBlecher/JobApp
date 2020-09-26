@@ -27,5 +27,9 @@
     <Folder Include="wwwroot\vendor\" />
     <Folder Include="wwwroot\login\" />
     <Folder Include="Views\Map\" />
+    <Folder Include="wwwroot\error\" />
+    <Folder Include="wwwroot\noPermission\" />
+    <Folder Include="wwwroot\noPermission\css\" />
+    <Folder Include="wwwroot\noPermission\js\" />
   </ItemGroup>
 </Project>

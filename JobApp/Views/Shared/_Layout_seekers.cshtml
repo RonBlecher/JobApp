@@ -8,8 +8,8 @@
     IEnumerable<Claim> claims = identity.Claims;
     Claim idClaim = claims.Where(claim => claim.Type == "Id").First();
     Claim nameClaim = claims.Where(claim => claim.Type == ClaimTypes.Name).First();
-    String publisherId = idClaim.Value;
-    String publisherName = nameClaim.Value;
+    String seekerId = idClaim.Value;
+    String seekerName = nameClaim.Value;
 }
 
 <!DOCTYPE html>
@@ -56,15 +56,15 @@
                         </a>
                     </li>
                     <li class="nav-item ">
-                        <a class="nav-link" href="/publishers/edit/@publisherId">
+                        <a class="nav-link" href="/seekers/edit/@seekerId">
                             <i class="material-icons">person</i>
                             <p>Edit my profile</p>
                         </a>
                     </li>
                     <li class="nav-item ">
-                        <a class="nav-link" href="/jobs/publish/@publisherId">
+                        <a class="nav-link" href="/jobs/index">
                             <i class="material-icons">library_books</i>
-                            <p>Publish Job</p>
+                            <p>Looking For Jobs</p>
                         </a>
                     </li>
                     <li class="nav-item ">
@@ -135,7 +135,7 @@
                                             Account
                                         </p>
                                         <div>
-                                            @publisherName
+                                            @seekerName
                                         </div>
                                     </div>
                                 </a>

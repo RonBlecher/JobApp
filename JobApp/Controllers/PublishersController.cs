@@ -39,28 +39,35 @@ namespace JobApp.Controllers
             return View(x);
         }
 
-        public async Task<IActionResult> Registering(string name, string email, string phonenum, string password)
+        public IActionResult Register()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Register([Bind("Name,Email,PhoneNum,Password")] Publisher publisher)
         {
             if (ModelState.IsValid)
             {
-                Publisher publisher = new Publisher() { Name = name, Email = email, PhoneNum = phonenum, Password = password };
                 _context.Add(publisher);
                 await _context.SaveChangesAsync();
                 SignIn(publisher);
                 return RedirectToAction(nameof(Index));
             }
 
-            return View();
+            return View(publisher);
         }
-
-        public IActionResult Register()
-        {
-            return View();
-        }
-
      
         public IActionResult Login(string name, string password)
         {
+            var identity = (ClaimsIdentity)User.Identity;
+            IEnumerable<Claim> claims = identity.Claims;
+            Claim role = claims.Where(claim => claim.Type == ClaimTypes.Role).First();
+            if (role != null && role.Value == "Publisher")
+            {
+                return RedirectToAction("Index");
+            }
+
             var publishers = _context.Publisher.Where(publisher => publisher.Name == name && publisher.Password == password).ToList();
             if (publishers != null && publishers.Count() > 0)
             {
@@ -75,6 +82,8 @@ namespace JobApp.Controllers
         {
             var claims = new List<Claim>
             {
+                new Claim("Id", user.ID.ToString()),
+                new Claim("Email", user.Email),
                 new Claim(ClaimTypes.Name, user.Name),
                 new Claim(ClaimTypes.Role, "Publisher"),
             };
@@ -135,15 +144,24 @@ namespace JobApp.Controllers
         // GET: Publishers/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            var identity = (ClaimsIdentity)User.Identity;
+            IEnumerable<Claim> claims = identity.Claims;
+            Claim idClaim = claims.Where(claim => claim.Type == "Id").First();
+
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction("Error", "Home");
+            }
+
+            if(idClaim.Value != id.ToString())
+            {
+                return RedirectToAction("NoPermission", "Home");
             }
 
             var publisher = await _context.Publisher.FindAsync(id);
             if (publisher == null)
             {
-                return NotFound();
+                return RedirectToAction("Error", "Home");
             }
             return View(publisher);
         }

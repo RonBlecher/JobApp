@@ -7,6 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using JobApp.Data;
 using JobApp.Models;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
+using System.Threading;
 
 namespace JobApp.Controllers
 {
@@ -19,10 +24,87 @@ namespace JobApp.Controllers
             _context = context;
         }
 
+        [Authorize(Roles = "Seeker")]
+        // GET: Publishers
+        public async Task<IActionResult> Index()
+        {
+            var x = await _context.Seeker.ToListAsync();
+            return View(x);
+        }
+
         // GET: Seekers
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> List()
         {
             return View(await _context.Seeker.ToListAsync());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Register([Bind("Name,Email,PhoneNum,Password")] Seeker seeker)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Add(seeker);
+                await _context.SaveChangesAsync();
+                SignIn(seeker);
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View();
+        }
+
+        public IActionResult Register()
+        {
+            return View();
+        }
+
+
+        public IActionResult Login(string name, string password)
+        {
+            Thread.Sleep(3000);
+            var identity = (ClaimsIdentity)User.Identity;
+            if(identity.IsAuthenticated)
+            {
+                IEnumerable<Claim> claims = identity.Claims;
+                Claim role = claims.Where(claim => claim.Type == ClaimTypes.Role).First();
+                if (role != null && role.Value == "Seeker")
+                {
+                    return RedirectToAction("Index");
+                }
+
+            }
+
+            var seekers = _context.Seeker.Where(seeker => seeker.Name == name && seeker.Password == password).ToList();
+            if (seekers != null && seekers.Count() > 0)
+            {
+                SignIn(seekers.First());
+                return RedirectToAction("Index");
+            }
+
+            return View();
+        }
+
+        private async void SignIn(User user)
+        {
+            var claims = new List<Claim>
+            {
+                new Claim("Id", user.ID.ToString()),
+                new Claim("Email", user.Email),
+                new Claim(ClaimTypes.Name, user.Name),
+                new Claim(ClaimTypes.Role, "Seeker"),
+            };
+
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+            var authProperites = new AuthenticationProperties
+            {
+
+            };
+
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity),
+                authProperites);
         }
 
         // GET: Seekers/Details/5
@@ -68,16 +150,26 @@ namespace JobApp.Controllers
         // GET: Seekers/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            var identity = (ClaimsIdentity)User.Identity;
+            IEnumerable<Claim> claims = identity.Claims;
+            Claim idClaim = claims.Where(claim => claim.Type == "Id").First();
+
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction("Error", "Home");
+            }
+
+            if (idClaim.Value != id.ToString())
+            {
+                return RedirectToAction("NoPermission", "Home");
             }
 
             var seeker = await _context.Seeker.FindAsync(id);
             if (seeker == null)
             {
-                return NotFound();
+                return RedirectToAction("Error", "Home");
             }
+
             return View(seeker);
         }
 

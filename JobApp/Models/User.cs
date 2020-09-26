@@ -12,9 +12,11 @@ namespace JobApp.Models
 
         [Required]
         [Display(Name = "Username")]
+        [StringLength(15, ErrorMessage = "Name length can't be more than 15.")]
         public string Name { get; set; }
 
         [Required]
+        [EmailAddress]
         public string Email { get; set; }
 
         [Required]

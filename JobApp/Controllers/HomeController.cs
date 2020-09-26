@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using JobApp.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication;
 
 namespace JobApp.Controllers
 {
@@ -41,8 +42,21 @@ namespace JobApp.Controllers
 
         public IActionResult LoginSeekers()
         {
+            return RedirectToAction("Login", "seekers");
+        }
+
+        public IActionResult NoPermission()
+        {
             return View();
         }
+
+
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync();
+            return RedirectToAction("Index", "home");
+        }
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

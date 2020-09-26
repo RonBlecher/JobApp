@@ -1,14 +1,18 @@
-﻿<!--
-=========================================================
-Material Dashboard - v2.1.2
-=========================================================
+﻿@using System.Security.Claims;
+@using Microsoft.AspNetCore.Authentication;
+@using Microsoft.AspNetCore.Authentication.Cookies;
+@using Microsoft.AspNetCore.Authorization;
 
-Product Page: https://www.creative-tim.com/product/material-dashboard
-Copyright 2020 Creative Tim (https://www.creative-tim.com)
-Coded by Creative Tim
+@{
+    var identity = (ClaimsIdentity)User.Identity;
+    IEnumerable<Claim> claims = identity.Claims;
+    Claim idClaim = claims.Where(claim => claim.Type == "Id").First();
+    Claim nameClaim = claims.Where(claim => claim.Type == ClaimTypes.Name).First();
+    String adminId = idClaim.Value;
+    String adminName = nameClaim.Value;
+}
 
-=========================================================
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. -->
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -144,18 +148,21 @@ The above copyright notice and this permission notice shall be included in all c
                             </li>
                             <li class="nav-item dropdown">
                                 <a class="nav-link" href="javascript:;" id="navbarDropdownProfile" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <i class="material-icons">person</i>
-                                    <p class="d-lg-none d-md-block">
-                                        Account
-                                    </p>
+                                    <div class="username">
+                                        <i class="material-icons">person</i>
+                                        <p class="d-lg-none d-md-block">
+                                            Account
+                                        </p>
+                                        <div>
+                                            @adminName
+                                        </div>
+                                    </div>
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownProfile">
                                     <a class="dropdown-item" href="#">Profile</a>
                                     <a class="dropdown-item" href="#">Settings</a>
                                     <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item">
-                                        @Html.ActionLink("Logout", "Logout");
-                                    </a>
+                                    <a class="dropdown-item" href="/home/logout">Log out</a>
                                 </div>
                             </li>
                         </ul>

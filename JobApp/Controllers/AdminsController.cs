@@ -70,6 +70,14 @@ namespace JobApp.Controllers
         // GET: /<controller>/ 
         public IActionResult Login(string name, string password)
         {
+            var identity = (ClaimsIdentity)User.Identity;
+            IEnumerable<Claim> claims = identity.Claims;
+            Claim role = claims.Where(claim => claim.Type == ClaimTypes.Role).First();
+            if (role != null && role.Value == "Admin")
+            {
+                return RedirectToAction("Index");
+            }
+
             var admins = _context.Admin.Where(publisher => publisher.Name == name && publisher.Password == password).ToList();
             if (admins != null && admins.Count() > 0)
             {
@@ -84,6 +92,8 @@ namespace JobApp.Controllers
         {
             var claims = new List<Claim>
             {
+                 new Claim("Id", user.ID.ToString()),
+                new Claim("Email", user.Email),
                 new Claim(ClaimTypes.Name, user.Name),
                 new Claim(ClaimTypes.Role, "Admin"),
             };

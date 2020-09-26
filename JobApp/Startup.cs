@@ -40,6 +40,7 @@ namespace JobApp
                     CookieAuthenticationDefaults.AuthenticationScheme,
                     options => {
                         options.LoginPath = "/home/error";
+                        options.AccessDeniedPath = "/home/nopermission";
                     }
                 );
         }

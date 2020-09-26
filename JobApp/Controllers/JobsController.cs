@@ -46,8 +46,11 @@ namespace JobApp.Controllers
         }
 
         // GET: Jobs/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            List<Publisher> publishers = await _context.Publisher.ToListAsync();
+            ViewData["Publishers"] = publishers; // Send this list to the view
+
             return View();
         }
 
@@ -56,7 +59,7 @@ namespace JobApp.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Title,Description")] Job job)
+        public async Task<IActionResult> Create([Bind("Title,Description")] Job job)
         {
             if (ModelState.IsValid)
             {

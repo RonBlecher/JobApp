@@ -19,10 +19,8 @@ namespace JobApp.Models
         [Required]
         public string Description { get; set; }
 
-        [Required]
         public ICollection<JobSkill> JobSkills { get; set; }
 
-        [Required]
         public ICollection<CityJob> JobCities { get; set; }
 
         public ICollection<SeekerJob> JobSeekers { get; set; }
