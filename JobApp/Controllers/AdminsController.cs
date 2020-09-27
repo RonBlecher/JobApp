@@ -71,14 +71,17 @@ namespace JobApp.Controllers
         public IActionResult Login(string name, string password)
         {
             var identity = (ClaimsIdentity)User.Identity;
-            IEnumerable<Claim> claims = identity.Claims;
-            Claim role = claims.Where(claim => claim.Type == ClaimTypes.Role).First();
-            if (role != null && role.Value == "Admin")
+            if (identity.IsAuthenticated)
             {
-                return RedirectToAction("Index");
+                IEnumerable<Claim> claims = identity.Claims;
+                Claim role = claims.Where(claim => claim.Type == ClaimTypes.Role).First();
+                if (role != null && role.Value == "Admin")
+                {
+                    return RedirectToAction("Index");
+                }
             }
 
-            var admins = _context.Admin.Where(publisher => publisher.Name == name && publisher.Password == password).ToList();
+            var admins = _context.Admin.Where(admin => admin.Name == name && admin.Password == password).ToList();
             if (admins != null && admins.Count() > 0)
             {
                 SignIn(admins.First());
