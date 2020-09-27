@@ -35,18 +35,18 @@ namespace JobApp.Controllers
             return RedirectToAction("List", "publishers");
         }
 
-        public async Task<IActionResult> Registering(string name, string email, string phonenum, string password)
+        [HttpPost]
+        public async Task<IActionResult> Register([Bind("Name,Email,PhoneNum,Password")] Admin admin)
         {
             if (ModelState.IsValid)
             {
-                Publisher publisher = new Publisher() { Name = name, Email = email, PhoneNum = phonenum, Password = password };
-                _context.Add(publisher);
+                _context.Add(admin);
                 await _context.SaveChangesAsync();
-                SignIn(publisher);
+                SignIn(admin);
                 return RedirectToAction(nameof(Index));
             }
 
-            return View();
+            return View(admin);
         }
 
         public IActionResult Register()
