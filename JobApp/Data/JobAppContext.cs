@@ -57,26 +57,26 @@ namespace JobApp.Data
                 .HasForeignKey(srsl => srsl.SeekerID);
         }
 
-        public DbSet<JobApp.Models.Admin> Admin { get; set; }
+        public DbSet<Admin> Admin { get; set; }
 
-        public DbSet<JobApp.Models.City> City { get; set; }
+        public DbSet<City> City { get; set; }
 
-        public DbSet<JobApp.Models.Job> Job { get; set; }
+        public DbSet<Job> Job { get; set; }
 
-        public DbSet<JobApp.Models.Publisher> Publisher { get; set; }
+        public DbSet<Publisher> Publisher { get; set; }
 
-        public DbSet<JobApp.Models.Region> Region { get; set; }
+        public DbSet<Region> Region { get; set; }
 
-        public DbSet<JobApp.Models.Seeker> Seeker { get; set; }
+        public DbSet<Seeker> Seeker { get; set; }
 
-        public DbSet<JobApp.Models.Skill> Skill { get; set; }
+        public DbSet<Skill> Skill { get; set; }
 
-        public DbSet<JobApp.Models.CityJob> CityJob { get; set; }
+        public DbSet<CityJob> CityJob { get; set; }
 
-        public DbSet<JobApp.Models.JobSkill> JobSkill { get; set; }
+        public DbSet<JobSkill> JobSkill { get; set; }
 
-        public DbSet<JobApp.Models.SeekerJob> SeekerJob { get; set; }
+        public DbSet<SeekerJob> SeekerJob { get; set; }
 
-        public DbSet<JobApp.Models.SeekerSkill> SeekerSkill { get; set; }
+        public DbSet<SeekerSkill> SeekerSkill { get; set; }
     }
 }

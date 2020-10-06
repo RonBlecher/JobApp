@@ -9,7 +9,7 @@ namespace JobApp.Models
     public class City
     {
         [Key]
-        [Display(Name = "City Name")]
+        [Display(Name = "City")]
         public string Name { get; set; }
 
         [Required]

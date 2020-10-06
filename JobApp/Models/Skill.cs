@@ -9,6 +9,7 @@ namespace JobApp.Models
     public class Skill
     {
         [Key]
+        [Display(Name = "Skill")]
         public string Name { get; set; }
 
         public ICollection<SeekerSkill> SkillSeekers { get; set; }
