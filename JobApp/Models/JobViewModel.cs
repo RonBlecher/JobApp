@@ -6,13 +6,8 @@ using System.Threading.Tasks;
 
 namespace JobApp.Models
 {
-    public class Job
+    public class JobViewModel
     {
-        public int ID { get; set; }
-
-        [Required]
-        public Publisher Publisher { get; set; }
-
         [Required]
         public int PublisherId { get; set; }
 
@@ -22,7 +17,7 @@ namespace JobApp.Models
         [Required]
         public string Description { get; set; }
 
-        public ICollection<JobSkill> JobSkills { get; set; }
+        public ICollection<string> JobSkillsId { get; set; }
 
         public ICollection<CityJob> JobCities { get; set; }
 

@@ -86,7 +86,9 @@ namespace JobApp.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     PublisherID = table.Column<int>(nullable: false),
                     Title = table.Column<string>(nullable: false),
-                    Description = table.Column<string>(nullable: false)
+                    Description = table.Column<string>(nullable: false),
+                    Lon = table.Column<Double>(nullable: false),
+                    Lat = table.Column<Double>(nullable: false)
                 },
                 constraints: table =>
                 {

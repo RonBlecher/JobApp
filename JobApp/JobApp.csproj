@@ -31,5 +31,6 @@
     <Folder Include="wwwroot\noPermission\" />
     <Folder Include="wwwroot\noPermission\css\" />
     <Folder Include="wwwroot\noPermission\js\" />
+    <Folder Include="Services\" />
   </ItemGroup>
 </Project>

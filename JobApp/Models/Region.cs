@@ -9,7 +9,7 @@ namespace JobApp.Models
     public class Region
     {
         [Key]
-        [Display(Name = "Region")]
+        [Display(Name = "Region Name")]
         public string Name { get; set; }
 
         public ICollection<City> Cities { get; set; }

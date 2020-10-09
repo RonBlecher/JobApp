@@ -1,7 +1,10 @@
-﻿@model JobApp.Models.Job
+﻿@model JobViewModel
 
 @{
     ViewData["Title"] = "Create";
+    Layout = "_Layout_publishers";
+
+
     List<SelectListItem> listItems = new List<SelectListItem>();
     var publisher = (List<Publisher>)ViewData["Publishers"];
     publisher.ForEach(publisher =>
@@ -12,12 +15,15 @@
             Value = publisher.ID.ToString()
         });
     });
+
+    List<SelectListItem> jobSkillsItem2 = new List<SelectListItem>();
+    var skills = (List<Skill>)ViewData["Skills"];
+    SelectList jobSkillsItems = new SelectList(skills.Select(p => p.Name));
 }
 
-<h1>Create</h1>
+<h1>Publish New Job</h1>
 
-<h4>Job</h4>
-<hr />
+<h4>Job details</h4>
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
@@ -33,10 +39,29 @@
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Publisher" class="control-label"></label>
-                @Html.DropDownListFor(model => model.Publisher, listItems, "-- Select Publisher --")
+                <label asp-for="PublisherId" class="control-label"></label>
+                @Html.DropDownListFor(model => model.PublisherId, listItems, "Select publisher")
 
-                <span asp-validation-for="Publisher" class="text-danger"></span>
+                <span asp-validation-for="PublisherId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="JobSkillsId" class="control-label"></label>
+                @Html.ListBoxFor(model => model.JobSkillsId, jobSkillsItems, "Select Skill")
+
+                <span asp-validation-for="JobSkillsId" class="text-danger"></span>
+            </div>
+            <div class="col-md-12">
+                <div id="map"></div>
+            </div>
+            <div class="form-group">
+                <label asp-for="Lon" class="control-label"></label>
+                <input id="lon" asp-for="Lon" class="form-control" />
+                <span asp-validation-for="Lon" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Lat" class="control-label"></label>
+                <input id="lat" asp-for="Lat" class="form-control" />
+                <span asp-validation-for="Lat" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
@@ -49,6 +74,44 @@
     <a asp-action="Index">Back to List</a>
 </div>
 
+
+<script src="~/js/core/jquery.min.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDMnkR_IpENkGrRXP5PxVOEDDjgjSXqpfU&callback=initMap"
+        defer></script>
+<script>
+    let map;
+    let currentMarker = null
+
+    function initMap() {
+        map = new google.maps.Map(document.getElementById("map"), {
+            center: { lat: 32.397, lng: 31.644 },
+            zoom: 8,
+        })
+
+        map.addListener("click", (e) => {
+            $('#lon').val(e.latLng.lng)
+            $('#lat').val(e.latLng.lat)
+            if (currentMarker) {
+                currentMarker.setMap(null);
+                currentMarker = null
+            }
+            currentMarker = placeMarkerAndPanTo(e.latLng, map);
+        });
+
+        function placeMarkerAndPanTo(latLng, map) {
+            return new google.maps.Marker({
+                position: latLng,
+                map: map,
+            });
+            map.panTo(latLng);
+        }
+    }
+
+
+
+</script>
+
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
+

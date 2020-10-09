@@ -44,8 +44,12 @@ namespace JobApp.Controllers
         }
 
         // GET: Cities/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            List<Region> regions = await _context.Region.ToListAsync();
+
+            ViewData["Regions"] = regions;
+
             return View();
         }
 
@@ -54,10 +58,18 @@ namespace JobApp.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name")] City city)
+        public async Task<IActionResult> Create(String name, String region)
         {
+            City city = new City();
+
             if (ModelState.IsValid)
             {
+                Region regionObj = new Region();
+                regionObj.Name = region;
+
+                city.Name = name;
+                city.Region = regionObj;
+             
                 _context.Add(city);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

@@ -1,8 +1,8 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    ViewData["Title"] = "Index";
+    Layout = "_Layout_publishers";
 }
+
 <style>
     /* Always set the map height explicitly to define the size of the div
        * element that contains the map. */
@@ -17,15 +17,27 @@
 
 <div id="map"></div>
 
+<script src="~/js/core/jquery.min.js"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDMnkR_IpENkGrRXP5PxVOEDDjgjSXqpfU&callback=initMap"
         defer></script>
-<script>
-    let map;
+<script>let map;
 
-function initMap() {
-  map = new google.maps.Map(document.getElementById("map"), {
-    center: { lat: 32.397, lng: 31.644 },
-    zoom: 8,
-  });
-}
-</script>
+    function initMap() {
+        map = new google.maps.Map(document.getElementById("map"), {
+            center: { lat: 32.397, lng: 31.644 },
+            zoom: 8,
+        })
+    }
+
+    $.get("/jobs/MyPublishedJobs", function (data) {
+        data.forEach(job => setMarkers(job))
+    });
+
+    function setMarkers(job) {
+
+        new google.maps.Marker({
+            position: { lat: job.lat, lng: job.lon },
+            map,
+            title: "Hello World!",
+        });
+    }</script>

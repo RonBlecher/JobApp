@@ -8,23 +8,58 @@ using Microsoft.EntityFrameworkCore;
 using JobApp.Data;
 using JobApp.Models;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace JobApp.Controllers
 {
     public class JobsController : Controller
     {
         private readonly JobAppContext _context;
+        private JobViewModelToJobConverter jobViewModelToJobConverter;
 
         public JobsController(JobAppContext context)
         {
             _context = context;
+            jobViewModelToJobConverter = new JobViewModelToJobConverter(context);
         }
 
         [Authorize(Roles="Admin")]
         // GET: Jobs
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Job.ToListAsync());
+            List<Job> jobs = await _context.Job.ToListAsync();
+            EnrichJob(jobs);
+            return View(jobs);
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Publisher")]
+        public async Task<List<Job>> MyPublishedJobs()
+        {
+            var identity = (ClaimsIdentity)User.Identity;
+            IEnumerable<Claim> claims = identity.Claims;
+            Claim idClaim = claims.Where(claim => claim.Type == "Id").First();
+
+            Publisher pulisher = _context.Publisher.Where(publisher => publisher.ID.ToString() == idClaim.Value).ToList().First();
+            // return publisher.PostedJobs.ToList();
+
+            List<Job> jobs = await _context.Job.ToListAsync();
+            return jobs.Where(job => job.PublisherId.ToString() == idClaim.Value).ToList();
+            //EnrichJob(jobs);
+            //List<Job> jobsOfPublisher = jobs.Where(job => job.Publisher.ID == Int32.Parse(idClaim.Value)).ToList();
+            //return jobsOfPublisher;
+        }
+
+        private void EnrichJob(List<Job> jobs)
+        {
+            jobs.ForEach(job =>
+            {
+                List<JobSkill> jobSkills =  _context.JobSkill.Where(jobSkill => jobSkill.Job.ID == job.ID).ToList();
+                job.JobSkills = jobSkills;
+                Publisher pulisher = _context.Publisher.Where(publisher => publisher.ID == job.PublisherId).ToList().First();
+                job.Publisher = pulisher;
+            });
+       
         }
 
         // GET: Jobs/Details/5
@@ -49,7 +84,10 @@ namespace JobApp.Controllers
         public async Task<IActionResult> Create()
         {
             List<Publisher> publishers = await _context.Publisher.ToListAsync();
+            List<Skill> skills = await _context.Skill.ToListAsync();
+
             ViewData["Publishers"] = publishers; // Send this list to the view
+            ViewData["Skills"] = skills;
 
             return View();
         }
@@ -59,13 +97,17 @@ namespace JobApp.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Title,Description")] Job job)
+        public async Task<IActionResult> Create([Bind("Title, Description, JobSkillsId, PublisherId, Lon, Lat")] JobViewModel jobViewModel)
         {
+            Job job = new Job();
+
             if (ModelState.IsValid)
             {
+                job = await jobViewModelToJobConverter.Convert(jobViewModel);
                 _context.Add(job);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+
+                return RedirectToAction("Create");
             } else
             {
                 var errors = ModelState.Values.SelectMany(v => v.Errors);
