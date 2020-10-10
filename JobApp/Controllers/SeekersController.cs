@@ -108,6 +108,25 @@ namespace JobApp.Controllers
                 authProperites);
         }
 
+        public async Task<IActionResult> DownloadCV(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var seeker = await _context.Seeker.FirstOrDefaultAsync(m => m.ID == id);
+            if (seeker == null)
+            {
+                return NotFound();
+            }
+
+            MemoryStream cvStream = new MemoryStream();
+            cvStream.Write(seeker.CV, 0, seeker.CV.Length);
+            cvStream.Position = 0;
+            return File(cvStream, System.Net.Mime.MediaTypeNames.Application.Octet, "mycv.pdf");
+        }
+
         // GET: Seekers/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -124,33 +143,6 @@ namespace JobApp.Controllers
             }
 
             return View(seeker);
-        }
-
-        public async Task<IActionResult> GetDisplayPDF(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var seeker = await _context.Seeker
-                .FirstOrDefaultAsync(m => m.ID == id);
-            if (seeker == null)
-            {
-                return NotFound();
-            }
-
-            return DisplayPDF(seeker);
-        }
-
-        private FileResult DisplayPDF(Seeker seeker)
-        {
-            byte[] byteArray = seeker.CV;
-            MemoryStream pdfStream = new MemoryStream();
-           
-            pdfStream.Write(byteArray, 0, byteArray.Length);
-            pdfStream.Position = 0;
-            return File(pdfStream, System.Net.Mime.MediaTypeNames.Application.Octet, "mycv.pdf");
         }
 
         // GET: Seekers/Create
@@ -217,20 +209,18 @@ namespace JobApp.Controllers
             {
                 try
                 {
-                    byte[] cv = seeker.CV;
-                    IFormFile CVObj = seeker.CVObj;
-                    using (MemoryStream ms = new MemoryStream())
+                    if (seeker.CVObj != null)
                     {
-                        seeker.CVObj.CopyTo(ms);
-                        seeker.CV = ms.ToArray();
-
                         if (seeker.CVObj.Length > _fileSizeLimit)
                         {
-                            seeker.CV = cv;
-                            seeker.CVObj = CVObj;
-                            
                             ModelState.AddModelError("CVObj", "File size is over 5MB");
                             return View(seeker);
+                        }
+
+                        using (MemoryStream ms = new MemoryStream())
+                        {
+                            seeker.CVObj.CopyTo(ms);
+                            seeker.CV = ms.ToArray();
                         }
                     }
 
@@ -251,11 +241,6 @@ namespace JobApp.Controllers
                 return RedirectToAction(nameof(Index));
             }
             return View(seeker);
-        }
-
-        public async Task<IActionResult> DownloadCV(int id)
-        {
-            return await GetDisplayPDF(id);
         }
 
         // GET: Seekers/Delete/5

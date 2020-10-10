@@ -13,17 +13,20 @@
     <div class="col-md-4">
         <form asp-action="Edit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="CVObj" class="control-label"></label>
-                <input asp-for="CVObj" class="form-control" />
-                <span asp-validation-for="CVObj" class="text-danger"></span>
-                @if (Model.CV != null)
-                {
-                    <br />
-                    <a>@Html.ActionLink("Download CV", "DownloadCV", new { id = Model.ID })</a>
-                }
-            </div>
-                <input type="hidden" asp-for="ID" />
+                <div class="form-group">
+                    <label asp-for="CVObj" class="control-label"></label>
+                    <div class="custom-file">
+                        <label class="custom-file-label" for="inputGroupFile01">Upload New</label>
+                        <input asp-for="CVObj" type="file" accept=".pdf, .doc, .docx" class="custom-file-input" id="inputGroupFile01">
+                    </div>
+                    <span asp-validation-for="CVObj" class="text-danger"></span>
+                    @if (Model.CV != null)
+                    {
+                        <br /> <br />
+                        <a>@Html.ActionLink("Download CV", "DownloadCV", new { id = Model.ID })</a>
+                        <br /> <br />
+                    }
+                </div>
                 <div class="form-group">
                     <label asp-for="Name" class="control-label"></label>
                     <input asp-for="Name" class="form-control" />
