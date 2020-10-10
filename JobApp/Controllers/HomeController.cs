@@ -56,5 +56,10 @@ namespace JobApp.Controllers
             await HttpContext.SignOutAsync();
             return RedirectToAction("Index", "home");
         }
+
+        public IActionResult Error()
+        {
+            return View();
+        }
     }
 }

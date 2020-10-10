@@ -11,13 +11,15 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
-using System.Threading;
+using System.IO;
+using Microsoft.AspNetCore.Http;
 
 namespace JobApp.Controllers
 {
     public class SeekersController : Controller
     {
         private readonly JobAppContext _context;
+        private readonly long _fileSizeLimit = 5 * 1024 * 1024; // 5MB
 
         public SeekersController(JobAppContext context)
         {
@@ -61,7 +63,6 @@ namespace JobApp.Controllers
 
         public IActionResult Login(string name, string password)
         {
-            Thread.Sleep(3000);
             var identity = (ClaimsIdentity)User.Identity;
             if(identity.IsAuthenticated)
             {
@@ -136,7 +137,7 @@ namespace JobApp.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CV,ID,Name,Email,PhoneNum,Password")] Seeker seeker)
+        public async Task<IActionResult> Create([Bind("CVObj,ID,Name,Email,PhoneNum,Password")] Seeker seeker)
         {
             if (ModelState.IsValid)
             {
@@ -178,7 +179,7 @@ namespace JobApp.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("CV,ID,Name,Email,PhoneNum,Password")] Seeker seeker)
+        public async Task<IActionResult> Edit(int id, [Bind("CVObj,ID,Name,Email,PhoneNum,Password")] Seeker seeker)
         {
             if (id != seeker.ID)
             {
@@ -189,6 +190,23 @@ namespace JobApp.Controllers
             {
                 try
                 {
+                    byte[] cv = seeker.CV;
+                    IFormFile CVObj = seeker.CVObj;
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        seeker.CVObj.CopyTo(ms);
+                        seeker.CV = ms.ToArray();
+
+                        if (seeker.CVObj.Length > _fileSizeLimit)
+                        {
+                            seeker.CV = cv;
+                            seeker.CVObj = CVObj;
+                            
+                            ModelState.AddModelError("CV", "File size is over 5MB");
+                            return View(seeker);
+                        }
+                    }
+
                     _context.Update(seeker);
                     await _context.SaveChangesAsync();
                 }
@@ -206,6 +224,13 @@ namespace JobApp.Controllers
                 return RedirectToAction(nameof(Index));
             }
             return View(seeker);
+        }
+
+        public FileResult DownloadCV(int id)
+        {
+            Seeker seeker = _context.Seeker.Where(s => s.ID == id).FirstOrDefault();
+            using var stream = new MemoryStream(seeker.CV);
+            return File(seeker.CV, "");
         }
 
         // GET: Seekers/Delete/5
