@@ -52,6 +52,8 @@ namespace JobApp
             {
                 var context = serviceScope.ServiceProvider.GetRequiredService<JobAppContext>();
                 context.Database.Migrate();
+
+                DBSeed.Seed(context);
             }
 
 
