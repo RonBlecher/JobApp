@@ -126,6 +126,33 @@ namespace JobApp.Controllers
             return View(seeker);
         }
 
+        public async Task<IActionResult> GetDisplayPDF(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var seeker = await _context.Seeker
+                .FirstOrDefaultAsync(m => m.ID == id);
+            if (seeker == null)
+            {
+                return NotFound();
+            }
+
+            return DisplayPDF(seeker);
+        }
+
+        private FileResult DisplayPDF(Seeker seeker)
+        {
+            byte[] byteArray = seeker.CV;
+            MemoryStream pdfStream = new MemoryStream();
+           
+            pdfStream.Write(byteArray, 0, byteArray.Length);
+            pdfStream.Position = 0;
+            return File(pdfStream, System.Net.Mime.MediaTypeNames.Application.Octet, "mycv.pdf");
+        }
+
         // GET: Seekers/Create
         public IActionResult Create()
         {
@@ -202,7 +229,7 @@ namespace JobApp.Controllers
                             seeker.CV = cv;
                             seeker.CVObj = CVObj;
                             
-                            ModelState.AddModelError("CV", "File size is over 5MB");
+                            ModelState.AddModelError("CVObj", "File size is over 5MB");
                             return View(seeker);
                         }
                     }
@@ -226,11 +253,9 @@ namespace JobApp.Controllers
             return View(seeker);
         }
 
-        public FileResult DownloadCV(int id)
+        public async Task<IActionResult> DownloadCV(int id)
         {
-            Seeker seeker = _context.Seeker.Where(s => s.ID == id).FirstOrDefault();
-            using var stream = new MemoryStream(seeker.CV);
-            return File(seeker.CV, "");
+            return await GetDisplayPDF(id);
         }
 
         // GET: Seekers/Delete/5
