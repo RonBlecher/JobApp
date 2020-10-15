@@ -27,7 +27,13 @@ namespace JobApp.Controllers
         // GET: Jobs
         public async Task<IActionResult> Index()
         {
-            List<Job> jobs = await _context.Job.ToListAsync();
+         List<Job> jobs = await _context.Job.ToListAsync();
+            if (!string.IsNullOrEmpty(search))
+            {
+                jobs = jobs.Where(job => String.Compare(job.Title, search,
+                    comparisonType: StringComparison.OrdinalIgnoreCase)==0).ToList();
+            }
+
             EnrichJob(jobs);
             return View(jobs);
         }

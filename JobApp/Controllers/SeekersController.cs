@@ -36,9 +36,16 @@ namespace JobApp.Controllers
 
         // GET: Seekers
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> List()
+        public async Task<IActionResult> List(string search)
         {
-            return View(await _context.Seeker.ToListAsync());
+            var seekers = await _context.Seeker.ToListAsync();
+            if (!string.IsNullOrEmpty(search))
+            {
+                seekers = seekers.Where(seeker => String.Compare(seeker.Name, search,
+                    comparisonType: StringComparison.OrdinalIgnoreCase) == 0).ToList();
+            }
+
+            return View(seekers);
         }
 
         [HttpPost]

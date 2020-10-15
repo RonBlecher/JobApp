@@ -33,10 +33,16 @@ namespace JobApp.Controllers
 
         [Authorize(Roles = "Admin")]
         // GET: Publishers
-        public async Task<IActionResult> List()
+        public async Task<IActionResult> List(string search)
         {
-            var x = await _context.Publisher.ToListAsync();
-            return View(x);
+            var publishers = await _context.Publisher.ToListAsync();
+            if (!string.IsNullOrEmpty(search))
+            {
+                publishers = publishers.Where(publisher => String.Compare(publisher.Name, search,
+                    comparisonType: StringComparison.OrdinalIgnoreCase) == 0).ToList();
+            }
+
+            return View(publishers);
         }
 
         public IActionResult Register()
