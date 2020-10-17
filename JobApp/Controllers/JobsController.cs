@@ -27,14 +27,8 @@ namespace JobApp.Controllers
         // GET: Jobs
         public async Task<IActionResult> Index()
         {
-            String search = "";
             List<Job> jobs = await _context.Job.ToListAsync();
-            if (!string.IsNullOrEmpty(search))
-            {
-                jobs = jobs.Where(job => String.Compare(job.Title, search,
-                    comparisonType: StringComparison.OrdinalIgnoreCase) == 0).ToList();
-            }
-
+           
             EnrichJob(jobs);
             return View(jobs);
         }
@@ -43,13 +37,7 @@ namespace JobApp.Controllers
         // GET: Jobs
         public async Task<IActionResult> LookingForJobs()
         {
-            String search = "";
             List<Job> jobs = await _context.Job.ToListAsync();
-            if (!string.IsNullOrEmpty(search))
-            {
-                jobs = jobs.Where(job => String.Compare(job.Title, search,
-                    comparisonType: StringComparison.OrdinalIgnoreCase) == 0).ToList();
-            }
 
             EnrichJob(jobs);
             return View(jobs);
@@ -199,10 +187,12 @@ namespace JobApp.Controllers
                 return NotFound();
             }
 
+
             SeekerJob seekerJob = new SeekerJob
             {
                 JobID = job.ID,
-                SeekerID = seeker.ID
+                SeekerID = seeker.ID,
+                SubmitDate = DateTime.Now
             };
 
             if (jobSeekersOfJob != null)
