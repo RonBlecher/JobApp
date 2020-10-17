@@ -60,7 +60,8 @@ namespace JobApp.Migrations
                     Email = table.Column<string>(nullable: false),
                     PhoneNum = table.Column<string>(nullable: false),
                     Password = table.Column<string>(nullable: false),
-                    CV = table.Column<byte[]>(nullable: false)
+                    CV = table.Column<byte[]>(nullable: true),
+                    CVFileName = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {

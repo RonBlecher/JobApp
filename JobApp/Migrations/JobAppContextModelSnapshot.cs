@@ -180,6 +180,9 @@ namespace JobApp.Migrations
                     b.Property<byte[]>("CV")
                         .HasColumnType("varbinary(max)");
 
+                    b.Property<string>("CVFileName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");

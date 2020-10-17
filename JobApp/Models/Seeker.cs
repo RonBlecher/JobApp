@@ -16,6 +16,8 @@ namespace JobApp.Models
 
         public byte[] CV { get; set; }
 
+        public string CVFileName { get; set; }
+
         [NotMapped]
         [Display(Name = "CV File")]
         public IFormFile CVObj { get; set; }

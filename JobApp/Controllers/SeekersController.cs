@@ -131,7 +131,7 @@ namespace JobApp.Controllers
             MemoryStream cvStream = new MemoryStream();
             cvStream.Write(seeker.CV, 0, seeker.CV.Length);
             cvStream.Position = 0;
-            return File(cvStream, System.Net.Mime.MediaTypeNames.Application.Octet, "mycv.pdf");
+            return File(cvStream, System.Net.Mime.MediaTypeNames.Application.Octet, seeker.CVFileName);
         }
 
         // GET: Seekers/Details/5
@@ -228,6 +228,7 @@ namespace JobApp.Controllers
                         {
                             seeker.CVObj.CopyTo(ms);
                             seeker.CV = ms.ToArray();
+                            seeker.CVFileName = seeker.CVObj.FileName;
                         }
                     }
 
