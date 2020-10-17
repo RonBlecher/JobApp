@@ -218,6 +218,10 @@ namespace JobApp.Migrations
                     b.Property<int>("JobID")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("SubmitDate")
+                        .IsRequired()
+                        .HasColumnType("datetime2");
+
                     b.HasKey("SeekerID", "JobID");
 
                     b.HasIndex("JobID");
