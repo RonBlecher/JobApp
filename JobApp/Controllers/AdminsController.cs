@@ -115,13 +115,13 @@ namespace JobApp.Controllers
         }
 
 
-        public async Task<IActionResult> Search(string name)
+        public async Task<IActionResult> Search(string name, string email)
         {
             var results = from admin in _context.Admin
-                          where admin.Name.ToLower().Contains(name.ToLower())
-                          select admin;
-
-            return View("Index", await results.ToListAsync());
+                        where name != null ? admin.Name.ToLower().Contains(name.ToLower()) : true ||
+                            email != null ? admin.Email.ToLower().Contains(email.ToLower()) : true
+                        select admin;
+            return View("List", await results.ToListAsync());
         }
 
         // GET: Admins/Details/5

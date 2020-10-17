@@ -30,8 +30,26 @@ namespace JobApp.Controllers
         // GET: Publishers
         public async Task<IActionResult> Index()
         {
-            var x = await _context.Seeker.ToListAsync();
-            return View(x);
+            var identity = (ClaimsIdentity)User.Identity;
+            IEnumerable<Claim> claims = identity.Claims;
+            Claim idClaim = claims.Where(claim => claim.Type == "Id").First();
+
+            var seekers = await _context.Seeker.Where(seeker => seeker.ID.ToString() == idClaim.Value).ToListAsync();
+            EnrichSeekers(seekers);
+            return View(seekers.First());
+        }
+
+        private void EnrichSeekers(List<Seeker> seekers)
+        {
+            var identity = (ClaimsIdentity)User.Identity;
+            IEnumerable<Claim> claims = identity.Claims;
+            Claim idClaim = claims.Where(claim => claim.Type == "Id").First();
+
+            seekers.ForEach(seeker =>
+            {
+                List<SeekerJob> seekerJobs = _context.SeekerJob.Where(seekerJob => seekerJob.SeekerID.ToString() == idClaim.Value).ToList();
+                seeker.SeekerJobs = seekerJobs;
+            });
         }
 
         // GET: Seekers
@@ -169,7 +187,7 @@ namespace JobApp.Controllers
             {
                 _context.Add(seeker);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(List));
             }
             return View(seeker);
         }
@@ -180,13 +198,14 @@ namespace JobApp.Controllers
             var identity = (ClaimsIdentity)User.Identity;
             IEnumerable<Claim> claims = identity.Claims;
             Claim idClaim = claims.Where(claim => claim.Type == "Id").First();
-
+            Claim role = claims.Where(claim => claim.Type == ClaimTypes.Role).First();
+            
             if (id == null)
             {
                 return RedirectToAction("Error", "Home");
             }
 
-            if (idClaim.Value != id.ToString())
+            if (idClaim.Value != id.ToString() && role.Value != "Admin")
             {
                 return RedirectToAction("NoPermission", "Home");
             }
@@ -245,7 +264,17 @@ namespace JobApp.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                var identity = (ClaimsIdentity)User.Identity;
+                IEnumerable<Claim> claims = identity.Claims;
+                Claim role = claims.Where(claim => claim.Type == ClaimTypes.Role).First();
+                if (role.Value == "Seeker")
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                if (role.Value == "Admin")
+                {
+                    return RedirectToAction(nameof(List));
+                }
             }
             return View(seeker);
         }

@@ -21,6 +21,22 @@
                         <h4 class="card-title">Publishers</h4>
                         <p class="card-category"> all publishers information</p>
                     </div>
+                    <div class="card-header card-header-primary">
+                        <form asp-action="Search" id="myForm">
+                            <div class="text-danger"></div>
+                            <input type="hidden" />
+                            <div class="form-group">
+                                <label class="control-label">Search By Name:</label>
+                                <input id="searchName" name="name" class="form-control" />
+                                <span class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Search By Email:</label>
+                                <input id="searchEmail" name="email" class="form-control" />
+                                <span class="text-danger"></span>
+                            </div>
+                        </form>
+                    </div>
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table">
@@ -73,3 +89,59 @@
         </div>
     </div>
 </div>
+
+<script src="~/js/core/jquery.min.js"></script>
+
+<script>
+    function delay(callback, ms) {
+        var timer = 0;
+        return function () {
+            var context = this, args = arguments;
+            clearTimeout(timer);
+            timer = setTimeout(function () {
+                callback.apply(context, args);
+            }, ms || 0);
+        };
+    }
+
+
+    // Example usage:
+
+    $('#searchName,#searchEmail').keyup(delay(function (e) {
+        console.log('Time elapsed!', this.value);
+
+        let form = $('#myForm');
+        let url = form.attr('action');
+        let jsonForm = form.serializeArray();
+
+
+        $.ajax(
+            {
+                url: url,
+                data: form.serialize(),
+                success: (data) => {
+                    var newDoc = document.open("text/html", "replace");
+                    newDoc.write(data);
+                    newDoc.close();
+                    let newForm = $('#myForm');
+                    function populate(frm, data) {
+                        $.each(data, function (key, value) {
+                            $('[name=' + key + ']', frm).val(value);
+                        });
+                    }
+                    populate('#myForm', objectifyForm(jsonForm));
+
+                }
+            });
+    }, 750));
+
+
+    function objectifyForm(formArray) {
+        //serialize data function
+        var returnArray = {};
+        for (var i = 0; i < formArray.length; i++) {
+            returnArray[formArray[i]['name']] = formArray[i]['value'];
+        }
+        return returnArray;
+    }
+</script>

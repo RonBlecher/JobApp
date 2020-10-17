@@ -1,16 +1,9 @@
-﻿@model IEnumerable<JobApp.Models.City>
+﻿@model IEnumerable<JobApp.Models.Job>
 
 @{
-    ViewData["Title"] = "City List";
-    ViewData["Model"] = "Cities";
-
+    ViewData["Title"] = "Index";
+    Layout = "_Layout_seekers";
 }
-
-<h1>Cities</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 
 <div class="content2">
     <div class="container-fluid">
@@ -18,22 +11,25 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header card-header-primary">
-                        <h4 class="card-title">Cities</h4>
-                        <p class="card-category"> All cities information</p>
+                        <h4 class="card-title">Jobs</h4>
+                        <p class="card-category"> All jobs information</p>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table">
-                                <thead class=" text-primary">
+                                <thead>
                                     <tr>
                                         <th>
-                                            @Html.DisplayNameFor(model => model.Name)
+                                            @Html.DisplayNameFor(model => model.Title)
                                         </th>
                                         <th>
-                                            @Html.DisplayNameFor(model => model.RegionName)
+                                            @Html.DisplayNameFor(model => model.Description)
                                         </th>
                                         <th>
-                                            @Html.DisplayNameFor(model => model.CityJobs)
+                                            @Html.DisplayName("Required Skills")
+                                        </th>
+                                        <th>
+                                            @Html.DisplayName("Publisher")
                                         </th>
                                         <th></th>
                                     </tr>
@@ -43,18 +39,25 @@
                                     {
                                         <tr>
                                             <td>
-                                                @Html.DisplayFor(modelItem => item.Name)
+                                                @Html.DisplayFor(modelItem => item.Title)
                                             </td>
                                             <td>
-                                                @Html.DisplayFor(modelItem => item.RegionName)
+                                                @Html.DisplayFor(modelItem => item.Description)
                                             </td>
                                             <td>
-                                                @if (item.CityJobs != null)
+                                                @foreach (var skill in item.JobSkills)
                                                 {
-                                                    @Html.DropDownListFor(modelItem => item.CityJobs, new SelectList(item.CityJobs, "CityName", "CityName"))
+                                                    <div>
+                                                        @Html.DisplayFor(modelItem => skill.SkillName)
+                                                    </div>
                                                 }
                                             </td>
-                                         
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Publisher.Name)
+                                            </td>
+                                            <td>
+                                                <a asp-action="ApplyCV" asp-route-id="@item.ID">Apply CV</a>
+                                            </td>
                                         </tr>
                                     }
                                 </tbody>

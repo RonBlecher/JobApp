@@ -13,7 +13,7 @@ public class JobViewModelToJobConverter
         this._context = context;
     }
 
-    public async Task<Job> Convert(JobViewModel jobViewModel)
+    public Job Convert(JobViewModel jobViewModel)
     {
         Job job = new Job();
 
