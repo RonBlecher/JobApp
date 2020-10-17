@@ -20,9 +20,16 @@ namespace JobApp.Controllers
         }
 
         // GET: Regions
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string search)
         {
-            return View(await _context.Region.ToListAsync());
+            List<Region> region = await _context.Region.ToListAsync();
+            if (!string.IsNullOrEmpty(search))
+            {
+                region = region.Where(reg => String.Compare(reg.Name, search,
+                    comparisonType: StringComparison.OrdinalIgnoreCase) == 0).ToList();
+            }
+
+            return View(region);
         }
 
         // GET: Regions/Details/5
