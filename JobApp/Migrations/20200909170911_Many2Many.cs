@@ -67,7 +67,8 @@ namespace JobApp.Migrations
                 columns: table => new
                 {
                     SeekerID = table.Column<int>(nullable: false),
-                    JobID = table.Column<int>(nullable: false)
+                    JobID = table.Column<int>(nullable: false),
+                    SubmitDate = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
