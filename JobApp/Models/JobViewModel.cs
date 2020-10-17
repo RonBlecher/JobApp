@@ -23,8 +23,8 @@ namespace JobApp.Models
 
         public ICollection<SeekerJob> JobSeekers { get; set; }
 
-        public Double Lon { get; set; }
+        public double Lon { get; set; }
 
-        public Double Lat { get; set; }
+        public double Lat { get; set; }
     }
 }

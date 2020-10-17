@@ -15,7 +15,7 @@ namespace JobApp.Controllers
     public class JobsController : Controller
     {
         private readonly JobAppContext _context;
-        private JobViewModelToJobConverter jobViewModelToJobConverter;
+        private readonly JobViewModelToJobConverter jobViewModelToJobConverter;
 
         public JobsController(JobAppContext context)
         {
@@ -25,14 +25,17 @@ namespace JobApp.Controllers
 
         [Authorize(Roles="Admin")]
         // GET: Jobs
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string search)
         {
+<<<<<<< HEAD
             String search = "";
+=======
+>>>>>>> 2a0a2455a413cd0a9edfb0cf5f705a8d3101b831
             List<Job> jobs = await _context.Job.ToListAsync();
             if (!string.IsNullOrEmpty(search))
             {
                 jobs = jobs.Where(job => String.Compare(job.Title, search,
-                    comparisonType: StringComparison.OrdinalIgnoreCase)==0).ToList();
+                    comparisonType: StringComparison.OrdinalIgnoreCase) == 0).ToList();
             }
 
             EnrichJob(jobs);
@@ -146,12 +149,18 @@ namespace JobApp.Controllers
 
             if (ModelState.IsValid)
             {
+<<<<<<< HEAD
                 job = jobViewModelToJobConverter.Convert(jobViewModel);
+=======
+                job = await jobViewModelToJobConverter.Convert(jobViewModel);
+                job.LastEdited = DateTime.Now;
+>>>>>>> 2a0a2455a413cd0a9edfb0cf5f705a8d3101b831
                 _context.Add(job);
                 await _context.SaveChangesAsync();
 
                 return RedirectToAction("Create");
-            } else
+            } 
+            else
             {
                 var errors = ModelState.Values.SelectMany(v => v.Errors);
             }
@@ -254,6 +263,7 @@ namespace JobApp.Controllers
             {
                 try
                 {
+                    job.LastEdited = DateTime.Now;
                     _context.Update(job);
                     await _context.SaveChangesAsync();
                 }

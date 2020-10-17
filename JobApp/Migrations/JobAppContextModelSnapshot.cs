@@ -100,13 +100,17 @@ namespace JobApp.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Lon")
+                    b.Property<double>("Lon")
                         .IsRequired()
                         .HasColumnType("double");
 
-                    b.Property<string>("Lat")
+                    b.Property<double>("Lat")
                         .IsRequired()
                         .HasColumnType("double");
+
+                    b.Property<DateTime>("LastEdited")
+                        .IsRequired()
+                        .HasColumnType("datetime2");
 
                     b.HasKey("ID");
 
@@ -179,6 +183,9 @@ namespace JobApp.Migrations
 
                     b.Property<byte[]>("CV")
                         .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("CVFileName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
                         .IsRequired()
