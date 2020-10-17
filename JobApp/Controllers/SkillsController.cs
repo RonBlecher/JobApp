@@ -20,15 +20,9 @@ namespace JobApp.Controllers
         }
 
         // GET: Skills
-        public async Task<IActionResult> Index(string search)
+        public async Task<IActionResult> Index()
         {
-            List<Skill> skills = await _context.Skill.ToListAsync();
-            if (!string.IsNullOrEmpty(search))
-            {
-                skills = skills.Where(skill => String.Compare(skill.Name, search,
-                    comparisonType: StringComparison.OrdinalIgnoreCase) == 0).ToList();
-            }
-            return View(skills);
+            return View(await _context.Skill.ToListAsync());
         }
 
         // GET: Skills/Details/5

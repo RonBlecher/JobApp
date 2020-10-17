@@ -28,15 +28,10 @@ namespace JobApp.Controllers
 
         [Authorize(Roles = "Seeker")]
         // GET: Publishers
-        public async Task<IActionResult> Index(string search)
+        public async Task<IActionResult> Index()
         {
-            List<Seeker> seeker = await _context.Seeker.ToListAsync();
-            if (!string.IsNullOrEmpty(search))
-            {
-                seeker = seeker.Where(seeker => String.Compare(seeker.Name, search,
-                    comparisonType: StringComparison.OrdinalIgnoreCase) == 0).ToList();
-            }
-            return View(seeker);
+            var x = await _context.Seeker.ToListAsync();
+            return View(x);
         }
 
         // GET: Seekers
@@ -49,7 +44,7 @@ namespace JobApp.Controllers
                 seekers = seekers.Where(seeker => String.Compare(seeker.Name, search,
                     comparisonType: StringComparison.OrdinalIgnoreCase) == 0).ToList();
             }
-            
+
             return View(seekers);
         }
 

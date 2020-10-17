@@ -23,29 +23,25 @@ namespace JobApp.Controllers
             _context = context;
         }
 
-        [Authorize(Roles = "Publisher, Admin")]
+        [Authorize(Roles = "Publisher")]
         // GET: Publishers
-        public async Task<IActionResult> Index(string search)
+        public async Task<IActionResult> Index()
         {
-            List<Publisher> publishers = await _context.Publisher.ToListAsync();
-            if (!string.IsNullOrEmpty(search))
-            {
-                publishers = publishers.Where(publisher => String.Compare(publisher.Name, search,
-                    comparisonType: StringComparison.OrdinalIgnoreCase) == 0).ToList();
-            }
-            return View(publishers);
+            var x = await _context.Publisher.ToListAsync();
+            return View(x);
         }
 
-       [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         // GET: Publishers
         public async Task<IActionResult> List(string search)
         {
-            List<Publisher> publishers = await _context.Publisher.ToListAsync();
+            var publishers = await _context.Publisher.ToListAsync();
             if (!string.IsNullOrEmpty(search))
             {
                 publishers = publishers.Where(publisher => String.Compare(publisher.Name, search,
                     comparisonType: StringComparison.OrdinalIgnoreCase) == 0).ToList();
             }
+
             return View(publishers);
         }
 

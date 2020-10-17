@@ -61,15 +61,10 @@ namespace JobApp.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> List(string search)
+        public async Task<IActionResult> List()
         {
-            List<Admin> admin = await _context.Admin.ToListAsync();
-            if (!string.IsNullOrEmpty(search))
-            {
-                admin = admin.Where(admin => String.Compare(admin.Name, search,
-                    comparisonType: StringComparison.OrdinalIgnoreCase) == 0).ToList();
-            }
-            return View(admin);
+            var x = await _context.Admin.ToListAsync();
+            return View(x);
         }
 
         // GET: /<controller>/ 
