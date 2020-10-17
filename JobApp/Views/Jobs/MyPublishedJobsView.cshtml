@@ -35,6 +35,9 @@
                                             @Html.DisplayNameFor(model => model.JobSkills)
                                         </th>
                                         <th>
+                                            @Html.DisplayNameFor(model => model.JobSeekers)
+                                        </th>
+                                        <th>
                                             @Html.DisplayNameFor(model => model.Publisher.Name)
                                         </th>
                                         <th></th>
@@ -43,33 +46,44 @@
                                 <tbody>
                                     @foreach (var item in Model)
                                     {
-                                        <tr>
-                                            <td>
-                                                @Html.DisplayFor(modelItem => item.Title)
-                                            </td>
-                                            <td>
-                                                @Html.DisplayFor(modelItem => item.Description)
-                                            </td>
-                                            <td>
-                                                @if (item.JobSkills != null)
+                                    <tr>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Title)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Description)
+                                        </td>
+                                        <td>
+                                            @if (item.JobSkills != null)
+                                            {
+                                                @foreach (var skill in item.JobSkills)
                                                 {
-                                                    @foreach (var skill in item.JobSkills)
-                                                    {
-                                                        <div>
-                                                            @Html.DisplayFor(modelItem => skill.SkillName)
-                                                        </div>
-                                                    }
+                                                    <div>
+                                                        @Html.DisplayFor(modelItem => skill.SkillName)
+                                                    </div>
                                                 }
-                                            </td>
-                                            <td>
-                                                @Html.DisplayFor(modelItem => item.Publisher.Name)
-                                            </td>
-                                            <td>
-                                                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                                                <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                                                <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
-                                            </td>
-                                        </tr>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (item.JobSeekers != null)
+                                            {
+                                                @foreach (var jobSeeker in item.JobSeekers)
+                                                {
+                                                    <div>
+                                                        @Html.DisplayFor(modelItem => jobSeeker.SeekerID)
+                                                    </div>
+                                                }
+                                            }
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Publisher.Name)
+                                        </td>
+                                        <td>
+                                            <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
+                                            <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
+                                            <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+                                        </td>
+                                    </tr>
                                     }
                                 </tbody>
                             </table>
