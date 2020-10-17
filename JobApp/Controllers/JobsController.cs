@@ -15,7 +15,7 @@ namespace JobApp.Controllers
     public class JobsController : Controller
     {
         private readonly JobAppContext _context;
-        private JobViewModelToJobConverter jobViewModelToJobConverter;
+        private readonly JobViewModelToJobConverter jobViewModelToJobConverter;
 
         public JobsController(JobAppContext context)
         {
@@ -25,13 +25,13 @@ namespace JobApp.Controllers
 
         [Authorize(Roles="Admin")]
         // GET: Jobs
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string search)
         {
-         List<Job> jobs = await _context.Job.ToListAsync();
+            List<Job> jobs = await _context.Job.ToListAsync();
             if (!string.IsNullOrEmpty(search))
             {
                 jobs = jobs.Where(job => String.Compare(job.Title, search,
-                    comparisonType: StringComparison.OrdinalIgnoreCase)==0).ToList();
+                    comparisonType: StringComparison.OrdinalIgnoreCase) == 0).ToList();
             }
 
             EnrichJob(jobs);
