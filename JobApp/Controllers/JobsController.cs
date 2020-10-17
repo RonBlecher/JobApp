@@ -25,12 +25,9 @@ namespace JobApp.Controllers
 
         [Authorize(Roles="Admin")]
         // GET: Jobs
-        public async Task<IActionResult> Index(string search)
+        public async Task<IActionResult> Index()
         {
-<<<<<<< HEAD
             String search = "";
-=======
->>>>>>> 2a0a2455a413cd0a9edfb0cf5f705a8d3101b831
             List<Job> jobs = await _context.Job.ToListAsync();
             if (!string.IsNullOrEmpty(search))
             {
@@ -149,12 +146,9 @@ namespace JobApp.Controllers
 
             if (ModelState.IsValid)
             {
-<<<<<<< HEAD
-                job = jobViewModelToJobConverter.Convert(jobViewModel);
-=======
                 job = await jobViewModelToJobConverter.Convert(jobViewModel);
                 job.LastEdited = DateTime.Now;
->>>>>>> 2a0a2455a413cd0a9edfb0cf5f705a8d3101b831
+
                 _context.Add(job);
                 await _context.SaveChangesAsync();
 
