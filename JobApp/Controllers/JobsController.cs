@@ -110,11 +110,13 @@ namespace JobApp.Controllers
             if (ModelState.IsValid)
             {
                 job = await jobViewModelToJobConverter.Convert(jobViewModel);
+                job.LastEdited = DateTime.Now;
                 _context.Add(job);
                 await _context.SaveChangesAsync();
 
                 return RedirectToAction("Create");
-            } else
+            } 
+            else
             {
                 var errors = ModelState.Values.SelectMany(v => v.Errors);
             }
@@ -153,6 +155,7 @@ namespace JobApp.Controllers
             {
                 try
                 {
+                    job.LastEdited = DateTime.Now;
                     _context.Update(job);
                     await _context.SaveChangesAsync();
                 }

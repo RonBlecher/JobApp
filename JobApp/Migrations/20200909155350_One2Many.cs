@@ -88,8 +88,9 @@ namespace JobApp.Migrations
                     PublisherID = table.Column<int>(nullable: false),
                     Title = table.Column<string>(nullable: false),
                     Description = table.Column<string>(nullable: false),
-                    Lon = table.Column<Double>(nullable: false),
-                    Lat = table.Column<Double>(nullable: false)
+                    Lon = table.Column<double>(nullable: false),
+                    Lat = table.Column<double>(nullable: false),
+                    LastEdited = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
