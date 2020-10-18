@@ -1,0 +1,106 @@
+﻿
+@using System.Security.Claims;
+@using Microsoft.AspNetCore.Authentication;
+@using Microsoft.AspNetCore.Authentication.Cookies;
+@using Microsoft.AspNetCore.Authorization;
+
+@model IEnumerable<JobApp.Models.Job>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "_Layout_seekers";
+    var identity = (ClaimsIdentity)User.Identity;
+    IEnumerable<Claim> claims = identity.Claims;
+    Claim idClaim = claims.Where(claim => claim.Type == "Id").First();
+    Claim nameClaim = claims.Where(claim => claim.Type == ClaimTypes.Name).First();
+    String seekerId = idClaim.Value;
+    String seekerName = nameClaim.Value;
+}
+
+<div class="content2">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-primary">
+                        <h4 class="card-title">Jobs</h4>
+                        <p class="card-category"> All jobs information</p>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.Title)
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.Description)
+                                        </th>
+                                        <th>
+                                            @Html.DisplayName("Required Skills")
+                                        </th>
+                                        <th>
+                                            @Html.DisplayName("Publisher")
+                                        </th>
+                                        <th>
+                                            @Html.DisplayName("Is Apply?")
+                                        </th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Title)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Description)
+                                            </td>
+                                            <td>
+                                                @foreach (var skill in item.JobSkills)
+                                                {
+                                                    <div>
+                                                        @Html.DisplayFor(modelItem => skill.SkillName)
+                                                    </div>
+                                                }
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Publisher.Name)
+                                            </td>
+                                            <td>
+                                                @if (item.JobSeekers.Where(jobSeeker => jobSeeker.SeekerID.ToString() == seekerId).ToList().Count() > 0)
+                                                {
+                                                    <div class="text-success">
+                                                        <i class="fa fa-check"></i>
+                                                    </div>
+                                                    @Html.Raw(item.JobSeekers.Where(jobSeeker => jobSeeker.SeekerID.ToString() == seekerId).First().SubmitDate)
+                                                }
+                                                else
+                                                {
+                                                    @Html.Raw("---")
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (item.JobSeekers.Where(jobSeeker => jobSeeker.SeekerID.ToString() == seekerId).ToList().Count() > 0)
+                                                {
+                                                    <div disabled asp-action="ApplyCV" asp-route-id="@item.ID">Apply CV</div>
+                                                }
+                                                else
+                                                {
+                                                    <a asp-action="ApplyCV" asp-route-id="@item.ID">Apply CV</a>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

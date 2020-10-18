@@ -15,6 +15,9 @@ namespace JobApp.Models
         [Required]
         public Region Region { get; set; }
 
+        [Required]
+        public String RegionName { get; set; }
+
         public ICollection<CityJob> CityJobs { get; set; }
     }
 }

@@ -30,7 +30,7 @@
                                             @Html.DisplayNameFor(model => model.Name)
                                         </th>
                                         <th>
-                                            @Html.DisplayNameFor(model => model.Region)
+                                            @Html.DisplayNameFor(model => model.RegionName)
                                         </th>
                                         <th>
                                             @Html.DisplayNameFor(model => model.CityJobs)
@@ -46,10 +46,13 @@
                                                 @Html.DisplayFor(modelItem => item.Name)
                                             </td>
                                             <td>
-                                                @Html.DisplayFor(modelItem => item.Region)
+                                                @Html.DisplayFor(modelItem => item.RegionName)
                                             </td>
                                             <td>
-                                                @Html.DropDownListFor(modelItem => item.CityJobs, new SelectList(item.CityJobs, "CityName", "CityName"))
+                                                @if (item.CityJobs != null)
+                                                {
+                                                    @Html.DropDownListFor(modelItem => item.CityJobs, new SelectList(item.CityJobs, "CityName", "CityName"))
+                                                }
                                             </td>
                                          
                                         </tr>

@@ -34,6 +34,9 @@
                                             @Html.DisplayNameFor(model => model.JobSkills)
                                         </th>
                                         <th>
+                                            @Html.DisplayNameFor(model => model.JobSeekers)
+                                        </th>
+                                        <th>
                                             @Html.DisplayNameFor(model => model.Publisher.Name)
                                         </th>
                                         <th></th>
@@ -55,6 +58,17 @@
                                                 <div>
                                                     @Html.DisplayFor(modelItem => skill.SkillName)
                                                 </div>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (item.JobSeekers != null)
+                                            {
+                                                @foreach (var jobSeeker in item.JobSeekers)
+                                                {
+                                                    <div>
+                                                        @Html.DisplayFor(modelItem => jobSeeker.SeekerID)
+                                                    </div>
+                                                }
                                             }
                                         </td>
                                         <td>
