@@ -180,7 +180,7 @@ namespace JobApp.Controllers
                 return RedirectToAction("NoPermission", "Home");
             }
 
-            var publisher = await _context.Publisher.Include(p => p.PostedJobs).FindAsync(id);
+            var publisher = await _context.Publisher.Include(p => p.PostedJobs).FirstOrDefaultAsync(p => p.ID == id);
             if (publisher == null)
             {
                 return RedirectToAction("Error", "Home");
