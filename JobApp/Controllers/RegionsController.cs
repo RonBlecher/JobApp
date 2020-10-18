@@ -22,7 +22,7 @@ namespace JobApp.Controllers
         // GET: Regions
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Region.ToListAsync());
+            return View(await _context.Region.Include(r => r.Cities).ToListAsync());
         }
 
         // GET: Regions/Details/5
@@ -34,6 +34,7 @@ namespace JobApp.Controllers
             }
 
             var region = await _context.Region
+                .Include(r => r.Cities)
                 .FirstOrDefaultAsync(m => m.Name == id);
             if (region == null)
             {

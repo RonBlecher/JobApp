@@ -34,11 +34,16 @@ namespace JobApp.Controllers
             IEnumerable<Claim> claims = identity.Claims;
             Claim idClaim = claims.Where(claim => claim.Type == "Id").First();
 
-            var seekers = await _context.Seeker.Where(seeker => seeker.ID.ToString() == idClaim.Value).ToListAsync();
+            var seekers = await _context.Seeker
+                .Where(seeker => seeker.ID.ToString() == idClaim.Value)
+                .Include(s => s.SeekerJobs)
+                .Include(s => s.SeekerSkills)
+                .ToListAsync();
             EnrichSeekers(seekers);
             return View(seekers.First());
         }
 
+        // TODO: remove
         private void EnrichSeekers(List<Seeker> seekers)
         {
             var identity = (ClaimsIdentity)User.Identity;
@@ -56,7 +61,10 @@ namespace JobApp.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> List(string search)
         {
-            var seekers = await _context.Seeker.ToListAsync();
+            var seekers = await _context.Seeker
+                .Include(s => s.SeekerJobs)
+                .Include(s => s.SeekerSkills)
+                .ToListAsync();
             if (!string.IsNullOrEmpty(search))
             {
                 seekers = seekers.Where(seeker => String.Compare(seeker.Name, search,
@@ -161,6 +169,8 @@ namespace JobApp.Controllers
             }
 
             var seeker = await _context.Seeker
+                .Include(s => s.SeekerJobs)
+                .Include(s => s.SeekerSkills)
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (seeker == null)
             {
