@@ -27,7 +27,12 @@ namespace JobApp.Controllers
         // GET: Jobs
         public async Task<IActionResult> Index()
         {
-            List<Job> jobs = await _context.Job.ToListAsync();
+            List<Job> jobs = await _context.Job
+                .Include(j => j.Publisher)
+                .Include(j => j.JobSeekers)
+                .Include(j => j.JobSkills)
+                .Include(j => j.JobCities)
+                .ToListAsync();
            
             EnrichJob(jobs);
             return View(jobs);
@@ -37,7 +42,12 @@ namespace JobApp.Controllers
         // GET: Jobs
         public async Task<IActionResult> LookingForJobs()
         {
-            List<Job> jobs = await _context.Job.ToListAsync();
+            List<Job> jobs = await _context.Job
+                .Include(j => j.Publisher)
+                .Include(j => j.JobSeekers)
+                .Include(j => j.JobSkills)
+                .Include(j => j.JobCities)
+                .ToListAsync();
 
             EnrichJob(jobs);
             return View(jobs);
@@ -55,7 +65,12 @@ namespace JobApp.Controllers
             Publisher pulisher = _context.Publisher.Where(publisher => publisher.ID.ToString() == idClaim.Value).ToList().First();
             // return publisher.PostedJobs.ToList();
 
-            List<Job> jobs = await _context.Job.ToListAsync();
+            List<Job> jobs = await _context.Job
+                .Include(j => j.Publisher)
+                .Include(j => j.JobSeekers)
+                .Include(j => j.JobSkills)
+                .Include(j => j.JobCities)
+                .ToListAsync();
             return jobs.Where(job => job.PublisherId.ToString() == idClaim.Value).ToList();
             //EnrichJob(jobs);
             //List<Job> jobsOfPublisher = jobs.Where(job => job.Publisher.ID == Int32.Parse(idClaim.Value)).ToList();
@@ -71,12 +86,18 @@ namespace JobApp.Controllers
             Publisher pulisher = _context.Publisher.Where(publisher => publisher.ID.ToString() == idClaim.Value).ToList().First();
             // return publisher.PostedJobs.ToList();
 
-            List<Job> jobs = await _context.Job.ToListAsync();
+            List<Job> jobs = await _context.Job
+                .Include(j => j.Publisher)
+                .Include(j => j.JobSeekers)
+                .Include(j => j.JobSkills)
+                .Include(j => j.JobCities)
+                .ToListAsync();
             List<Job> jobsOfSpecificPublisherLogged = jobs.Where(job => job.PublisherId.ToString() == idClaim.Value).ToList();
             EnrichJob(jobsOfSpecificPublisherLogged);
             return View(jobsOfSpecificPublisherLogged);
         }
 
+        // TODO: remove
         private void EnrichJob(List<Job> jobs)
         {
             jobs.ForEach(job =>
@@ -90,7 +111,6 @@ namespace JobApp.Controllers
                 Publisher pulisher = _context.Publisher.Where(publisher => publisher.ID == job.PublisherId).ToList().First();
                 job.Publisher = pulisher;
             });
-       
         }
 
         // GET: Jobs/Details/5
@@ -102,6 +122,10 @@ namespace JobApp.Controllers
             }
 
             var job = await _context.Job
+                .Include(j => j.Publisher)
+                .Include(j => j.JobSeekers)
+                .Include(j => j.JobSkills)
+                .Include(j => j.JobCities)
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (job == null)
             {
@@ -114,8 +138,8 @@ namespace JobApp.Controllers
         // GET: Jobs/Create
         public async Task<IActionResult> Create()
         {
-            List<Publisher> publishers = await _context.Publisher.ToListAsync();
-            List<Skill> skills = await _context.Skill.ToListAsync();
+            List<Publisher> publishers = await _context.Publisher.Include(p => p.PostedJobs).ToListAsync();
+            List<Skill> skills = await _context.Skill.Include(s => s.SkillJobs).Include(s => s.SkillSeekers).ToListAsync();
 
             ViewData["Publishers"] = publishers; // Send this list to the view
             ViewData["Skills"] = skills;
@@ -179,7 +203,12 @@ namespace JobApp.Controllers
                 return NotFound();
             }
 
-            var job = await _context.Job.FindAsync(id);
+            var job = await _context.Job
+                .Include(j => j.Publisher)
+                .Include(j => j.JobSeekers)
+                .Include(j => j.JobSkills)
+                .Include(j => j.JobCities)
+                .FirstOrDefaultAsync(j => j.ID == id);
             var jobSeekersOfJob = await _context.SeekerJob.Where(seekerJob => seekerJob.JobID == job.ID).ToListAsync();
 
             if (job == null)

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using JobApp.Data;
 using JobApp.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace JobApp.Controllers
 {
@@ -23,6 +24,14 @@ namespace JobApp.Controllers
         public async Task<IActionResult> Index()
         {
             return View(await _context.City.ToListAsync());
+        }
+
+        // GET: Cities
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> List()
+        {
+            var seekers = await _context.City.ToListAsync();
+            return View(seekers);
         }
 
         // GET: Cities/Details/5
@@ -58,21 +67,27 @@ namespace JobApp.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(String name, String region)
+        public async Task<IActionResult> Create(string name, string regionName)
         {
             City city = new City();
 
             if (ModelState.IsValid)
             {
-                Region regionObj = await _context.Region.Where(regionFromDB => regionFromDB.Name.Equals(region)).FirstAsync();
+                if (!CityExists(name))
+                {
+                    city.Name = name;
+                    city.RegionName = regionName;
 
-                city.Name = name;
-                city.Region = regionObj;
-             
-                _context.Add(city);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                    _context.Add(city);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    ModelState.AddModelError("Name", "City already exists");
+                }
             }
+            ViewData["Regions"] = await _context.Region.ToListAsync();
             return View(city);
         }
 
@@ -97,7 +112,7 @@ namespace JobApp.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Name")] City city)
+        public async Task<IActionResult> Edit(string id, [Bind("Name,RegionName")] City city)
         {
             if (id != city.Name)
             {

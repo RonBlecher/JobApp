@@ -27,7 +27,7 @@ namespace JobApp.Controllers
         // GET: Publishers
         public async Task<IActionResult> Index()
         {
-            var x = await _context.Publisher.ToListAsync();
+            var x = await _context.Publisher.Include(p => p.PostedJobs).ToListAsync();
             return View(x);
         }
 
@@ -35,7 +35,7 @@ namespace JobApp.Controllers
         // GET: Publishers
         public async Task<IActionResult> List(string search)
         {
-            var publishers = await _context.Publisher.ToListAsync();
+            var publishers = await _context.Publisher.Include(p => p.PostedJobs).ToListAsync();
             if (!string.IsNullOrEmpty(search))
             {
                 publishers = publishers.Where(publisher => String.Compare(publisher.Name, search,
@@ -51,7 +51,7 @@ namespace JobApp.Controllers
                           where name != null ? publisher.Name.ToLower().Contains(name.ToLower()) : true ||
                               email != null ? publisher.Email.ToLower().Contains(email.ToLower()) : true
                           select publisher;
-            var publishers = await results.ToListAsync();
+            var publishers = await results.Include(p => p.PostedJobs).ToListAsync();
 
             return View("List", publishers);
         }
@@ -130,6 +130,7 @@ namespace JobApp.Controllers
             }
 
             var publisher = await _context.Publisher
+                .Include(p => p.PostedJobs)
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (publisher == null)
             {
@@ -179,7 +180,7 @@ namespace JobApp.Controllers
                 return RedirectToAction("NoPermission", "Home");
             }
 
-            var publisher = await _context.Publisher.FindAsync(id);
+            var publisher = await _context.Publisher.Include(p => p.PostedJobs).FindAsync(id);
             if (publisher == null)
             {
                 return RedirectToAction("Error", "Home");

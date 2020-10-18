@@ -17,6 +17,9 @@ namespace JobApp.Models
         [Required]
         public string Description { get; set; }
 
+        [Required]
+        public DateTime LastEdited { get; set; }
+
         public ICollection<string> JobSkillsId { get; set; }
 
         public ICollection<CityJob> JobCities { get; set; }

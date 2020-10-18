@@ -9,6 +9,7 @@ namespace JobApp.Models
     public class City
     {
         [Key]
+        [Required]
         [Display(Name = "City")]
         public string Name { get; set; }
 
@@ -16,7 +17,7 @@ namespace JobApp.Models
         public Region Region { get; set; }
 
         [Required]
-        public String RegionName { get; set; }
+        public string RegionName { get; set; }
 
         public ICollection<CityJob> CityJobs { get; set; }
     }
