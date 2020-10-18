@@ -60,8 +60,7 @@ namespace JobApp.Migrations
                     Email = table.Column<string>(nullable: false),
                     PhoneNum = table.Column<string>(nullable: false),
                     Password = table.Column<string>(nullable: false),
-                    CV = table.Column<byte[]>(nullable: true),
-                    CVFileName = table.Column<string>(nullable: true)
+                    CV = table.Column<byte[]>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -88,9 +87,8 @@ namespace JobApp.Migrations
                     PublisherID = table.Column<int>(nullable: false),
                     Title = table.Column<string>(nullable: false),
                     Description = table.Column<string>(nullable: false),
-                    Lon = table.Column<double>(nullable: false),
-                    Lat = table.Column<double>(nullable: false),
-                    LastEdited = table.Column<DateTime>(nullable: false)
+                    Lon = table.Column<Double>(nullable: false),
+                    Lat = table.Column<Double>(nullable: false)
                 },
                 constraints: table =>
                 {

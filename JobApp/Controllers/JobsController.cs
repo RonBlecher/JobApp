@@ -15,7 +15,7 @@ namespace JobApp.Controllers
     public class JobsController : Controller
     {
         private readonly JobAppContext _context;
-        private readonly JobViewModelToJobConverter jobViewModelToJobConverter;
+        private JobViewModelToJobConverter jobViewModelToJobConverter;
 
         public JobsController(JobAppContext context)
         {
@@ -27,22 +27,16 @@ namespace JobApp.Controllers
         // GET: Jobs
         public async Task<IActionResult> Index()
         {
-            List<Job> jobs = await _context.Job.ToListAsync();
-           
-            EnrichJob(jobs);
-            return View(jobs);
-        }
-
-        [Authorize(Roles = "Seeker")]
-        // GET: Jobs
-        public async Task<IActionResult> LookingForJobs()
-        {
-            List<Job> jobs = await _context.Job.ToListAsync();
+         List<Job> jobs = await _context.Job.ToListAsync();
+            if (!string.IsNullOrEmpty(search))
+            {
+                jobs = jobs.Where(job => String.Compare(job.Title, search,
+                    comparisonType: StringComparison.OrdinalIgnoreCase)==0).ToList();
+            }
 
             EnrichJob(jobs);
             return View(jobs);
         }
-
 
         [HttpGet]
         [Authorize(Roles = "Publisher")]
@@ -62,31 +56,12 @@ namespace JobApp.Controllers
             //return jobsOfPublisher;
         }
 
-        public async Task<IActionResult> MyPublishedJobsView()
-        {
-            var identity = (ClaimsIdentity)User.Identity;
-            IEnumerable<Claim> claims = identity.Claims;
-            Claim idClaim = claims.Where(claim => claim.Type == "Id").First();
-
-            Publisher pulisher = _context.Publisher.Where(publisher => publisher.ID.ToString() == idClaim.Value).ToList().First();
-            // return publisher.PostedJobs.ToList();
-
-            List<Job> jobs = await _context.Job.ToListAsync();
-            List<Job> jobsOfSpecificPublisherLogged = jobs.Where(job => job.PublisherId.ToString() == idClaim.Value).ToList();
-            EnrichJob(jobsOfSpecificPublisherLogged);
-            return View(jobsOfSpecificPublisherLogged);
-        }
-
         private void EnrichJob(List<Job> jobs)
         {
             jobs.ForEach(job =>
             {
                 List<JobSkill> jobSkills =  _context.JobSkill.Where(jobSkill => jobSkill.Job.ID == job.ID).ToList();
                 job.JobSkills = jobSkills;
-
-                List<SeekerJob> seekerJobs = _context.SeekerJob.Where(seekerJob => seekerJob.Job.ID == job.ID).ToList();
-                job.JobSeekers = seekerJobs;
-
                 Publisher pulisher = _context.Publisher.Where(publisher => publisher.ID == job.PublisherId).ToList().First();
                 job.Publisher = pulisher;
             });
@@ -135,14 +110,11 @@ namespace JobApp.Controllers
             if (ModelState.IsValid)
             {
                 job = await jobViewModelToJobConverter.Convert(jobViewModel);
-                job.LastEdited = DateTime.Now;
-
                 _context.Add(job);
                 await _context.SaveChangesAsync();
 
                 return RedirectToAction("Create");
-            } 
-            else
+            } else
             {
                 var errors = ModelState.Values.SelectMany(v => v.Errors);
             }
@@ -165,72 +137,6 @@ namespace JobApp.Controllers
             return View(job);
         }
 
-        [Authorize(Roles ="Seeker")]
-        public async Task<IActionResult> ApplyCV(int? id)
-        {
-            var identity = (ClaimsIdentity)User.Identity;
-            IEnumerable<Claim> claims = identity.Claims;
-            Claim idClaim = claims.Where(claim => claim.Type == "Id").First();
-
-            Seeker seeker = _context.Seeker.Where(publisher => publisher.ID.ToString() == idClaim.Value).ToList().First();
-
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var job = await _context.Job.FindAsync(id);
-            var jobSeekersOfJob = await _context.SeekerJob.Where(seekerJob => seekerJob.JobID == job.ID).ToListAsync();
-
-            if (job == null)
-            {
-                return NotFound();
-            }
-
-
-            SeekerJob seekerJob = new SeekerJob
-            {
-                JobID = job.ID,
-                SeekerID = seeker.ID,
-                SubmitDate = DateTime.Now
-            };
-
-            if (jobSeekersOfJob != null)
-            {
-                job.JobSeekers = jobSeekersOfJob;
-                if(job.JobSeekers.Where(jobSeekers => jobSeekers.SeekerID == seekerJob.SeekerID).ToList().Count() == 0)
-                {
-                    job.JobSeekers.Add(seekerJob);
-                }
-            }
-            else
-            {
-                job.JobSeekers = new List<SeekerJob>
-                {
-                    seekerJob
-                };
-            }
-       
-            try
-            {
-                _context.Update(job);
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!JobExists(job.ID))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return RedirectToAction(nameof(LookingForJobs));
-        }
-
         // POST: Jobs/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -247,7 +153,6 @@ namespace JobApp.Controllers
             {
                 try
                 {
-                    job.LastEdited = DateTime.Now;
                     _context.Update(job);
                     await _context.SaveChangesAsync();
                 }

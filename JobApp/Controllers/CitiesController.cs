@@ -64,7 +64,8 @@ namespace JobApp.Controllers
 
             if (ModelState.IsValid)
             {
-                Region regionObj = await _context.Region.Where(regionFromDB => regionFromDB.Name.Equals(region)).FirstAsync();
+                Region regionObj = new Region();
+                regionObj.Name = region;
 
                 city.Name = name;
                 city.Region = regionObj;

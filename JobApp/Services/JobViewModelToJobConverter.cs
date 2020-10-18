@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using JobApp.Data;
 using JobApp.Models;
-using Microsoft.EntityFrameworkCore;
 
 public class JobViewModelToJobConverter
 {
@@ -18,17 +17,15 @@ public class JobViewModelToJobConverter
     {
         Job job = new Job();
 
-        var publishers = await _context.Publisher.Where(publisher => publisher.ID == jobViewModel.PublisherId).ToListAsync();
+        var publishers = _context.Publisher.Where(publisher => publisher.ID == jobViewModel.PublisherId).ToList();
         Publisher publisherFromViewModel = publishers[0];
         List<JobSkill> jobSkillesFromViewModel = new List<JobSkill>();
         foreach (string JobSkillsId in jobViewModel.JobSkillsId)
         {
-            Skill foundJobSKill = (await _context.Skill.Where(jobSkill => jobSkill.Name == JobSkillsId).ToListAsync())[0];
-            JobSkill jobSkill = new JobSkill
-            {
-                Skill = foundJobSKill,
-                Job = job
-            };
+            Skill foundJobSKill = _context.Skill.Where(jobSkill => jobSkill.Name == JobSkillsId).ToList()[0];
+            JobSkill jobSkill = new JobSkill();
+            jobSkill.Skill = foundJobSKill;
+            jobSkill.Job = job;
             _context.Add(jobSkill);
             jobSkillesFromViewModel.Add(jobSkill);
         }

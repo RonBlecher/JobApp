@@ -13,8 +13,5 @@ namespace JobApp.Models
 
         public int JobID { get; set; }
         public Job Job { get; set; }
-
-        [Required]
-        public DateTime SubmitDate { get; set; }
     }
 }

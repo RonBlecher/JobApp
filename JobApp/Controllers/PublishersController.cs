@@ -45,17 +45,6 @@ namespace JobApp.Controllers
             return View(publishers);
         }
 
-        public async Task<IActionResult> Search(string name, string email)
-        {
-            var results = from publisher in _context.Publisher
-                          where name != null ? publisher.Name.ToLower().Contains(name.ToLower()) : true ||
-                              email != null ? publisher.Email.ToLower().Contains(email.ToLower()) : true
-                          select publisher;
-            var publishers = await results.ToListAsync();
-
-            return View("List", publishers);
-        }
-
         public IActionResult Register()
         {
             return View();
@@ -167,14 +156,13 @@ namespace JobApp.Controllers
             var identity = (ClaimsIdentity)User.Identity;
             IEnumerable<Claim> claims = identity.Claims;
             Claim idClaim = claims.Where(claim => claim.Type == "Id").First();
-            Claim role = claims.Where(claim => claim.Type == ClaimTypes.Role).First();
 
             if (id == null)
             {
                 return RedirectToAction("Error", "Home");
             }
 
-            if(idClaim.Value != id.ToString() && role.Value != "Admin")
+            if(idClaim.Value != id.ToString())
             {
                 return RedirectToAction("NoPermission", "Home");
             }

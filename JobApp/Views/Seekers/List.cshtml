@@ -67,12 +67,7 @@
                                             @Html.DisplayFor(modelItem => item.Password)
                                         </td>
                                         <td>
-                                            @if (item.CV != null)
-                                            {
-                                                <br /> <br />
-                                                <a>@Html.ActionLink("Download CV", "DownloadCV", new { id = item.ID })</a>
-                                                <br /> <br />
-                                            }
+                                            @Html.DisplayFor(modelItem => item.CV)
                                         </td>
                                         <td>
                                             @Html.DisplayFor(modelItem => item.SeekerJobs)

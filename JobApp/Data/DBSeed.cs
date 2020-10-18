@@ -10,7 +10,7 @@ namespace JobApp.Data
     {
         public static void Seed(JobAppContext context)
         {
-            if (context.Admin.Any(a => a.Email == "admin@mail.com") == false)
+            if (context.Admin.Any(a => a.Name == "admin") == false)
             {
                 context.Admin.Add(new Admin
                 {
@@ -22,7 +22,7 @@ namespace JobApp.Data
                 context.SaveChanges();
             }
 
-            if (context.Seeker.Any(s => s.Email == "seek@mail.com") == false)
+            if (context.Seeker.Any(a => a.Name == "seek") == false)
             {
                 context.Seeker.Add(new Seeker
                 {

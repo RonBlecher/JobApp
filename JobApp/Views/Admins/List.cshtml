@@ -21,23 +21,6 @@
                         <h4 class="card-title">Admins</h4>
                         <p class="card-category"> all admins information</p>
                     </div>
-                    <div class="card-header card-header-primary">
-                        <form asp-action="Search">
-                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                            <input type="hidden" />
-                            <div class="form-group">
-                                <label class="control-label">Search By Name:</label>
-                                <input name="name" class="form-control" />
-                                <span class="text-danger"></span>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label">Search By Email:</label>
-                                <input name="email" class="form-control" />
-                                <span class="text-danger"></span>
-                            </div>
-                            <input type="submit" value="Search" class="btn btn-primary" />
-                        </form>
-                    </div>
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table">
