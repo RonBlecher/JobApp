@@ -40,12 +40,15 @@ namespace JobApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(admin);
-                await _context.SaveChangesAsync();
-                SignIn(admin);
-                return RedirectToAction(nameof(Index));
+                if (!EmailExists(admin.Email))
+                {
+                    _context.Add(admin);
+                    await _context.SaveChangesAsync();
+                    SignIn(admin);
+                    return RedirectToAction(nameof(Index));
+                }
+                ModelState.AddModelError("Email", "Email already exists in the system");
             }
-
             return View(admin);
         }
 
@@ -68,7 +71,7 @@ namespace JobApp.Controllers
         }
 
         // GET: /<controller>/ 
-        public IActionResult Login(string name, string password)
+        public IActionResult Login(string email, string password)
         {
             var identity = (ClaimsIdentity)User.Identity;
             if (identity.IsAuthenticated)
@@ -81,8 +84,8 @@ namespace JobApp.Controllers
                 }
             }
 
-            var admins = _context.Admin.Where(admin => admin.Name == name && admin.Password == password).ToList();
-            if (admins != null && admins.Count() > 0)
+            var admins = _context.Admin.Where(admin => admin.Email == email && admin.Password == password).ToList();
+            if (admins != null && admins.Count() == 1)
             {
                 SignIn(admins.First());
                 return RedirectToAction("Index");
@@ -95,7 +98,7 @@ namespace JobApp.Controllers
         {
             var claims = new List<Claim>
             {
-                 new Claim("Id", user.ID.ToString()),
+                new Claim("Id", user.ID.ToString()),
                 new Claim("Email", user.Email),
                 new Claim(ClaimTypes.Name, user.Name),
                 new Claim(ClaimTypes.Role, "Admin"),
@@ -113,7 +116,6 @@ namespace JobApp.Controllers
                 new ClaimsPrincipal(claimsIdentity),
                 authProperites);
         }
-
 
         public async Task<IActionResult> Search(string name, string email)
         {
@@ -157,9 +159,13 @@ namespace JobApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(admin);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (!EmailExists(admin.Email))
+                {
+                    _context.Add(admin);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                ModelState.AddModelError("Email", "Email already exists in the system");
             }
             return View(admin);
         }
@@ -246,7 +252,12 @@ namespace JobApp.Controllers
 
         private bool AdminExists(int id)
         {
-            return _context.Admin.Any(e => e.ID == id);
+            return _context.Admin.Any(a => a.ID == id);
+        }
+
+        private bool EmailExists(string email)
+        {
+            return _context.Admin.Any(a => a.Email == email);
         }
     }
 }

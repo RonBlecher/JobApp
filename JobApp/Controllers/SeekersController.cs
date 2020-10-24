@@ -79,12 +79,15 @@ namespace JobApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(seeker);
-                await _context.SaveChangesAsync();
-                SignIn(seeker);
-                return RedirectToAction(nameof(Index));
+                if (!EmailExists(seeker.Email))
+                {
+                    _context.Add(seeker);
+                    await _context.SaveChangesAsync();
+                    SignIn(seeker);
+                    return RedirectToAction(nameof(Index));
+                }
+                ModelState.AddModelError("Email", "Email already exists in the system");
             }
-
             return View();
         }
 
@@ -94,7 +97,7 @@ namespace JobApp.Controllers
         }
 
 
-        public IActionResult Login(string name, string password)
+        public IActionResult Login(string email, string password)
         {
             var identity = (ClaimsIdentity)User.Identity;
             if(identity.IsAuthenticated)
@@ -108,8 +111,8 @@ namespace JobApp.Controllers
 
             }
 
-            var seekers = _context.Seeker.Where(seeker => seeker.Name == name && seeker.Password == password).ToList();
-            if (seekers != null && seekers.Count() > 0)
+            var seekers = _context.Seeker.Where(seeker => seeker.Email == email && seeker.Password == password).ToList();
+            if (seekers != null && seekers.Count() == 1)
             {
                 SignIn(seekers.First());
                 return RedirectToAction("Index");
@@ -195,9 +198,13 @@ namespace JobApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(seeker);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(List));
+                if (!EmailExists(seeker.Email))
+                {
+                    _context.Add(seeker);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(List));
+                }
+                ModelState.AddModelError("Email", "Email already exists in the system");
             }
             return View(seeker);
         }
@@ -321,7 +328,12 @@ namespace JobApp.Controllers
 
         private bool SeekerExists(int id)
         {
-            return _context.Seeker.Any(e => e.ID == id);
+            return _context.Seeker.Any(s => s.ID == id);
+        }
+
+        private bool EmailExists(string email)
+        {
+            return _context.Seeker.Any(s => s.Email == email);
         }
     }
 }

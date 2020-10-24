@@ -66,16 +66,19 @@ namespace JobApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(publisher);
-                await _context.SaveChangesAsync();
-                SignIn(publisher);
-                return RedirectToAction(nameof(Index));
+                if (!EmailExists(publisher.Email))
+                {
+                    _context.Add(publisher);
+                    await _context.SaveChangesAsync();
+                    SignIn(publisher);
+                    return RedirectToAction(nameof(Index));
+                }
+                ModelState.AddModelError("Email", "Email already exists in the system");
             }
-
             return View(publisher);
         }
      
-        public IActionResult Login(string name, string password)
+        public IActionResult Login(string email, string password)
         {
             var identity = (ClaimsIdentity)User.Identity;
             if (identity.IsAuthenticated)
@@ -88,8 +91,8 @@ namespace JobApp.Controllers
                 }
             }
 
-            var publishers = _context.Publisher.Where(publisher => publisher.Name == name && publisher.Password == password).ToList();
-            if (publishers != null && publishers.Count() > 0)
+            var publishers = _context.Publisher.Where(publisher => publisher.Email == email && publisher.Password == password).ToList();
+            if (publishers != null && publishers.Count() == 1)
             {
                 SignIn(publishers.First());
                 return RedirectToAction("Index");
@@ -155,9 +158,13 @@ namespace JobApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(publisher);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (!EmailExists(publisher.Email))
+                {
+                    _context.Add(publisher);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                ModelState.AddModelError("Email", "Email already exists in the system");
             }
             return View(publisher);
         }
@@ -254,7 +261,12 @@ namespace JobApp.Controllers
 
         private bool PublisherExists(int id)
         {
-            return _context.Publisher.Any(e => e.ID == id);
+            return _context.Publisher.Any(p => p.ID == id);
+        }
+
+        private bool EmailExists(string email)
+        {
+            return _context.Publisher.Any(p => p.Email == email);
         }
     }
 }
