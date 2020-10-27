@@ -9,6 +9,7 @@ using JobApp.Data;
 using JobApp.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using JobApp.Twitter;
 
 namespace JobApp.Controllers
 {
@@ -156,6 +157,10 @@ namespace JobApp.Controllers
         public async Task<IActionResult> Create([Bind("Title, Description, JobSkillsId, PublisherId, Lon, Lat")] JobViewModel jobViewModel)
         {
             Job job = new Job();
+
+            var twitter = new TwitterApi();
+            var messagePost = "Job: " + jobViewModel.Title + "\nDescription: " + jobViewModel.Description;
+            var response = await twitter.Tweet(messagePost);
 
             if (ModelState.IsValid)
             {
