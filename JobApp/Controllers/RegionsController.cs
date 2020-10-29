@@ -59,9 +59,13 @@ namespace JobApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(region);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (!RegionExists(region.Name))
+                {
+                    _context.Add(region);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                ModelState.AddModelError("Name", "Region already exists");
             }
             return View(region);
         }

@@ -10,6 +10,7 @@ namespace JobApp.Models
     {
         [Key]
         [Display(Name = "Skill")]
+        // https://stackoverflow.com/questions/7739233/double-escape-sequence-inside-a-url-the-request-filtering-module-is-configured
         public string Name { get; set; }
 
         public ICollection<SeekerSkill> SkillSeekers { get; set; }

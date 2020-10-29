@@ -58,9 +58,13 @@ namespace JobApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(skill);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (!SkillExists(skill.Name))
+                {
+                    _context.Add(skill);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                ModelState.AddModelError("Name", "Skill already exists");
             }
             return View(skill);
         }

@@ -298,6 +298,7 @@ namespace JobApp.Controllers
         }
 
         // GET: Seekers/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -316,6 +317,7 @@ namespace JobApp.Controllers
         }
 
         // POST: Seekers/Delete/5
+        [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -323,7 +325,7 @@ namespace JobApp.Controllers
             var seeker = await _context.Seeker.FindAsync(id);
             _context.Seeker.Remove(seeker);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(List));
         }
 
         private bool SeekerExists(int id)

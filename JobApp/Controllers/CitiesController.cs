@@ -82,10 +82,7 @@ namespace JobApp.Controllers
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
                 }
-                else
-                {
-                    ModelState.AddModelError("Name", "City already exists");
-                }
+                ModelState.AddModelError("Name", "City already exists");
             }
             ViewData["Regions"] = await _context.Region.ToListAsync();
             return View(city);
