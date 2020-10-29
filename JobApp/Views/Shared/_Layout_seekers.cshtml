@@ -20,9 +20,6 @@
     <link rel="apple-touch-icon" sizes="76x76" href="~/img/apple-icon.png">
     <link rel="icon" type="image/png" href="~/img/favicon.png">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <title>
-        Material Dashboard by Creative Tim
-    </title>
     <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
     <!--     Fonts and icons     -->
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
@@ -31,6 +28,10 @@
     <link href="~/css/material-dashboard.css?v=2.1.2" rel="stylesheet" />
     <!-- CSS Just for demo purpose, don't include it in your project -->
     <link href="~/demo/demo.css" rel="stylesheet" />
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="~/css/StyleSheet.css" />
     @RenderSection("stylesLoginPublisher", false)
 </head>
 
@@ -44,7 +45,7 @@
             -->
             <div class="logo">
                 <a href="" class="simple-text logo-normal">
-                    Job App
+                    @Html.ActionLink("Job App", "index")
                 </a>
             </div>
             <div class="sidebar-wrapper">
@@ -152,41 +153,61 @@
             </nav>
             <!-- End Navbar -->
             @RenderBody()
-            <footer class="footer">
-                <div class="container-fluid">
-                    <nav class="float-left">
-                        <ul>
-                            <li>
-                                <a href="https://www.creative-tim.com">
-                                    Creative Tim
-                                </a>
-                            </li>
-                            <li>
-                                <a href="https://creative-tim.com/presentation">
-                                    About Us
-                                </a>
-                            </li>
-                            <li>
-                                <a href="http://blog.creative-tim.com">
-                                    Blog
-                                </a>
-                            </li>
-                            <li>
-                                <a href="https://www.creative-tim.com/license">
-                                    Licenses
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
-                    <div class="copyright float-right">
-                        &copy;
-                        <script>document.write(new Date().getFullYear())</script>, made with <i class="material-icons">favorite</i> by
-                        <a href="https://www.creative-tim.com" target="_blank">Creative Tim</a> for a better web.
+
+            <!-- Footer -->
+            <section id="footer2">
+                <div class="container">
+                    <div class="row text-center text-xs-center text-sm-left text-md-left">
+                        <div class="col-xs-12 col-sm-4 col-md-4">
+                            <h4>Quick links</h4>
+                            <ul class="list-unstyled quick-links">
+                                <li><a href=""><i class="fa fa-angle-double-right"></i>Home</a></li>
+                                <li><a href=""><i class="fa fa-angle-double-right"></i>About</a></li>
+                                <li><a href=""><i class="fa fa-angle-double-right"></i>FAQ</a></li>
+                                <li><a href=""><i class="fa fa-angle-double-right"></i>Get Started</a></li>
+                                <li><a href=""><i class="fa fa-angle-double-right"></i>Videos</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-xs-12 col-sm-4 col-md-4">
+                            <h4>Quick links</h4>
+                            <ul class="list-unstyled quick-links">
+                                <li><a href=""><i class="fa fa-angle-double-right"></i>Publish job</a></li>
+                                <li><a href=""><i class="fa fa-angle-double-right"></i>Contact us</a></li>
+                                <li><a href=""><i class="fa fa-angle-double-right"></i>Jobs list</a></li>
+                                <li><a href=""><i class="fa fa-angle-double-right"></i>Pro tips</a></li>
+                                <li><a href=""><i class="fa fa-angle-double-right"></i>Articles</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-xs-12 col-sm-4 col-md-4">
+                            <h4>Quick links</h4>
+                            <ul class="list-unstyled quick-links">
+                                <li><a href=""><i class="fa fa-angle-double-right"></i>Maps</a></li>
+                                <li><a href=""><i class="fa fa-angle-double-right"></i>Profile</a></li>
+                                <li><a href=""><i class="fa fa-angle-double-right"></i>Settings</a></li>
+                                <li><a href=""><i class="fa fa-angle-double-right"></i>Send CV</a></li>
+                                <li><a href=""><i class="fa fa-angle-double-right"></i>Twitter page</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-12 mt-2 mt-sm-5">
+                            <ul class="list-unstyled list-inline social text-center">
+                                <li class="list-inline-item"><a href=""><i class="fa fa-facebook"></i></a></li>
+                                <li class="list-inline-item"><a href=""><i class="fa fa-twitter"></i></a></li>
+                                <li class="list-inline-item"><a href=""><i class="fa fa-instagram"></i></a></li>
+                                <li class="list-inline-item"><a href=""><i class="fa fa-google-plus"></i></a></li>
+                                <li class="list-inline-item"><a href="" target="_blank"><i class="fa fa-envelope"></i></a></li>
+                            </ul>
+                        </div>
+                        <hr>
                     </div>
                 </div>
-            </footer>
+            </section>
+            <!-- ./Footer -->
+
         </div>
     </div>
+
     <!--   Core JS Files   -->
     <script src="~/js/core/jquery.min.js"></script>
     <script src="~/js/core/popper.min.js"></script>
@@ -230,7 +251,8 @@
     <script src="~/js/material-dashboard.js?v=2.1.2" type="text/javascript"></script>
     <!-- Material Dashboard DEMO methods, don't include it in your project! -->
     <script src="~/demo/demo.js"></script>
-    <script>$(document).ready(function () {
+    <script>
+    $(document).ready(function () {
             $().ready(function () {
                 $sidebar = $('.sidebar');
 
@@ -399,7 +421,8 @@
                 });
             });
         });</script>
-    <script>$(document).ready(function () {
+    <script>
+    $(document).ready(function () {
             // Javascript method's body can be found in assets/js/demos.js
             md.initDashboardPageCharts();
 
