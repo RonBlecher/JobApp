@@ -11,4 +11,8 @@ namespace JobApp.Models
         [JsonIgnore]
         public ICollection<Job> PostedJobs { get; set; }
     }
+
+    public class PublisherEditModel : UserEditModel
+    {
+    }
 }

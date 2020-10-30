@@ -232,8 +232,16 @@ namespace JobApp.Controllers
             {
                 return RedirectToAction("Error", "Home");
             }
-
-            return View(seeker);
+            SeekerEditModel seekerEdit = new SeekerEditModel
+            {
+                ID = seeker.ID,
+                Name = seeker.Name,
+                Email = seeker.Email,
+                PhoneNum = seeker.PhoneNum,
+                CV = seeker.CV,
+                CVFileName = seeker.CVFileName
+            };
+            return View(seekerEdit);
         }
 
         // POST: Seekers/Edit/5
@@ -241,39 +249,67 @@ namespace JobApp.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("CVObj,ID,Name,Email,PhoneNum,Password")] Seeker seeker)
+        public async Task<IActionResult> Edit(int id, [Bind("CVObj,ID,Name,Email,PhoneNum,OldPassword,NewPassword")] SeekerEditModel seekerEdit)
         {
-            if (id != seeker.ID)
+            if (id != seekerEdit.ID)
             {
                 return NotFound();
             }
 
+            if ((string.IsNullOrEmpty(seekerEdit.OldPassword) ^ string.IsNullOrEmpty(seekerEdit.NewPassword)) == true)
+            {
+                ModelState.AddModelError("OldPassword", "Error on changing password");
+                ModelState.AddModelError("NewPassword", "Error on changing password");
+                return View(seekerEdit);
+            }
+
+            if (_context.Seeker.Any(s => s.Email == seekerEdit.Email && s.ID != seekerEdit.ID))
+            {
+                ModelState.AddModelError("Email", "Email already exists in the system");
+                return View(seekerEdit);
+            }
+
             if (ModelState.IsValid)
             {
-                try
+                Seeker seeker = await _context.Seeker.FindAsync(id);
+                seeker.Name = seekerEdit.Name;
+                seeker.Email = seekerEdit.Email;
+                seeker.PhoneNum = seekerEdit.PhoneNum;
+                if (seeker.Password == seekerEdit.OldPassword)
                 {
-                    if (seeker.CVObj != null)
-                    {
-                        if (seeker.CVObj.Length > _fileSizeLimit)
-                        {
-                            ModelState.AddModelError("CVObj", "File size is over 5MB");
-                            return View(seeker);
-                        }
+                    seeker.Password = seekerEdit.NewPassword;
+                }
+                else if (!string.IsNullOrEmpty(seekerEdit.OldPassword))
+                {
+                    ModelState.AddModelError("OldPassword", "Incorrect password");
+                    return View(seekerEdit);
+                }
 
-                        using (MemoryStream ms = new MemoryStream())
-                        {
-                            seeker.CVObj.CopyTo(ms);
-                            seeker.CV = ms.ToArray();
-                            seeker.CVFileName = seeker.CVObj.FileName;
-                        }
+                if (seekerEdit.CVObj != null)
+                {
+                    if (seekerEdit.CVObj.Length > _fileSizeLimit)
+                    {
+                        ModelState.AddModelError("CVObj", "File size is over 5MB");
+                        return View(seekerEdit);
                     }
 
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        seekerEdit.CVObj.CopyTo(ms);
+                        // update SEEKER cv file, overcomes clicking cancel button bug in OpenFileDialog 
+                        seeker.CV = ms.ToArray();
+                        seeker.CVFileName = seekerEdit.CVObj.FileName;
+                    }
+                }
+
+                try
+                {
                     _context.Update(seeker);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!SeekerExists(seeker.ID))
+                    if (!SeekerExists(seekerEdit.ID))
                     {
                         return NotFound();
                     }
@@ -294,7 +330,7 @@ namespace JobApp.Controllers
                     return RedirectToAction(nameof(List));
                 }
             }
-            return View(seeker);
+            return View(seekerEdit);
         }
 
         // GET: Seekers/Delete/5

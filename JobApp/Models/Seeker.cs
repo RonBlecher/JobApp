@@ -22,4 +22,14 @@ namespace JobApp.Models
         [Display(Name = "CV File")]
         public IFormFile CVObj { get; set; }
     }
+
+    public class SeekerEditModel : UserEditModel
+    {
+        public byte[] CV { get; set; }
+
+        public string CVFileName { get; set; }
+
+        [Display(Name = "CV File")]
+        public IFormFile CVObj { get; set; }
+    }
 }

@@ -183,7 +183,14 @@ namespace JobApp.Controllers
             {
                 return NotFound();
             }
-            return View(admin);
+            AdminEditModel adminEdit = new AdminEditModel
+            {
+                ID = admin.ID,
+                Name = admin.Name,
+                Email = admin.Email,
+                PhoneNum = admin.PhoneNum
+            };
+            return View(adminEdit);
         }
 
         // POST: Admins/Edit/5
@@ -191,15 +198,42 @@ namespace JobApp.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Email,PhoneNum,Password")] Admin admin)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Email,PhoneNum,OldPassword,NewPassword")] AdminEditModel adminEdit)
         {
-            if (id != admin.ID)
+            if (id != adminEdit.ID)
             {
                 return NotFound();
             }
 
+            if ((string.IsNullOrEmpty(adminEdit.OldPassword) ^ string.IsNullOrEmpty(adminEdit.NewPassword)) == true)
+            {
+                ModelState.AddModelError("OldPassword", "Error on changing password");
+                ModelState.AddModelError("NewPassword", "Error on changing password");
+                return View(adminEdit);
+            }
+
+            if (_context.Admin.Any(a => a.Email == adminEdit.Email && a.ID != adminEdit.ID))
+            {
+                ModelState.AddModelError("Email", "Email already exists in the system");
+                return View(adminEdit);
+            }
+
             if (ModelState.IsValid)
             {
+                Admin admin = await _context.Admin.FindAsync(id);
+                admin.Name = adminEdit.Name;
+                admin.Email = adminEdit.Email;
+                admin.PhoneNum = adminEdit.PhoneNum;
+                if (admin.Password == adminEdit.OldPassword)
+                {
+                    admin.Password = adminEdit.NewPassword;
+                } 
+                else if (!string.IsNullOrEmpty(adminEdit.OldPassword))
+                {
+                    ModelState.AddModelError("OldPassword", "Incorrect password");
+                    return View(adminEdit);
+                }
+
                 try
                 {
                     _context.Update(admin);
@@ -207,7 +241,7 @@ namespace JobApp.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!AdminExists(admin.ID))
+                    if (!AdminExists(adminEdit.ID))
                     {
                         return NotFound();
                     }
@@ -216,9 +250,9 @@ namespace JobApp.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(List));
             }
-            return View(admin);
+            return View(adminEdit);
         }
 
         // GET: Admins/Delete/5

@@ -8,4 +8,8 @@ namespace JobApp.Models
     public class Admin : User
     {
     }
+
+    public class AdminEditModel : UserEditModel
+    {
+    }
 }

@@ -192,7 +192,14 @@ namespace JobApp.Controllers
             {
                 return RedirectToAction("Error", "Home");
             }
-            return View(publisher);
+            PublisherEditModel publisherEdit = new PublisherEditModel
+            {
+                ID = publisher.ID,
+                Name = publisher.Name,
+                Email = publisher.Email,
+                PhoneNum = publisher.PhoneNum
+            };
+            return View(publisherEdit);
         }
 
         // POST: Publishers/Edit/5
@@ -200,15 +207,42 @@ namespace JobApp.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Email,PhoneNum,Password")] Publisher publisher)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Email,PhoneNum,OldPassword,NewPassword")] PublisherEditModel publisherEdit)
         {
-            if (id != publisher.ID)
+            if (id != publisherEdit.ID)
             {
                 return NotFound();
             }
 
+            if ((string.IsNullOrEmpty(publisherEdit.OldPassword) ^ string.IsNullOrEmpty(publisherEdit.NewPassword)) == true)
+            {
+                ModelState.AddModelError("OldPassword", "Error on changing password");
+                ModelState.AddModelError("NewPassword", "Error on changing password");
+                return View(publisherEdit);
+            }
+
+            if (_context.Publisher.Any(p => p.Email == publisherEdit.Email && p.ID != publisherEdit.ID))
+            {
+                ModelState.AddModelError("Email", "Email already exists in the system");
+                return View(publisherEdit);
+            }
+
             if (ModelState.IsValid)
             {
+                Publisher publisher = await _context.Publisher.FindAsync(id);
+                publisher.Name = publisherEdit.Name;
+                publisher.Email = publisherEdit.Email;
+                publisher.PhoneNum = publisherEdit.PhoneNum;
+                if (publisher.Password == publisherEdit.OldPassword)
+                {
+                    publisher.Password = publisherEdit.NewPassword;
+                }
+                else if (!string.IsNullOrEmpty(publisherEdit.OldPassword))
+                {
+                    ModelState.AddModelError("OldPassword", "Incorrect password");
+                    return View(publisherEdit);
+                }
+
                 try
                 {
                     _context.Update(publisher);
@@ -216,7 +250,7 @@ namespace JobApp.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PublisherExists(publisher.ID))
+                    if (!PublisherExists(publisherEdit.ID))
                     {
                         return NotFound();
                     }
@@ -225,9 +259,19 @@ namespace JobApp.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                var identity = (ClaimsIdentity)User.Identity;
+                IEnumerable<Claim> claims = identity.Claims;
+                Claim role = claims.Where(claim => claim.Type == ClaimTypes.Role).First();
+                if (role.Value == "Publisher")
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                if (role.Value == "Admin")
+                {
+                    return RedirectToAction(nameof(List));
+                }
             }
-            return View(publisher);
+            return View(publisherEdit);
         }
 
         // GET: Publishers/Delete/5

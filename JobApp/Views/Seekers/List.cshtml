@@ -36,9 +36,6 @@
                                             @Html.DisplayNameFor(model => model.PhoneNum)
                                         </th>
                                         <th>
-                                            @Html.DisplayNameFor(model => model.Password)
-                                        </th>
-                                        <th>
                                             @Html.DisplayNameFor(model => model.CV)
                                         </th>
                                         <th>
@@ -64,14 +61,9 @@
                                             @Html.DisplayFor(modelItem => item.PhoneNum)
                                         </td>
                                         <td>
-                                            @Html.DisplayFor(modelItem => item.Password)
-                                        </td>
-                                        <td>
                                             @if (item.CV != null)
                                             {
-                                                <br /> <br />
                                                 <a>@Html.ActionLink("Download CV", "DownloadCV", new { id = item.ID })</a>
-                                                <br /> <br />
                                             }
                                         </td>
                                         <td>
