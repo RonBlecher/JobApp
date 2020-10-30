@@ -12,6 +12,8 @@ namespace JobApp.Models
     {
         public ICollection<SeekerSkill> SeekerSkills { get; set; }
 
+        public ICollection<SeekerRegion> SeekerRegions { get; set; }
+
         public ICollection<SeekerJob> SeekerJobs { get; set; }
 
         public byte[] CV { get; set; }

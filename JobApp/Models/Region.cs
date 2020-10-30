@@ -13,5 +13,7 @@ namespace JobApp.Models
         public string Name { get; set; }
 
         public ICollection<City> Cities { get; set; }
+
+        public ICollection<SeekerRegion> RegionSeekers { get; set; }
     }
 }

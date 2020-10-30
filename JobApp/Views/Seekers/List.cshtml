@@ -63,7 +63,7 @@
                                         <td>
                                             @if (item.CV != null)
                                             {
-                                                <a>@Html.ActionLink("Download CV", "DownloadCV", new { id = item.ID })</a>
+                                                <a>@Html.ActionLink(item.CVFileName, "DownloadCV", new { id = item.ID })</a>
                                             }
                                         </td>
                                         <td>

@@ -55,6 +55,16 @@ namespace JobApp.Data
                 .HasOne(srsl => srsl.Seeker)
                 .WithMany(s => s.SeekerSkills)
                 .HasForeignKey(srsl => srsl.SeekerID);
+
+            modelBuilder.Entity<SeekerRegion>().HasKey(srrg => new { srrg.SeekerID, srrg.RegionName });
+            modelBuilder.Entity<SeekerRegion>()
+                .HasOne(srrg => srrg.Region)
+                .WithMany(r => r.RegionSeekers)
+                .HasForeignKey(srrg => srrg.RegionName);
+            modelBuilder.Entity<SeekerRegion>()
+                .HasOne(srrg => srrg.Seeker)
+                .WithMany(s => s.SeekerRegions)
+                .HasForeignKey(srrg => srrg.SeekerID);
         }
 
         public DbSet<Admin> Admin { get; set; }
@@ -78,5 +88,7 @@ namespace JobApp.Data
         public DbSet<SeekerJob> SeekerJob { get; set; }
 
         public DbSet<SeekerSkill> SeekerSkill { get; set; }
+
+        public DbSet<SeekerRegion> SeekerRegion { get; set; }
     }
 }

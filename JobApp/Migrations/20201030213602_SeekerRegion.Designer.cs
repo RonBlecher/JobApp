@@ -4,14 +4,16 @@ using JobApp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace JobApp.Migrations
 {
     [DbContext(typeof(JobAppContext))]
-    partial class JobAppContextModelSnapshot : ModelSnapshot
+    [Migration("20201030213602_SeekerRegion")]
+    partial class SeekerRegion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

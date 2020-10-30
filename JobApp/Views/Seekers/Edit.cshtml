@@ -29,14 +29,14 @@
                 <span asp-validation-for="CVObj" class="text-danger"></span>
                 @if (Model.CV != null)
                 {
-                    @Html.ActionLink("Download " + Model.CVFileName, "DownloadCV", new { id = Model.ID }, new Dictionary<string, object> { { "id", "cvFileLink" } })
+                    @Html.ActionLink(Model.CVFileName, "DownloadCV", new { id = Model.ID }, new Dictionary<string, object> { { "id", "cvFileLink" } })
                 }
                 else
                 {
                     <a id="cvFileLink">No file selected</a>
                 }
-                <br /><br />
             </div>
+            <hr />
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
