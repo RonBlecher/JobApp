@@ -104,3 +104,9 @@ section {
     display: contents;
 }
 
+.logo {
+    text-align: center;
+    font-weight: bold;
+    font-size:20px;
+}
+
