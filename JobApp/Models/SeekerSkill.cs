@@ -13,4 +13,16 @@ namespace JobApp.Models
         public string SkillName { get; set; }
         public Skill Skill { get; set; }
     }
+
+    public class SeekerSkillCheckBoxItem
+    {
+        public string SkillName { get; set; }
+
+        public bool IsChecked { get; set; }
+    }
+
+    public class SeekerSkillViewModel
+    {
+        public List<SeekerSkillCheckBoxItem> SkillCheckBoxItems { get; set; }
+    }
 }

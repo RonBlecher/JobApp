@@ -13,4 +13,16 @@ namespace JobApp.Models
         public string RegionName { get; set; }
         public Region Region { get; set; }
     }
+
+    public class SeekerRegionCheckBoxItem
+    {
+        public string RegionName { get; set; }
+
+        public bool IsChecked { get; set; }
+    }
+
+    public class SeekerRegionViewModel
+    {
+        public List<SeekerRegionCheckBoxItem> RegionCheckBoxItems { get; set; }
+    }
 }

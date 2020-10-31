@@ -39,22 +39,7 @@ namespace JobApp.Controllers
                 .Include(s => s.SeekerJobs)
                 .Include(s => s.SeekerSkills)
                 .ToListAsync();
-            EnrichSeekers(seekers);
             return View(seekers.First());
-        }
-
-        // TODO: remove
-        private void EnrichSeekers(List<Seeker> seekers)
-        {
-            var identity = (ClaimsIdentity)User.Identity;
-            IEnumerable<Claim> claims = identity.Claims;
-            Claim idClaim = claims.Where(claim => claim.Type == "Id").First();
-
-            seekers.ForEach(seeker =>
-            {
-                List<SeekerJob> seekerJobs = _context.SeekerJob.Where(seekerJob => seekerJob.SeekerID.ToString() == idClaim.Value).ToList();
-                seeker.SeekerJobs = seekerJobs;
-            });
         }
 
         // GET: Seekers
@@ -333,6 +318,104 @@ namespace JobApp.Controllers
             return View(seekerEdit);
         }
 
+        // GET
+        [Authorize(Roles = "Seeker")]
+        public async Task<IActionResult> MyRegions()
+        {
+            var identity = (ClaimsIdentity)User.Identity;
+            IEnumerable<Claim> claims = identity.Claims;
+            Claim idClaim = claims.Where(claim => claim.Type == "Id").First();
+            int seekerID = Convert.ToInt32(idClaim.Value);
+
+            var allRegions = await _context.Region.Select(r => new SeekerRegionCheckBoxItem()
+            {
+                RegionName = r.Name,
+                IsChecked = r.RegionSeekers.Any(rs => rs.RegionName == r.Name && rs.SeekerID == seekerID)
+            }).OrderBy(r => r.RegionName).ToListAsync();
+
+            return View(new SeekerRegionViewModel { RegionCheckBoxItems = allRegions });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> MyRegions(SeekerRegionViewModel srvm)
+        {
+            var identity = (ClaimsIdentity)User.Identity;
+            IEnumerable<Claim> claims = identity.Claims;
+            Claim idClaim = claims.Where(claim => claim.Type == "Id").First();
+            int seekerID = Convert.ToInt32(idClaim.Value);
+
+            foreach (var checkBoxItem in srvm.RegionCheckBoxItems)
+            {
+                if (checkBoxItem.IsChecked)
+                {
+                    if (!SeekerRegionExists(seekerID, checkBoxItem.RegionName))
+                    {
+                        _context.SeekerRegion.Add(new SeekerRegion { SeekerID = seekerID, RegionName = checkBoxItem.RegionName });
+                        await _context.SaveChangesAsync();
+                    }
+                }
+                else
+                {
+                    if (SeekerRegionExists(seekerID, checkBoxItem.RegionName))
+                    {
+                        SeekerRegion sr = _context.SeekerRegion.First(sr => sr.SeekerID == seekerID && sr.RegionName == checkBoxItem.RegionName);
+                        _context.SeekerRegion.Remove(sr);
+                        await _context.SaveChangesAsync();
+                    }
+                }
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
+        // GET
+        [Authorize(Roles = "Seeker")]
+        public async Task<IActionResult> MySkills()
+        {
+            var identity = (ClaimsIdentity)User.Identity;
+            IEnumerable<Claim> claims = identity.Claims;
+            Claim idClaim = claims.Where(claim => claim.Type == "Id").First();
+            int seekerID = Convert.ToInt32(idClaim.Value);
+
+            var allSkills = await _context.Skill.Select(s => new SeekerSkillCheckBoxItem()
+            {
+                SkillName = s.Name,
+                IsChecked = s.SkillSeekers.Any(sk => sk.SkillName == s.Name && sk.SeekerID == seekerID)
+            }).OrderBy(s => s.SkillName).ToListAsync();
+
+            return View(new SeekerSkillViewModel { SkillCheckBoxItems = allSkills });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> MySkills(SeekerSkillViewModel ssvm)
+        {
+            var identity = (ClaimsIdentity)User.Identity;
+            IEnumerable<Claim> claims = identity.Claims;
+            Claim idClaim = claims.Where(claim => claim.Type == "Id").First();
+            int seekerID = Convert.ToInt32(idClaim.Value);
+
+            foreach (var checkBoxItem in ssvm.SkillCheckBoxItems)
+            {
+                if (checkBoxItem.IsChecked)
+                {
+                    if (!SeekerSkillExists(seekerID, checkBoxItem.SkillName))
+                    {
+                        _context.SeekerSkill.Add(new SeekerSkill { SeekerID = seekerID, SkillName = checkBoxItem.SkillName });
+                        await _context.SaveChangesAsync();
+                    }
+                }
+                else
+                {
+                    if (SeekerSkillExists(seekerID, checkBoxItem.SkillName))
+                    {
+                        SeekerSkill sk = _context.SeekerSkill.First(s => s.SeekerID == seekerID && s.SkillName == checkBoxItem.SkillName);
+                        _context.SeekerSkill.Remove(sk);
+                        await _context.SaveChangesAsync();
+                    }
+                }
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
         // GET: Seekers/Delete/5
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
@@ -372,6 +455,16 @@ namespace JobApp.Controllers
         private bool EmailExists(string email)
         {
             return _context.Seeker.Any(s => s.Email == email);
+        }
+
+        private bool SeekerRegionExists(int seekerID, string regionName)
+        {
+            return _context.SeekerRegion.Any(sr => sr.SeekerID == seekerID && sr.RegionName == regionName);
+        }
+
+        private bool SeekerSkillExists(int seekerID, string skillName)
+        {
+            return _context.SeekerSkill.Any(sk => sk.SeekerID == seekerID && sk.SkillName == skillName);
         }
     }
 }

@@ -1,0 +1,35 @@
+﻿@model JobApp.Models.SeekerRegionViewModel
+
+@{
+    ViewData["Title"] = "MyRegions";
+    Layout = "_Layout_seekers";
+}
+
+<h1>My Job Search Regions</h1>
+
+<h4>Regions</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="MyRegions">
+            <div class="form-group">
+                @for (int i = 0; i < Model.RegionCheckBoxItems.Count; i++)
+                {
+                    // only works with 'Model.RegionCheckBoxItems[i]'
+                    @Html.HiddenFor(x => Model.RegionCheckBoxItems[i].RegionName);
+                    @Html.EditorFor(x => Model.RegionCheckBoxItems[i].IsChecked, new { id = Model.RegionCheckBoxItems[i].RegionName });
+                    <text>&nbsp;</text>
+                    @Html.LabelFor(x => Model.RegionCheckBoxItems[i].IsChecked, Model.RegionCheckBoxItems[i].RegionName, new { style = "color:black" });
+                    <br /><br />
+                }
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

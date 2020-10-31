@@ -56,6 +56,12 @@ namespace JobApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Name")] Skill skill)
         {
+            if (string.IsNullOrEmpty(skill.Name))
+            {
+                ModelState.AddModelError("Name", "Skill name is empty");
+                return View(skill);
+            }
+
             if (ModelState.IsValid)
             {
                 if (!SkillExists(skill.Name))

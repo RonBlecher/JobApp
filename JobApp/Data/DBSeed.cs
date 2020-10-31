@@ -48,6 +48,91 @@ namespace JobApp.Data
                 db_changed = true;
             }
 
+            if (context.Region.Any(r => r.Name == "North") == false)
+            {
+                context.Region.Add(new Region
+                {
+                    Name = "North"
+                });
+                db_changed = true;
+            }
+
+            if (context.Region.Any(r => r.Name == "Central") == false)
+            {
+                context.Region.Add(new Region
+                {
+                    Name = "Central"
+                });
+                db_changed = true;
+            }
+
+            if (context.Region.Any(r => r.Name == "South") == false)
+            {
+                context.Region.Add(new Region
+                {
+                    Name = "South"
+                });
+                db_changed = true;
+            }
+
+            if (context.City.Any(c => c.Name == "Haifa") == false)
+            {
+                context.City.Add(new City
+                {
+                    Name = "Haifa",
+                    RegionName = "North"
+                });
+                db_changed = true;
+            }
+
+            if (context.City.Any(c => c.Name == "Herzliya") == false)
+            {
+                context.City.Add(new City
+                {
+                    Name = "Herzliya",
+                    RegionName = "Central"
+                });
+                db_changed = true;
+            }
+
+            if (context.City.Any(c => c.Name == "Tel Aviv") == false)
+            {
+                context.City.Add(new City
+                {
+                    Name = "Tel Aviv",
+                    RegionName = "Central"
+                });
+                db_changed = true;
+            }
+
+            if (context.City.Any(c => c.Name == "Beer Sheva") == false)
+            {
+                context.City.Add(new City
+                {
+                    Name = "Beer Sheva",
+                    RegionName = "South"
+                });
+                db_changed = true;
+            }
+
+            if (context.Skill.Any(s => s.Name == "CPP") == false)
+            {
+                context.Skill.Add(new Skill
+                {
+                    Name = "CPP"
+                });
+                db_changed = true;
+            }
+
+            if (context.Skill.Any(s => s.Name == "C#") == false)
+            {
+                context.Skill.Add(new Skill
+                {
+                    Name = "C#"
+                });
+                db_changed = true;
+            }
+
             if (db_changed)
             {
                 context.SaveChanges();
