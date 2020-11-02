@@ -245,6 +245,7 @@ namespace JobApp.Data
             {
                 context.Job.Add(new Job
                 {
+                    // Job ID = 1
                     PublisherId = 1,
                     Title = "C# Developer",
                     Description = "5+ years of experience",

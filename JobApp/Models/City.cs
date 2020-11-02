@@ -11,6 +11,7 @@ namespace JobApp.Models
         [Key]
         [Required]
         [Display(Name = "City")]
+        [RegularExpression("^[A-Za-z '-]+$", ErrorMessage = "{0} is not valid.")]
         public string Name { get; set; }
 
         [Required]

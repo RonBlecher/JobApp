@@ -19,6 +19,7 @@ namespace JobApp.Controllers
             _context = context;
         }
 
+        /*
         // GET: CityJobs
         public async Task<IActionResult> Index()
         {
@@ -162,5 +163,6 @@ namespace JobApp.Controllers
         {
             return _context.CityJob.Any(e => e.CityName == id);
         }
+        */
     }
 }
