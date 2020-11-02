@@ -19,6 +19,7 @@ namespace JobApp.Controllers
             _context = context;
         }
 
+        /*
         // GET: SeekerRegions
         public async Task<IActionResult> Index()
         {
@@ -162,5 +163,6 @@ namespace JobApp.Controllers
         {
             return _context.SeekerRegion.Any(e => e.SeekerID == id);
         }
+        */
     }
 }

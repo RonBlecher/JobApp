@@ -10,6 +10,7 @@ namespace JobApp.Models
     {
         [Key]
         [Display(Name = "Region Name")]
+        [RegularExpression("^[A-Za-z '-]+$", ErrorMessage = "{0} is not valid.")]
         public string Name { get; set; }
 
         public ICollection<City> Cities { get; set; }
