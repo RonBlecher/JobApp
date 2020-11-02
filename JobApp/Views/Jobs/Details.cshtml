@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Details";
+
 }
 
 <h1>Details</h1>
@@ -10,18 +11,50 @@
     <h4>Job</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Title)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Title)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Description)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Description)
         </dd>
+        @if (Model.JobSeekers.Count > 0)
+        {
+            @foreach (var seekerJob in Model.JobSeekers)
+            {
+                <dt class="col-sm-2">
+                    @if (seekerJob.Seeker != null)
+                    {
+                        @Html.Raw("Seekers CV's:")
+                    }
+                </dt>
+                <dd class="col-sm-10">
+                    <dl>
+                        @if (seekerJob.Seeker != null)
+                        {
+                            <dt class="col-sm-2">
+                                @Html.Raw(seekerJob.Seeker.Name)
+                            </dt>
+                            <dd class="col-sm-10">
+                                @Html.ActionLink("Download " + seekerJob.Seeker.CVFileName, "DownloadCV", "Seekers", new { id = seekerJob.Seeker.ID }, new Dictionary<string, object> { { "id", "cvFileLink" } })
+                            </dd>
+                        }
+                    </dl>
+                </dd>
+            }
+        }
+        else
+        {
+            <dt class="col-sm-2">
+                @Html.Raw("No Cv has applied yet")
+            </dt>
+        
+        }
     </dl>
 </div>
 <div>
