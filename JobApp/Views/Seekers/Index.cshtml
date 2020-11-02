@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Index";
+    int newJobNumber = (int)ViewData["New Jobs"];
     Layout = "_Layout_seekers";
 }
 
@@ -39,8 +40,13 @@
                         <div class="ct-chart" id="websiteViewsChart"></div>
                     </div>
                     <div class="card-body">
-                        <h4 class="card-title">New Jobs Seeker did not see yet</h4>
-                        <p class="card-category">Click here to see the new jobs</p>
+                        <h4 class="card-title">New Jobs Seeker did not see yet:
+                        @if (newJobNumber != null)
+                        {
+                            @Html.Raw(newJobNumber)
+                        }
+                        </h4>
+                        <a href="jobs/lookingforjobs" class="card-category">Click here to see the new jobs</a>
                     </div>
                     <div class="card-footer">
                         <div class="stats">

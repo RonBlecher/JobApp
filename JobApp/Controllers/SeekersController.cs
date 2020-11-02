@@ -39,8 +39,91 @@ namespace JobApp.Controllers
                 .Include(s => s.SeekerJobs)
                 .Include(s => s.SeekerSkills)
                 .ToListAsync();
+
+            EnrichSeekers(seekers);
+
+            ViewData["New Jobs"] = FindNewJobs(seekers.First());
+
             return View(seekers.First());
         }
+
+        private int FindNewJobs(Seeker currentSeeker)
+        {
+            List<Job> allJobs = _context.Job.ToList();
+
+            List<Job> matchedJobs = GetNewJobs(currentSeeker);
+
+            return allJobs.Count - matchedJobs.Count;
+        }
+
+        [HttpGet]
+        public async Task<List<JobMonthCount>> GetCvAppliedPerMonth()
+        {
+            Seeker seeker = (await GetSeeker());
+
+            return seeker.SeekerJobs.GroupBy(seekerJob => seekerJob.SubmitDate.Month).Select(key => new JobMonthCount
+            {
+                Month = key.Key,
+                Count = key.Count()
+            }).ToList();
+        }
+
+
+        [HttpGet]
+        public async Task<List<JobMonthCount>> GetSeekerNewJobs()
+        {
+            List<Job> newJobs = GetNewJobs(await GetSeeker());
+
+            return newJobs.GroupBy(job => job.LastEdited.Month).Select(key => new JobMonthCount
+            {
+                Month = key.Key,
+                Count = key.Count()
+            }).ToList();
+
+        }
+
+        private List<Job> GetNewJobs(Seeker currentSeeker)
+        {
+            List<Job> allJobs = _context.Job.ToList();
+
+            List<Job> newJobs = allJobs.Where(job =>
+            {
+                return currentSeeker.SeekerJobs.Where(seekerJob => seekerJob.JobID != job.ID).ToList().Count() > 0;
+            }).ToList();
+
+            return newJobs;
+        }
+
+        private async Task<Seeker> GetSeeker()
+        {
+            var identity = (ClaimsIdentity)User.Identity;
+            IEnumerable<Claim> claims = identity.Claims;
+            Claim idClaim = claims.Where(claim => claim.Type == "Id").First();
+
+            var seekers = await _context.Seeker
+                .Where(seeker => seeker.ID.ToString() == idClaim.Value)
+                .Include(s => s.SeekerJobs)
+                .Include(s => s.SeekerSkills)
+                .ToListAsync();
+            EnrichSeekers(seekers);
+
+            return seekers.First();
+        }
+
+        // TODO: remove
+        private void EnrichSeekers(List<Seeker> seekers)
+        {
+            var identity = (ClaimsIdentity)User.Identity;
+            IEnumerable<Claim> claims = identity.Claims;
+            Claim idClaim = claims.Where(claim => claim.Type == "Id").First();
+
+            seekers.ForEach(seeker =>
+            {
+                List<SeekerJob> seekerJobs = _context.SeekerJob.Where(seekerJob => seekerJob.SeekerID.ToString() == idClaim.Value).ToList();
+                seeker.SeekerJobs = seekerJobs;
+            });
+        }
+
 
         // GET: Seekers
         [Authorize(Roles = "Admin")]

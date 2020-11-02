@@ -192,30 +192,37 @@ md = {
     if ($('#dailySalesChart').length != 0 && $('#websiteViewsChart').length != 0) {
       /* ----------==========     Daily Sales Chart initialization For Documentation    ==========---------- */
 
-      dataDailySalesChart = {
-        labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
-        series: [
-          [12, 17, 7, 17, 23, 18, 38]
-        ]
-      };
+        var url = '/seekers/GetCvAppliedPerMonth'
+        $.ajax(
+            {
+                url: url,
+                success: (data) => {
+                    dataDailySalesChart = {
+                        labels: ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'],
+                        series: [
+                            [getByMonth(data, 0), getByMonth(data, 1), getByMonth(data, 2), getByMonth(data, 3), getByMonth(data, 4), getByMonth(data, 5), getByMonth(data, 6), getByMonth(data, 7), getByMonth(data, 8), getByMonth(data, 9), getByMonth(data, 10), getByMonth(data, 11), getByMonth(data, 12)]
+                        ]
+                    };
 
-      optionsDailySalesChart = {
-        lineSmooth: Chartist.Interpolation.cardinal({
-          tension: 0
-        }),
-        low: 0,
-        high: 50, // creative tim: we recommend you to set the high sa the biggest value + something for a better look
-        chartPadding: {
-          top: 0,
-          right: 0,
-          bottom: 0,
-          left: 0
-        },
-      }
+                    optionsDailySalesChart = {
+                        lineSmooth: Chartist.Interpolation.cardinal({
+                            tension: 0
+                        }),
+                        low: 0,
+                        high: getHigest(data) + getBuffer(getHigest(data)), // creative tim: we recommend you to set the high sa the biggest value + something for a better look
+                        chartPadding: {
+                            top: 0,
+                            right: 0,
+                            bottom: 0,
+                            left: 0
+                        },
+                    }
 
-      var dailySalesChart = new Chartist.Line('#dailySalesChart', dataDailySalesChart, optionsDailySalesChart);
+                    var dailySalesChart = new Chartist.Line('#dailySalesChart', dataDailySalesChart, optionsDailySalesChart);
 
-      var animationHeaderChart = new Chartist.Line('#websiteViewsChart', dataDailySalesChart, optionsDailySalesChart);
+                    var animationHeaderChart = new Chartist.Line('#websiteViewsChart', dataDailySalesChart, optionsDailySalesChart);
+                }
+            });
     }
   },
 
@@ -317,32 +324,38 @@ md = {
     if ($('#dailySalesChart').length != 0 || $('#completedTasksChart').length != 0 || $('#websiteViewsChart').length != 0) {
       /* ----------==========     Daily Sales Chart initialization    ==========---------- */
 
-      dataDailySalesChart = {
-        labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
-        series: [
-          [12, 17, 7, 17, 23, 18, 38]
-        ]
-      };
+        var url = '/seekers/GetCvAppliedPerMonth'
+        $.ajax(
+            {
+                url: url,
+                success: (data) => {
+                    dataDailySalesChart = {
+                        labels: ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'],
+                        series: [
+                            [getByMonth(data, 0), getByMonth(data, 1), getByMonth(data, 2), getByMonth(data, 3), getByMonth(data, 4), getByMonth(data, 5), getByMonth(data, 6), getByMonth(data, 7), getByMonth(data, 8), getByMonth(data, 9), getByMonth(data, 10), getByMonth(data, 11), getByMonth(data, 12)]
 
-      optionsDailySalesChart = {
-        lineSmooth: Chartist.Interpolation.cardinal({
-          tension: 0
-        }),
-        low: 0,
-        high: 50, // creative tim: we recommend you to set the high sa the biggest value + something for a better look
-        chartPadding: {
-          top: 0,
-          right: 0,
-          bottom: 0,
-          left: 0
-        },
-      }
+                        ]
+                    };
 
-      var dailySalesChart = new Chartist.Line('#dailySalesChart', dataDailySalesChart, optionsDailySalesChart);
+                    optionsDailySalesChart = {
+                        lineSmooth: Chartist.Interpolation.cardinal({
+                            tension: 0
+                        }),
+                        low: 0,
+                        high: getHigest(data) + getBuffer(getHigest(data)), // creative tim: we recommend you to set the high sa the biggest value + something for a better look
+                        chartPadding: {
+                            top: 0,
+                            right: 0,
+                            bottom: 0,
+                            left: 0
+                        },
+                    }
 
-      md.startAnimationForLineChart(dailySalesChart);
+                    var dailySalesChart = new Chartist.Line('#dailySalesChart', dataDailySalesChart, optionsDailySalesChart);
 
-
+                    md.startAnimationForLineChart(dailySalesChart);
+                }
+            });
 
       /* ----------==========     Completed Tasks Chart initialization    ==========---------- */
 
@@ -373,42 +386,73 @@ md = {
       md.startAnimationForLineChart(completedTasksChart);
 
 
-      /* ----------==========     Emails Subscription Chart initialization    ==========---------- */
-
-      var dataWebsiteViewsChart = {
-        labels: ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'],
-        series: [
-          [542, 443, 320, 780, 553, 453, 326, 434, 568, 610, 756, 895]
-
-        ]
-      };
-      var optionsWebsiteViewsChart = {
-        axisX: {
-          showGrid: false
-        },
-        low: 0,
-        high: 1000,
-        chartPadding: {
-          top: 0,
-          right: 5,
-          bottom: 0,
-          left: 0
+        function getByMonth(data, month) {
+            return data.find(monthCount => monthCount.month === month) ? data.find(monthCount => monthCount.month === month).count : 0
         }
-      };
-      var responsiveOptions = [
-        ['screen and (max-width: 640px)', {
-          seriesBarDistance: 5,
-          axisX: {
-            labelInterpolationFnc: function(value) {
-              return value[0];
-            }
-          }
-        }]
-      ];
-      var websiteViewsChart = Chartist.Bar('#websiteViewsChart', dataWebsiteViewsChart, optionsWebsiteViewsChart, responsiveOptions);
 
-      //start animation for the Emails Subscription Chart
-      md.startAnimationForBarChart(websiteViewsChart);
+        function getHigest(data) {
+            highestValue = data[0].count
+
+            data.forEach(monthCount => {
+                highestValue = highestValue > monthCount.count ? highestValue : monthCount.count
+            })
+
+            return highestValue
+        }
+
+        function getBuffer(highest) {
+            if (highest < 10) {
+                return 5
+            } else if (highest > 10 && highest < 100) {
+                return 15
+            } else if (highest > 100 && highest < 1000) {
+                return 50
+            }
+        }
+    
+      /* ----------==========     Emails Subscription Chart initialization    ==========---------- */
+        var url = '/seekers/GetSeekerNewJobs'
+        $.ajax(
+            {
+                url: url,
+                success: (data) => {
+                    var dataWebsiteViewsChart = {
+                        labels: ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'],
+                        series: [
+                            [getByMonth(data, 0), getByMonth(data, 1), getByMonth(data, 2), getByMonth(data, 3), getByMonth(data, 4), getByMonth(data, 5), getByMonth(data, 6), getByMonth(data, 7), getByMonth(data, 8), getByMonth(data, 9), getByMonth(data, 10), getByMonth(data, 11), getByMonth(data, 12)]
+
+                        ]
+                    };
+                    var optionsWebsiteViewsChart = {
+                        axisX: {
+                            showGrid: false
+                        },
+                        low: 0,
+                        high: getHigest(data) + getBuffer(getHigest(data)),
+                        chartPadding: {
+                            top: 0,
+                            right: 5,
+                            bottom: 0,
+                            left: 0
+                        }
+                    };
+                    var responsiveOptions = [
+                        ['screen and (max-width: 1240px)', {
+                            seriesBarDistance: 5,
+                            axisX: {
+                                labelInterpolationFnc: function (value) {
+                                    return value[0];
+                                }
+                            }
+                        }]
+                    ];
+                    var websiteViewsChart = Chartist.Bar('#websiteViewsChart', dataWebsiteViewsChart, optionsWebsiteViewsChart, responsiveOptions);
+
+                    //start animation for the Emails Subscription Chart
+                    md.startAnimationForBarChart(websiteViewsChart);
+                }
+        });  
+    
     }
   },
 

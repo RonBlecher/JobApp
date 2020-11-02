@@ -89,7 +89,7 @@ namespace JobApp.Controllers
 
             List<Job> jobs = await _context.Job
                 .Include(j => j.Publisher)
-                .Include(j => j.JobSeekers)
+                .Include(j => j.JobSeekers).ThenInclude(js => js.Seeker)
                 .Include(j => j.JobSkills)
                 .Include(j => j.JobCities)
                 .ToListAsync();
@@ -124,7 +124,7 @@ namespace JobApp.Controllers
 
             var job = await _context.Job
                 .Include(j => j.Publisher)
-                .Include(j => j.JobSeekers)
+                .Include(j => j.JobSeekers).ThenInclude(js => js.Seeker)
                 .Include(j => j.JobSkills)
                 .Include(j => j.JobCities)
                 .FirstOrDefaultAsync(m => m.ID == id);

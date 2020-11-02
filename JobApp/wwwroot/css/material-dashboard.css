@@ -15569,7 +15569,7 @@ fieldset[disabled] .form-group.is-focused .togglebutton label {
 }
 
 .main-panel {
-  padding: 50px;
+/*  padding: 50px;*/
   position: relative;
   float: right;
   width: calc(100% - 260px);
