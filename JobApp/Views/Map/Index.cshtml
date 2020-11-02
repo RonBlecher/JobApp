@@ -1,6 +1,13 @@
-﻿@{
+﻿@using System.Security.Claims;
+@using Microsoft.AspNetCore.Authentication;
+@using Microsoft.AspNetCore.Authentication.Cookies;
+@using Microsoft.AspNetCore.Authorization;
+
+@{
     ViewData["Title"] = "Index";
-    Layout = "_Layout_publishers";
+
+    var identity = (ClaimsIdentity)User.Identity;
+    Layout = LayoutDecision.LocateLayout(User);
 }
 
 <style>
