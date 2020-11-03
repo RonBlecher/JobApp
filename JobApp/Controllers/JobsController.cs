@@ -157,12 +157,12 @@ namespace JobApp.Controllers
         {
             Job job = new Job();
 
-            var twitter = new TwitterApi();
-            var messagePost = "Job: " + jobViewModel.Title + "\nDescription: " + jobViewModel.Description;
-            var response = await twitter.Tweet(messagePost);
-
             if (ModelState.IsValid)
             {
+                var twitter = new TwitterApi();
+                var messagePost = "Job: " + jobViewModel.Title + "\nDescription: " + jobViewModel.Description;
+                var response = await twitter.Tweet(messagePost);
+
                 job = await jobViewModelToJobConverter.Convert(jobViewModel);
                 job.LastEdited = DateTime.Now;
 
