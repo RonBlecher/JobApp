@@ -2,8 +2,7 @@
 
 @{
     ViewData["Title"] = "Create";
-    Layout = "_Layout_publishers";
-
+    Layout = LayoutDecision.LocateLayout(User);
 
     List<SelectListItem> listItems = new List<SelectListItem>();
     var publisher = (List<Publisher>)ViewData["Publishers"];

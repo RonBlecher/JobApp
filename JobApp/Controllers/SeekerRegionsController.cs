@@ -12,6 +12,7 @@ namespace JobApp.Controllers
 {
     public class SeekerRegionsController : Controller
     {
+        /*
         private readonly JobAppContext _context;
 
         public SeekerRegionsController(JobAppContext context)
@@ -19,7 +20,6 @@ namespace JobApp.Controllers
             _context = context;
         }
 
-        /*
         // GET: SeekerRegions
         public async Task<IActionResult> Index()
         {

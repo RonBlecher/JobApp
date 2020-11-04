@@ -2,7 +2,8 @@
 
 @{
     ViewData["Title"] = "Create";
-    List<SelectListItem> regionsItems = new List<SelectListItem>();
+    Layout = LayoutDecision.LocateLayout(User);
+
     var regions = (List<Region>)ViewData["Regions"];
     SelectList selectedRegion = new SelectList(regions.Select(p => p.Name));
 }
@@ -22,7 +23,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="RegionName" class="control-label"></label>
-                @Html.ListBoxFor(model => model.RegionName, selectedRegion, "Select Region")
+                @Html.DropDownListFor(model => model.RegionName, selectedRegion, "Select Region")
                 <span asp-validation-for="RegionName" class="text-danger"></span>
             </div>
             <div class="form-group">

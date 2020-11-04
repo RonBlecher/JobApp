@@ -8,7 +8,7 @@
 
 @{
     ViewData["Title"] = "Index";
-    Layout = "_Layout_seekers";
+    Layout = LayoutDecision.LocateLayout(User);
     var identity = (ClaimsIdentity)User.Identity;
     IEnumerable<Claim> claims = identity.Claims;
     Claim idClaim = claims.Where(claim => claim.Type == "Id").First();

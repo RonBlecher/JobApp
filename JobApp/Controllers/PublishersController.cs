@@ -45,6 +45,7 @@ namespace JobApp.Controllers
             return View(publishers);
         }
 
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Search(string name, string email)
         {
             var results = from publisher in _context.Publisher
@@ -125,6 +126,7 @@ namespace JobApp.Controllers
         }
 
         // GET: Publishers/Details/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -144,6 +146,7 @@ namespace JobApp.Controllers
         }
 
         // GET: Publishers/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
@@ -154,6 +157,7 @@ namespace JobApp.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("ID,Name,Email,PhoneNum,Password")] Publisher publisher)
         {
             if (ModelState.IsValid)
@@ -182,7 +186,7 @@ namespace JobApp.Controllers
                 return RedirectToAction("Error", "Home");
             }
 
-            if(idClaim.Value != id.ToString() && role.Value != "Admin")
+            if (idClaim.Value != id.ToString() && role.Value != "Admin")
             {
                 return RedirectToAction("NoPermission", "Home");
             }
@@ -275,6 +279,7 @@ namespace JobApp.Controllers
         }
 
         // GET: Publishers/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -295,6 +300,7 @@ namespace JobApp.Controllers
         // POST: Publishers/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var publisher = await _context.Publisher.FindAsync(id);

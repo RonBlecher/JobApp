@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Index";
     ViewData["Model"] = "Admins";
-
+    Layout = LayoutDecision.LocateLayout(User);
 }
 
 <h1>Admins</h1>
@@ -24,7 +24,6 @@
                     <div class="card-header card-header-primary">
                         <form asp-action="Search">
                             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                            <input type="hidden" />
                             <div class="form-group">
                                 <label class="control-label">Search By Name:</label>
                                 <input name="name" class="form-control"/>
@@ -87,5 +86,4 @@
 
 @section style{
     <link rel="stylesheet" href="~/css/StyleSheet.css"/>
-
 }

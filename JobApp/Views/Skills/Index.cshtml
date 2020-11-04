@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Index";
+    Layout = LayoutDecision.LocateLayout(User);
 }
 
 
@@ -28,6 +29,7 @@
                                         <th>
                                             @Html.DisplayNameFor(model => model.Name)
                                         </th>
+                                        <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -38,7 +40,6 @@
                                                 @Html.DisplayFor(modelItem => item.Name)
                                             </td>
                                             <td>
-                                                <a asp-action="Edit" asp-route-id="@item.Name">Edit</a> |
                                                 <a asp-action="Details" asp-route-id="@item.Name">Details</a> |
                                                 <a asp-action="Delete" asp-route-id="@item.Name">Delete</a>
                                             </td>

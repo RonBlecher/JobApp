@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Delete";
+    Layout = LayoutDecision.LocateLayout(User);
 }
 
 <h1>Delete</h1>
@@ -11,6 +12,18 @@
     <h4>City</h4>
     <hr />
     <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.RegionName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.RegionName)
+        </dd>
     </dl>
     
     <form asp-action="Delete">

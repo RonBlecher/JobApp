@@ -21,20 +21,14 @@ namespace JobApp.Controllers
         }
 
         // GET: Cities
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             return View(await _context.City.ToListAsync());
         }
 
-        // GET: Cities
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> List()
-        {
-            var seekers = await _context.City.ToListAsync();
-            return View(seekers);
-        }
-
         // GET: Cities/Details/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Details(string id)
         {
             if (id == null)
@@ -53,6 +47,7 @@ namespace JobApp.Controllers
         }
 
         // GET: Cities/Create
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create()
         {
             List<Region> regions = await _context.Region.ToListAsync();
@@ -67,6 +62,7 @@ namespace JobApp.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(string name, string regionName)
         {
             City city = new City();
@@ -89,6 +85,7 @@ namespace JobApp.Controllers
         }
 
         // GET: Cities/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(string id)
         {
             if (id == null)
@@ -101,6 +98,7 @@ namespace JobApp.Controllers
             {
                 return NotFound();
             }
+            ViewData["Regions"] = await _context.Region.ToListAsync();
             return View(city);
         }
 
@@ -109,9 +107,12 @@ namespace JobApp.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Name,RegionName")] City city)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Edit(string name, string regionName)
         {
-            if (id != city.Name)
+            City city = await _context.City.FindAsync(name);
+
+            if (city == null)
             {
                 return NotFound();
             }
@@ -120,6 +121,7 @@ namespace JobApp.Controllers
             {
                 try
                 {
+                    city.RegionName = regionName;
                     _context.Update(city);
                     await _context.SaveChangesAsync();
                 }
@@ -136,10 +138,12 @@ namespace JobApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["Regions"] = await _context.Region.ToListAsync();
             return View(city);
         }
 
         // GET: Cities/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(string id)
         {
             if (id == null)
@@ -160,6 +164,7 @@ namespace JobApp.Controllers
         // POST: Cities/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
             var city = await _context.City.FindAsync(id);

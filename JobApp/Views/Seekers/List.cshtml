@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Seeker List";
     ViewData["Model"] = "Seekers";
-
+    Layout = LayoutDecision.LocateLayout(User);
 }
 
 <h1>Seekers</h1>
@@ -36,13 +36,7 @@
                                             @Html.DisplayNameFor(model => model.PhoneNum)
                                         </th>
                                         <th>
-                                            @Html.DisplayNameFor(model => model.CV)
-                                        </th>
-                                        <th>
-                                            @Html.DisplayNameFor(model => model.SeekerJobs)
-                                        </th>
-                                        <th>
-                                            @Html.DisplayNameFor(model => model.SeekerSkills)
+                                            @Html.DisplayNameFor(model => model.CVObj)
                                         </th>
                                         <th></th>
                                     </tr>
@@ -65,12 +59,10 @@
                                             {
                                                 <a>@Html.ActionLink(item.CVFileName, "DownloadCV", new { id = item.ID })</a>
                                             }
-                                        </td>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.SeekerJobs)
-                                        </td>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.SeekerSkills)
+                                            else
+                                            {
+                                                @Html.Raw("No File");
+                                            }
                                         </td>
                                         <td>
                                             <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |

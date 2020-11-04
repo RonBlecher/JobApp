@@ -2,7 +2,7 @@
 
 @{
     ViewData["Title"] = "Details";
-
+    Layout = LayoutDecision.LocateLayout(User);
 }
 
 <h1>Details</h1>
@@ -53,7 +53,6 @@
             <dt class="col-sm-2">
                 @Html.Raw("No Cv has applied yet")
             </dt>
-        
         }
     </dl>
 </div>

@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Delete";
+    Layout = LayoutDecision.LocateLayout(User);
 }
 
 <h1>Delete</h1>
@@ -11,12 +12,16 @@
     <h4>Skill</h4>
     <hr />
     <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
     </dl>
     
     <form asp-action="Delete">
-        <div class="form-group">
-            @Html.DisplayFor(model => model.Name)
-        </div>
+        <input type="hidden" asp-for="Name" />
         <input type="submit" value="Delete" class="btn btn-danger" /> |
         <a asp-action="Index">Back to List</a>
     </form>

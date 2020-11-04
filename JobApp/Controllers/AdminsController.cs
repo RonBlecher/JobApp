@@ -30,37 +30,10 @@ namespace JobApp.Controllers
             return View();
         }
 
+        [Authorize(Roles = "Admin")]
         public IActionResult PublisherIndex()
         {
             return RedirectToAction("List", "publishers");
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Register([Bind("Name,Email,PhoneNum,Password")] Admin admin)
-        {
-            if (ModelState.IsValid)
-            {
-                if (!EmailExists(admin.Email))
-                {
-                    _context.Add(admin);
-                    await _context.SaveChangesAsync();
-                    SignIn(admin);
-                    return RedirectToAction(nameof(Index));
-                }
-                ModelState.AddModelError("Email", "Email already exists in the system");
-            }
-            return View(admin);
-        }
-
-        public IActionResult Register()
-        {
-            return View();
-        }
-
-        public async Task<IActionResult> Logout()
-        {
-            await HttpContext.SignOutAsync();
-            return RedirectToAction("Index", "home");
         }
 
         [Authorize(Roles = "Admin")]
@@ -68,6 +41,12 @@ namespace JobApp.Controllers
         {
             var x = await _context.Admin.ToListAsync();
             return View(x);
+        }
+
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync();
+            return RedirectToAction("Index", "home");
         }
 
         // GET: /<controller>/ 
@@ -106,10 +85,7 @@ namespace JobApp.Controllers
 
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-            var authProperites = new AuthenticationProperties
-            {
-
-            };
+            var authProperites = new AuthenticationProperties() { };
 
             await HttpContext.SignInAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme,
@@ -117,16 +93,18 @@ namespace JobApp.Controllers
                 authProperites);
         }
 
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Search(string name, string email)
         {
             var results = from admin in _context.Admin
-                        where name != null ? admin.Name.ToLower().Contains(name.ToLower()) : true ||
+                          where name != null ? admin.Name.ToLower().Contains(name.ToLower()) : true ||
                             email != null ? admin.Email.ToLower().Contains(email.ToLower()) : true
-                        select admin;
+                          select admin;
             return View("List", await results.ToListAsync());
         }
 
         // GET: Admins/Details/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -135,7 +113,7 @@ namespace JobApp.Controllers
             }
 
             var admin = await _context.Admin
-                .FirstOrDefaultAsync(m => m.ID == id);
+                .FirstOrDefaultAsync(a => a.ID == id);
             if (admin == null)
             {
                 return NotFound();
@@ -145,6 +123,7 @@ namespace JobApp.Controllers
         }
 
         // GET: Admins/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
@@ -155,6 +134,7 @@ namespace JobApp.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("ID,Name,Email,PhoneNum,Password")] Admin admin)
         {
             if (ModelState.IsValid)
@@ -163,7 +143,7 @@ namespace JobApp.Controllers
                 {
                     _context.Add(admin);
                     await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToAction(nameof(List));
                 }
                 ModelState.AddModelError("Email", "Email already exists in the system");
             }
@@ -171,6 +151,7 @@ namespace JobApp.Controllers
         }
 
         // GET: Admins/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -198,6 +179,7 @@ namespace JobApp.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Email,PhoneNum,OldPassword,NewPassword")] AdminEditModel adminEdit)
         {
             if (id != adminEdit.ID)
@@ -221,6 +203,12 @@ namespace JobApp.Controllers
             if (ModelState.IsValid)
             {
                 Admin admin = await _context.Admin.FindAsync(id);
+
+                if (admin == null)
+                {
+                    return NotFound();
+                }
+
                 admin.Name = adminEdit.Name;
                 admin.Email = adminEdit.Email;
                 admin.PhoneNum = adminEdit.PhoneNum;
@@ -256,6 +244,7 @@ namespace JobApp.Controllers
         }
 
         // GET: Admins/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -276,6 +265,7 @@ namespace JobApp.Controllers
         // POST: Admins/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var admin = await _context.Admin.FindAsync(id);

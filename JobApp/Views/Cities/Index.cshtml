@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "City List";
     ViewData["Model"] = "Cities";
-
+    Layout = LayoutDecision.LocateLayout(User);
 }
 
 <h1>Cities</h1>
@@ -32,9 +32,6 @@
                                         <th>
                                             @Html.DisplayNameFor(model => model.RegionName)
                                         </th>
-                                        <th>
-                                            @Html.DisplayNameFor(model => model.CityJobs)
-                                        </th>
                                         <th></th>
                                     </tr>
                                 </thead>
@@ -47,12 +44,6 @@
                                             </td>
                                             <td>
                                                 @Html.DisplayFor(modelItem => item.RegionName)
-                                            </td>
-                                            <td>
-                                                @if (item.CityJobs != null)
-                                                {
-                                                    @Html.DropDownListFor(modelItem => item.CityJobs, new SelectList(item.CityJobs, "CityName", "CityName"))
-                                                }
                                             </td>
                                             <td>
                                                 <a asp-action="Edit" asp-route-id="@item.Name">Edit</a> |

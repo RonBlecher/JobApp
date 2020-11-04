@@ -36,11 +36,9 @@ namespace JobApp.Controllers
 
             var seekers = await _context.Seeker
                 .Where(seeker => seeker.ID.ToString() == idClaim.Value)
-                .Include(s => s.SeekerJobs)
-                .Include(s => s.SeekerSkills)
+                .Include(s => s.SeekerJobs).ThenInclude(sj => sj.Job)
+                .Include(s => s.SeekerSkills).ThenInclude(sk => sk.Skill)
                 .ToListAsync();
-
-            EnrichSeekers(seekers);
 
             ViewData["New Jobs"] = FindNewJobs(seekers.First());
 
@@ -68,7 +66,6 @@ namespace JobApp.Controllers
             }).ToList();
         }
 
-
         [HttpGet]
         public async Task<List<JobMonthCount>> GetSeekerNewJobs()
         {
@@ -79,7 +76,6 @@ namespace JobApp.Controllers
                 Month = key.Key,
                 Count = key.Count()
             }).ToList();
-
         }
 
         private List<Job> GetNewJobs(Seeker currentSeeker)
@@ -102,28 +98,12 @@ namespace JobApp.Controllers
 
             var seekers = await _context.Seeker
                 .Where(seeker => seeker.ID.ToString() == idClaim.Value)
-                .Include(s => s.SeekerJobs)
-                .Include(s => s.SeekerSkills)
+                .Include(s => s.SeekerJobs).ThenInclude(sj => sj.Job)
+                .Include(s => s.SeekerSkills).ThenInclude(sk => sk.Skill)
                 .ToListAsync();
-            EnrichSeekers(seekers);
 
             return seekers.First();
         }
-
-        // TODO: remove
-        private void EnrichSeekers(List<Seeker> seekers)
-        {
-            var identity = (ClaimsIdentity)User.Identity;
-            IEnumerable<Claim> claims = identity.Claims;
-            Claim idClaim = claims.Where(claim => claim.Type == "Id").First();
-
-            seekers.ForEach(seeker =>
-            {
-                List<SeekerJob> seekerJobs = _context.SeekerJob.Where(seekerJob => seekerJob.SeekerID.ToString() == idClaim.Value).ToList();
-                seeker.SeekerJobs = seekerJobs;
-            });
-        }
-
 
         // GET: Seekers
         [Authorize(Roles = "Admin")]
@@ -214,9 +194,19 @@ namespace JobApp.Controllers
 
         public async Task<IActionResult> DownloadCV(int? id)
         {
+            var identity = (ClaimsIdentity)User.Identity;
+            IEnumerable<Claim> claims = identity.Claims;
+            Claim idClaim = claims.Where(claim => claim.Type == "Id").First();
+            Claim role = claims.Where(claim => claim.Type == ClaimTypes.Role).First();
+
             if (id == null)
             {
                 return NotFound();
+            }
+
+            if (role.Value == "Seeker" && idClaim.Value != id.ToString())
+            {
+                return RedirectToAction("NoPermission", "Home");
             }
 
             var seeker = await _context.Seeker.FirstOrDefaultAsync(m => m.ID == id);
@@ -234,9 +224,19 @@ namespace JobApp.Controllers
         // GET: Seekers/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+            var identity = (ClaimsIdentity)User.Identity;
+            IEnumerable<Claim> claims = identity.Claims;
+            Claim idClaim = claims.Where(claim => claim.Type == "Id").First();
+            Claim role = claims.Where(claim => claim.Type == ClaimTypes.Role).First();
+
             if (id == null)
             {
                 return NotFound();
+            }
+
+            if (role.Value == "Seeker" && idClaim.Value != id.ToString())
+            {
+                return RedirectToAction("NoPermission", "Home");
             }
 
             var seeker = await _context.Seeker
@@ -252,6 +252,7 @@ namespace JobApp.Controllers
         }
 
         // GET: Seekers/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
@@ -262,12 +263,29 @@ namespace JobApp.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("CVObj,ID,Name,Email,PhoneNum,Password")] Seeker seeker)
         {
             if (ModelState.IsValid)
             {
                 if (!EmailExists(seeker.Email))
                 {
+                    if (seeker.CVObj != null)
+                    {
+                        if (seeker.CVObj.Length > _fileSizeLimit)
+                        {
+                            ModelState.AddModelError("CVObj", "File size is over 5MB");
+                            return View(seeker);
+                        }
+
+                        using (MemoryStream ms = new MemoryStream())
+                        {
+                            seeker.CVObj.CopyTo(ms);
+                            seeker.CV = ms.ToArray();
+                            seeker.CVFileName = seeker.CVObj.FileName;
+                        }
+                    }
+
                     _context.Add(seeker);
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(List));
@@ -420,6 +438,7 @@ namespace JobApp.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Seeker")]
         public async Task<IActionResult> MyRegions(SeekerRegionViewModel srvm)
         {
             var identity = (ClaimsIdentity)User.Identity;
@@ -469,6 +488,7 @@ namespace JobApp.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Seeker")]
         public async Task<IActionResult> MySkills(SeekerSkillViewModel ssvm)
         {
             var identity = (ClaimsIdentity)User.Identity;
@@ -519,9 +539,9 @@ namespace JobApp.Controllers
         }
 
         // POST: Seekers/Delete/5
-        [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var seeker = await _context.Seeker.FindAsync(id);

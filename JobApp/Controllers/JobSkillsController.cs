@@ -12,6 +12,7 @@ namespace JobApp.Controllers
 {
     public class JobSkillsController : Controller
     {
+        /*
         private readonly JobAppContext _context;
 
         public JobSkillsController(JobAppContext context)
@@ -19,7 +20,6 @@ namespace JobApp.Controllers
             _context = context;
         }
 
-        /*
         // GET: JobSkills
         public async Task<IActionResult> Index()
         {

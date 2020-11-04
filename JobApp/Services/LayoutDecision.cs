@@ -5,31 +5,33 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 
-
 public class LayoutDecision
 {
     public static string LocateLayout(ClaimsPrincipal User)
     {
-        string Layout = "";
+        string layout = "";
 
-        var identity = (ClaimsIdentity)User.Identity;
+        var identity = (ClaimsIdentity) User.Identity;
         IEnumerable<Claim> claims = identity.Claims;
         Claim roleClaim = claims.Where(claim => claim.Type == ClaimTypes.Role).First();
-        if (roleClaim.Value == "Seeker")
-        {
-            Layout = "_Layout_seekers";
 
-        }
-        else if (roleClaim.Value.ToString() == "Publisher")
+        switch (roleClaim.Value)
         {
-            Layout = "_Layout_publishers";
+            case "Seeker":
+                layout = "_Layout_seekers";
+                break;
 
-        }
-        else if (roleClaim.Value.ToString() == "Admin")
-        {
-            Layout = "_Layout_admins";
-        }
+            case "Publisher":
+                layout = "_Layout_publishers";
+                break;
 
-        return Layout;
+            case "Admin":
+                layout = "_Layout_admins";
+                break;
+
+            default:
+                break;
+        }
+        return layout;
     }
 }
