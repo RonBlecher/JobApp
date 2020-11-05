@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace JobApp.Models
@@ -10,6 +11,7 @@ namespace JobApp.Models
     {
         public int ID { get; set; }
 
+        [JsonIgnore]
         [Required]
         public Publisher Publisher { get; set; }
 
@@ -25,10 +27,13 @@ namespace JobApp.Models
         [Required]
         public DateTime LastEdited { get; set; }
 
+        [JsonIgnore]
         public ICollection<JobSkill> JobSkills { get; set; }
 
+        [JsonIgnore]
         public ICollection<CityJob> JobCities { get; set; }
 
+        [JsonIgnore]
         public ICollection<SeekerJob> JobSeekers { get; set; }
 
         public double Lon { get; set; }

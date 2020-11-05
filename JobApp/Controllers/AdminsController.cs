@@ -27,6 +27,11 @@ namespace JobApp.Controllers
         [Authorize(Roles = "Admin")]
         public IActionResult Index()
         {
+            ViewData["SeekersCount"] = 30;
+            ViewData["PublishedJobsCount"] = 20;
+            ViewData["AppliedCvCount"] = 10;
+            ViewData["PublishersCount"] = 5;
+
             return View();
         }
 
