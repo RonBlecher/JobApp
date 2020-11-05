@@ -391,7 +391,7 @@ md = {
         }
 
         function getHigest(data) {
-            highestValue = data[0].count
+            highestValue = data[0] && data[0].count || 0
 
             data.forEach(monthCount => {
                 highestValue = highestValue > monthCount.count ? highestValue : monthCount.count
