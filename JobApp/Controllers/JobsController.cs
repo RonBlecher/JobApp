@@ -62,7 +62,7 @@ namespace JobApp.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Seeker")]
+        [Authorize(Roles = "Seeker, Admin")]
         public async Task<List<Job>> AllPublishedJobs()
         {
             List<Job> jobs = await _context.Job

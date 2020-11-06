@@ -44,7 +44,7 @@
     <div class="wrapper ">
         <div class="sidebar" data-color="purple" data-background-color="white" data-image="~/img/sidebar-1.jpg">
             <div class="logo">
-                @Html.ActionLink("Job App", "index")
+                @Html.ActionLink("Job App", "index", "publishers")
             </div>
             <div class="sidebar-wrapper">
                 <ul class="nav">
@@ -62,7 +62,7 @@
                     </li>
                     <li class="nav-item ">
                         <a class="nav-link" href="/jobs/create/@publisherId">
-                            <i class="material-icons">library_books</i>
+                            <i class="material-icons">publish</i>
                             <p>Publish Job</p>
                         </a>
                     </li>
@@ -151,7 +151,7 @@
                                     </div>
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownProfile">
-                                    <a class="dropdown-item" href="#">Profile</a>
+                                    <a class="dropdown-item" href="/publishers/edit/@publisherId">Profile</a>
                                     <a class="dropdown-item" href="#">Settings</a>
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" href="/home/logout">Log out</a>
