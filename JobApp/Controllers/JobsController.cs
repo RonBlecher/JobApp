@@ -54,6 +54,20 @@ namespace JobApp.Controllers
             return View(jobs);
         }
 
+        [HttpGet]
+        [Authorize(Roles = "Seeker")]
+        public async Task<List<Job>> AllPublishedJobs()
+        {
+            List<Job> jobs = await _context.Job
+                .Include(j => j.Publisher)
+                .Include(j => j.JobSeekers).ThenInclude(js => js.Seeker)
+                .Include(j => j.JobSkills)
+                .Include(j => j.JobCities)
+                .ToListAsync();
+
+            return jobs;
+        }
+
 
         [HttpGet]
         [Authorize(Roles = "Publisher")]

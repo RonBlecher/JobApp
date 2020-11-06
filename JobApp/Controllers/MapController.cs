@@ -15,5 +15,10 @@ namespace JobApp.Controllers
         {
             return View();
         }
+
+        public IActionResult Seeker()
+        {
+            return View();
+        }
     }
 }

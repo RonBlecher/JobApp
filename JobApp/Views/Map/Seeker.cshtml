@@ -28,13 +28,10 @@
             zoom: 8,
         })
 
-        $.get("/jobs/MyPublishedJobs", function (data) {
+        $.get("/jobs/AllPublishedJobs", function (data) {
             data.forEach(job => setMarkers(job))
         });
     }
-
- 
-
     function setMarkers(job) {
 
         new google.maps.Marker({
