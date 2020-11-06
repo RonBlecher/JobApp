@@ -10,10 +10,12 @@
 
 <h1>My Job Suggestions</h1>
 
-<hr />
-
-<h1>My Applied Jobs</h1>
-
+@if (seeker.CV == null)
+{
+    <aside style="width: 33%; padding-left: 15px; font-style: italic; background-color: firebrick;">
+        <h3>Please upload CV file to apply for jobs</h3>
+    </aside>
+}
 <div class="content2">
     <div class="container-fluid">
         <div class="row">
@@ -21,7 +23,7 @@
                 <div class="card">
                     <div class="card-header card-header-primary">
                         <h4 class="card-title">Jobs</h4>
-                        <p class="card-category"> All jobs information</p>
+                        <p class="card-category"> All suggested jobs information</p>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -43,11 +45,14 @@
                                         <th>
                                             @Html.DisplayName("Publisher")
                                         </th>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.LastEdited)
+                                        </th>
                                         <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach (var item in appliedJobs)
+                                    @foreach (var item in Model)
                                     {
                                     <tr>
                                         <td>
@@ -76,9 +81,102 @@
                                             @Html.DisplayFor(modelItem => item.Publisher.Name)
                                         </td>
                                         <td>
-                                            @Html.Raw(item.JobSeekers.Where(jobSeeker => jobSeeker.SeekerID == seeker.ID).First().SubmitDate)
+                                            @Html.DisplayFor(modelItem => item.LastEdited)
+                                        </td>
+                                        <td>
+                                            @if (seeker.CV != null && item.JobSeekers.Where(jobSeeker => jobSeeker.SeekerID == seeker.ID).ToList().Count() == 0)
+                                            {
+                                                <a asp-action="ApplyCV" asp-route-id="@item.ID">Apply CV</a>
+                                            }
+                                            else
+                                            {
+                                                @Html.Raw("Can't apply")
+                                            }
                                         </td>
                                     </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr />
+
+<h1>My Applied Jobs</h1>
+
+<div class="content2">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-primary">
+                        <h4 class="card-title">Jobs</h4>
+                        <p class="card-category"> All applied jobs information</p>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.Title)
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.Description)
+                                        </th>
+                                        <th>
+                                            @Html.DisplayName("Required Skills")
+                                        </th>
+                                        <th>
+                                            @Html.DisplayName("Cities")
+                                        </th>
+                                        <th>
+                                            @Html.DisplayName("Publisher")
+                                        </th>
+                                        <th>
+                                            @Html.DisplayName("Applied on")
+                                        </th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in appliedJobs)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Title)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Description)
+                                            </td>
+                                            <td>
+                                                @foreach (var skill in item.JobSkills)
+                                                {
+                                                    <div>
+                                                        @Html.DisplayFor(modelItem => skill.SkillName)
+                                                    </div>
+                                                }
+                                            </td>
+                                            <td>
+                                                @foreach (var city in item.JobCities)
+                                                {
+                                                    <div>
+                                                        @Html.DisplayFor(modelItem => city.CityName)
+                                                    </div>
+                                                }
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Publisher.Name)
+                                            </td>
+                                            <td>
+                                                @Html.Raw(item.JobSeekers.Where(js => js.SeekerID == seeker.ID && js.JobID == item.ID).First().SubmitDate)
+                                            </td>
+                                        </tr>
                                     }
                                 </tbody>
                             </table>

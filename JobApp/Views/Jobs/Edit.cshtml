@@ -73,6 +73,48 @@
     </div>
 </div>
 
+<script src="~/js/core/jquery.min.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDMnkR_IpENkGrRXP5PxVOEDDjgjSXqpfU&callback=initMap"
+        defer></script>
+
+<script>
+    let map;
+    let currentMarker = null
+
+    function initMap() {
+        map = new google.maps.Map(document.getElementById("map"), {
+            center: { lat: 31.766, lng: 35.222 },
+            zoom: 8,
+        })
+
+        var lat_val = parseFloat(document.getElementById("lat").value);
+        var lon_val = parseFloat(document.getElementById("lon").value);
+        currentMarker = new google.maps.Marker({
+            position: { lat: lat_val, lng: lon_val },
+            map,
+            title: "Job Marker",
+        });
+
+        map.addListener("click", (e) => {
+            $('#lon').val(e.latLng.lng)
+            $('#lat').val(e.latLng.lat)
+            if (currentMarker) {
+                currentMarker.setMap(null);
+                currentMarker = null
+            }
+            currentMarker = placeMarkerAndPanTo(e.latLng, map);
+        });
+
+        function placeMarkerAndPanTo(latLng, map) {
+            return new google.maps.Marker({
+                position: latLng,
+                map: map,
+            });
+            map.panTo(latLng);
+        }
+    }
+</script>
+
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

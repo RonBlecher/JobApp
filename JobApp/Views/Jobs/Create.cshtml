@@ -33,12 +33,6 @@
                 <input asp-for="Description" class="form-control" />
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
-            @*<div class="form-group">
-                <label asp-for="PublisherId" class="control-label"></label>
-                @Html.DropDownListFor(model => model.PublisherId, listItems, "Select publisher")
-
-                <span asp-validation-for="PublisherId" class="text-danger"></span>
-            </div>*@
             <div class="form-group">
                 <label asp-for="JobSkillsId" class="control-label"></label>
                 @Html.ListBoxFor(model => model.JobSkillsId, jobSkillsItems, "Select Skills")
@@ -78,7 +72,7 @@
 
     function initMap() {
         map = new google.maps.Map(document.getElementById("map"), {
-            center: { lat: 32.397, lng: 31.644 },
+            center: { lat: 31.766, lng: 35.222 },
             zoom: 8,
         })
 

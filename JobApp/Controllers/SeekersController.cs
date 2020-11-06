@@ -47,11 +47,8 @@ namespace JobApp.Controllers
 
         private int FindNewJobs(Seeker currentSeeker)
         {
-            List<Job> allJobs = _context.Job.ToList();
-
             List<Job> matchedJobs = GetNewJobs(currentSeeker);
-
-            return allJobs.Count - matchedJobs.Count;
+            return matchedJobs.Count;
         }
 
         [HttpGet]
@@ -80,12 +77,22 @@ namespace JobApp.Controllers
 
         private List<Job> GetNewJobs(Seeker currentSeeker)
         {
-            List<Job> allJobs = _context.Job.ToList();
+            List<string> seekSkills = new List<string>();
+            _context.SeekerSkill.Where(sk => sk.SeekerID == currentSeeker.ID).ForEachAsync(sk => seekSkills.Add(sk.SkillName));
 
-            List<Job> newJobs = allJobs.Where(job =>
-            {
-                return currentSeeker.SeekerJobs.Where(seekerJob => seekerJob.JobID != job.ID).ToList().Count() > 0;
-            }).ToList();
+            List<string> seekRegions = new List<string>();
+            _context.SeekerRegion.Where(sr => sr.SeekerID == currentSeeker.ID).ForEachAsync(sr => seekRegions.Add(sr.RegionName));
+
+            List<Job> newJobs = _context.Job
+                .Include(j => j.Publisher)
+                .Include(j => j.JobSeekers).ThenInclude(js => js.Seeker)
+                .Include(j => j.JobSkills).ThenInclude(js => js.Skill)
+                .Include(j => j.JobCities).ThenInclude(jc => jc.City)
+                .Where(j => j.JobSeekers.Any(js => js.SeekerID == currentSeeker.ID && js.JobID == j.ID) == false)
+                .Where(j => j.JobSkills.Any(js => seekSkills.Contains(js.SkillName)))
+                .Where(j => j.JobCities.Any(jc => seekRegions.Contains(jc.City.RegionName)))
+                .OrderByDescending(j => j.LastEdited)
+                .ToList();
 
             return newJobs;
         }

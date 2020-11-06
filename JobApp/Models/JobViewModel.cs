@@ -22,16 +22,20 @@ namespace JobApp.Models
         [Required]
         public DateTime LastEdited { get; set; }
 
+        [Required]
         [Display(Name = "Skills")]
         public ICollection<string> JobSkillsId { get; set; }
 
+        [Required]
         [Display(Name = "Cities")]
         public ICollection<string> JobCities { get; set; }
 
         public ICollection<SeekerJob> JobSeekers { get; set; }
 
+        [Required]
         public double Lon { get; set; }
 
+        [Required]
         public double Lat { get; set; }
     }
 }

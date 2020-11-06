@@ -39,8 +39,10 @@ namespace JobApp.Models
         [JsonIgnore]
         public ICollection<SeekerJob> JobSeekers { get; set; }
 
+        [Required]
         public double Lon { get; set; }
 
+        [Required]
         public double Lat { get; set; }
     }
 }

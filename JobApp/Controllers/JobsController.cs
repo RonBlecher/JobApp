@@ -45,18 +45,39 @@ namespace JobApp.Controllers
             IEnumerable<Claim> claims = identity.Claims;
             Claim idClaim = claims.Where(claim => claim.Type == "Id").First();
 
+            Seeker seeker = await _context.Seeker.FirstAsync(s => s.ID.ToString() == idClaim.Value);
+            List<Job> appliedJobs = await _context.SeekerJob
+                .Where(js => js.SeekerID.ToString() == idClaim.Value)
+                .OrderByDescending(js => js.SubmitDate)
+                .Select(js => js.Job)
+                .ToListAsync();
+            appliedJobs.ForEach(j =>
+            {
+                j.Publisher = _context.Publisher.First(p => p.ID == j.PublisherId);
+                j.JobSeekers = _context.SeekerJob.Where(sj => sj.SeekerID == seeker.ID).Include(sj => sj.Seeker).ToList();
+                j.JobSkills = _context.JobSkill.Where(js => js.JobID == j.ID).Include(js => js.Skill).ToList();
+                j.JobCities = _context.CityJob.Where(cj => cj.JobID == j.ID).Include(cj => cj.City).ToList();
+            });
+
+            ViewData["Seeker"] = seeker;
+            ViewData["AppliedJobs"] = appliedJobs;
+
+            List<string> seekSkills = new List<string>();
+            await _context.SeekerSkill.Where(sk => sk.SeekerID == seeker.ID).ForEachAsync(sk => seekSkills.Add(sk.SkillName));
+
+            List<string> seekRegions = new List<string>();
+            await _context.SeekerRegion.Where(sr => sr.SeekerID == seeker.ID).ForEachAsync(sr => seekRegions.Add(sr.RegionName));
+
             List<Job> jobs = await _context.Job
                 .Include(j => j.Publisher)
                 .Include(j => j.JobSeekers).ThenInclude(js => js.Seeker)
                 .Include(j => j.JobSkills).ThenInclude(js => js.Skill)
                 .Include(j => j.JobCities).ThenInclude(jc => jc.City)
+                .Where(j => j.JobSeekers.Any(js => js.SeekerID == seeker.ID && js.JobID == j.ID) == false)
+                .Where(j => j.JobSkills.Any(js => seekSkills.Contains(js.SkillName)))
+                .Where(j => j.JobCities.Any(jc => seekRegions.Contains(jc.City.RegionName)))
+                .OrderByDescending(j => j.LastEdited)
                 .ToListAsync();
-
-            ViewData["Seeker"] = await _context.Seeker.FirstAsync(s => s.ID.ToString() == idClaim.Value);
-            ViewData["AppliedJobs"] = await _context.SeekerJob
-                .Where(js => js.SeekerID.ToString() == idClaim.Value)
-                .OrderByDescending(js => js.SubmitDate)
-                .Select(js => js.Job).ToListAsync();
 
             return View(jobs);
         }
@@ -161,7 +182,7 @@ namespace JobApp.Controllers
             IEnumerable<Claim> claims = identity.Claims;
             Claim idClaim = claims.Where(claim => claim.Type == "Id").First();
 
-            jobViewModel.PublisherId = int.Parse(idClaim.Value);
+            jobViewModel.PublisherId = Convert.ToInt32(idClaim.Value);
 
             Job job = new Job();
 
