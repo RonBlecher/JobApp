@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using JobApp.Data;
 using JobApp.Models;
@@ -156,8 +155,14 @@ namespace JobApp.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Publisher")]
-        public async Task<IActionResult> Create([Bind("Title, Description, JobSkillsId, PublisherId, JobCities, Lon, Lat")] JobViewModel jobViewModel)
+        public async Task<IActionResult> Create([Bind("Title, Description, JobSkillsId, JobCities, Lon, Lat")] JobViewModel jobViewModel)
         {
+            var identity = (ClaimsIdentity)User.Identity;
+            IEnumerable<Claim> claims = identity.Claims;
+            Claim idClaim = claims.Where(claim => claim.Type == "Id").First();
+
+            jobViewModel.PublisherId = int.Parse(idClaim.Value);
+
             Job job = new Job();
 
             if (ModelState.IsValid)
@@ -171,6 +176,7 @@ namespace JobApp.Controllers
 
                 _context.Add(job);
                 await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(MyPublishedJobsView));
             } 
             else
