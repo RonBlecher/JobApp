@@ -25,14 +25,74 @@ namespace JobApp.Controllers
 
         // GET: Admins
         [Authorize(Roles = "Admin")]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            ViewData["SeekersCount"] = 30;
-            ViewData["PublishedJobsCount"] = 20;
-            ViewData["AppliedCvCount"] = 10;
-            ViewData["PublishersCount"] = 5;
+            ViewData["SeekersCount"] = await GetSeekersCount();
+            ViewData["PublishersCount"] = await GetPublishersCount();
+            ViewData["PublishedJobsCount"] = await GetPublishedJobsCount();
+            ViewData["AppliedCvCount"] = await GetAppliedCvsCount();
+            ViewData["TopPublishers"] = await GetTopPublishers();
+            ViewData["TopSeekers"] = await GetTopSeekers();
 
             return View();
+        }
+
+        private async Task<int> GetSeekersCount()
+        {
+            var seekers = await _context.Seeker.ToListAsync();
+
+            return seekers.Count;
+        }
+
+        private async Task<int> GetPublishersCount()
+        {
+            var publishers = await _context.Publisher.ToListAsync();
+
+            return publishers.Count;
+        }
+
+        private async Task<int> GetPublishedJobsCount()
+        {
+            var publishers = await _context.Publisher.Include(p => p.PostedJobs).ToListAsync();
+            int publishedJobs = 0;
+
+            foreach (var pub in publishers) {
+                publishedJobs += pub.PostedJobs.Count;
+            }
+            return publishedJobs;
+        }
+
+        private async Task<int> GetAppliedCvsCount()
+        {
+            var seekers = await _context.Seeker
+               .Include(s => s.SeekerJobs).ThenInclude(sj => sj.Job)
+               .Include(s => s.SeekerSkills).ThenInclude(sk => sk.Skill)
+               .ToListAsync();
+            int appliedCvs = 0;
+
+            foreach (var seeker in seekers)
+            {
+                appliedCvs += seeker.SeekerJobs.Count;
+            }
+
+            return appliedCvs;
+        }
+
+        private async Task<List<Publisher>> GetTopPublishers()
+        {
+            var publishers = await _context.Publisher.Include(p => p.PostedJobs).ToListAsync();
+
+            return publishers.OrderByDescending(x => x.PostedJobs.Count).Take(5).ToList();
+        }
+
+        private async Task<List<Seeker>> GetTopSeekers()
+        {
+            var seekers = await _context.Seeker
+               .Include(s => s.SeekerJobs).ThenInclude(sj => sj.Job)
+               .Include(s => s.SeekerSkills).ThenInclude(sk => sk.Skill)
+               .ToListAsync();
+
+            return seekers.OrderByDescending(x => x.SeekerJobs.Count).Take(5).ToList();
         }
 
         [Authorize(Roles = "Admin")]
