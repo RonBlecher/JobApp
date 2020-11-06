@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<JobApp.Models.Job>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "My Published Jobs";
     Layout = LayoutDecision.LocateLayout(User);
 }
 
@@ -23,7 +23,7 @@
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table">
-                                <thead>
+                                <thead class=" text-primary">
                                     <tr>
                                         <th>
                                             @Html.DisplayNameFor(model => model.Title)
@@ -35,10 +35,10 @@
                                             @Html.DisplayNameFor(model => model.JobSkills)
                                         </th>
                                         <th>
-                                            @Html.DisplayNameFor(model => model.JobSeekers)
+                                            @Html.DisplayNameFor(model => model.JobCities)
                                         </th>
                                         <th>
-                                            @Html.DisplayNameFor(model => model.Publisher.Name)
+                                            @Html.DisplayNameFor(model => model.LastEdited)
                                         </th>
                                         <th></th>
                                     </tr>
@@ -65,18 +65,18 @@
                                             }
                                         </td>
                                         <td>
-                                            @if (item.JobSeekers != null)
+                                            @if (item.JobCities != null)
                                             {
-                                                @foreach (var jobSeeker in item.JobSeekers)
+                                                @foreach (var jobCity in item.JobCities)
                                                 {
                                                     <div>
-                                                        @Html.DisplayFor(modelItem => jobSeeker.SeekerID)
+                                                        @Html.DisplayFor(modelItem => jobCity.CityName)
                                                     </div>
                                                 }
                                             }
                                         </td>
                                         <td>
-                                            @Html.DisplayFor(modelItem => item.Publisher.Name)
+                                            @Html.DisplayFor(modelItem => item.LastEdited)
                                         </td>
                                         <td>
                                             <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |

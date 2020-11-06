@@ -8,6 +8,8 @@ namespace JobApp.Models
 {
     public class JobViewModel
     {
+        public int ID { get; set; }
+
         [Required]
         public int PublisherId { get; set; }
 
@@ -20,9 +22,11 @@ namespace JobApp.Models
         [Required]
         public DateTime LastEdited { get; set; }
 
+        [Display(Name = "Skills")]
         public ICollection<string> JobSkillsId { get; set; }
 
-        public ICollection<CityJob> JobCities { get; set; }
+        [Display(Name = "Cities")]
+        public ICollection<string> JobCities { get; set; }
 
         public ICollection<SeekerJob> JobSeekers { get; set; }
 

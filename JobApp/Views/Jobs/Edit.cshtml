@@ -1,8 +1,24 @@
-﻿@model JobApp.Models.Job
+﻿@model JobApp.Models.JobViewModel
 
 @{
     ViewData["Title"] = "Edit";
     Layout = LayoutDecision.LocateLayout(User);
+
+    var publisher = (Publisher)ViewData["Publisher"];
+
+    var skills = (List<Skill>)ViewData["Skills"];
+    SelectList jobSkillsItems = new SelectList(skills.Select(s => s.Name));
+    foreach (var skill in jobSkillsItems)
+    {
+        skill.Selected = Model.JobSkillsId.Contains(skill.Text);
+    }
+
+    var cities = (List<City>)ViewData["Cities"];
+    SelectList jobCitiesItems = new SelectList(cities.Select(c => c.Name));
+    foreach (var city in jobCitiesItems)
+    {
+        city.Selected = Model.JobCities.Contains(city.Text);
+    }
 }
 
 <h1>Edit</h1>
@@ -15,6 +31,9 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="ID" />
             <div class="form-group">
+                <input type="hidden" id="PublisherId" name="PublisherId" value="@publisher.ID" />
+            </div>
+            <div class="form-group">
                 <label asp-for="Title" class="control-label"></label>
                 <input asp-for="Title" class="form-control" />
                 <span asp-validation-for="Title" class="text-danger"></span>
@@ -25,14 +44,33 @@
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="JobSkillsId" class="control-label"></label>
+                @Html.ListBoxFor(model => model.JobSkillsId, jobSkillsItems, "Select Skills")
+                <span asp-validation-for="JobSkillsId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="JobCities" class="control-label"></label>
+                @Html.ListBoxFor(model => model.JobCities, jobCitiesItems, "Select Cities")
+                <span asp-validation-for="JobCities" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <div id="map"></div>
+            </div>
+            <div class="form-group">
+                <label asp-for="Lon" class="control-label"></label>
+                <input id="lon" asp-for="Lon" class="form-control" readonly="readonly" />
+                <span asp-validation-for="Lon" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Lat" class="control-label"></label>
+                <input id="lat" asp-for="Lat" class="form-control" readonly="readonly" />
+                <span asp-validation-for="Lat" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {

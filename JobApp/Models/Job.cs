@@ -25,12 +25,15 @@ namespace JobApp.Models
         public string Description { get; set; }
 
         [Required]
+        [Display(Name = "Last Edited")]
         public DateTime LastEdited { get; set; }
 
         [JsonIgnore]
+        [Display(Name = "Skills")]
         public ICollection<JobSkill> JobSkills { get; set; }
 
         [JsonIgnore]
+        [Display(Name = "Cities")]
         public ICollection<CityJob> JobCities { get; set; }
 
         [JsonIgnore]
