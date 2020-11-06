@@ -36,6 +36,8 @@
     <link href="~/demo/demo.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/StyleSheet.css" />
     @RenderSection("stylesLogin", false)
+    <title>@ViewBag.Title</title>
+
 </head>
 
 <body class="">
@@ -64,12 +66,12 @@
                             <p>Publish Job</p>
                         </a>
                     </li>
-                    <li class="nav-item ">
+                    @*<li class="nav-item ">
                         <a class="nav-link" href="/jobs/MyPublishedJobs/@publisherId">
                             <i class="material-icons">library_books</i>
                             <p>My Published Jobs json</p>
                         </a>
-                    </li>
+                    </li>*@
                     <li class="nav-item ">
                         <a class="nav-link" href="/jobs/MyPublishedJobsView/@publisherId">
                             <i class="material-icons">library_books</i>

@@ -33,6 +33,8 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <link rel="stylesheet" href="~/css/StyleSheet.css" />
     @RenderSection("stylesLogin", false)
+    <title>@ViewBag.Title</title>
+
 </head>
 
 <body class="">
@@ -432,6 +434,15 @@
             md.initDashboardPageCharts();
 
         });</script>
+
+    <script>
+        $("#nav li").click(function (e) {
+            debugger
+            $('#nav li.active').removeClass('active');
+            $(e.className).removeClass('active');
+        });
+        
+    </script>
     @RenderSection("Scripts", required: false)
 </body>
 
