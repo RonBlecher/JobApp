@@ -1,7 +1,7 @@
 ﻿@model JobApp.Models.Seeker
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "JobApp";
     int newJobNumber = (int)ViewData["New Jobs"];
     var date = DateTime.Now.ToString("dd/MM/yyyy");
     Layout = LayoutDecision.LocateLayout(User);

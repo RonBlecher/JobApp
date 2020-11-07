@@ -1,9 +1,14 @@
-﻿@model IEnumerable<JobApp.Models.Admin>
+﻿@using System.Security.Claims;
+
+@model IEnumerable<JobApp.Models.Admin>
 
 @{
-    ViewData["Title"] = "Index";
-    ViewData["Model"] = "Admins";
+    ViewData["Title"] = "Admins List";
     Layout = LayoutDecision.LocateLayout(User);
+
+    var identity = (ClaimsIdentity)User.Identity;
+    IEnumerable<Claim> claims = identity.Claims;
+    Claim idClaim = claims.Where(claim => claim.Type == "Id").First();
 }
 
 <h1>Admins</h1>
@@ -26,12 +31,12 @@
                             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                             <div class="form-group">
                                 <label class="control-label">Search By Name:</label>
-                                <input name="name" class="form-control"/>
+                                <input name="name" class="form-control" />
                                 <span class="text-danger"></span>
                             </div>
                             <div class="form-group" style="top:auto">
                                 <label class="control-label">Search By Email:</label>
-                                <input name="email" class="form-control"/>
+                                <input name="email" class="form-control" />
                                 <span class="text-danger"></span>
                             </div>
                             <input type="submit" value="Search" class="btn btn-primary" />
@@ -69,8 +74,12 @@
                                             </td>
                                             <td>
                                                 <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                                                <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                                                <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+                                                <a asp-action="Details" asp-route-id="@item.ID">Details</a>
+                                                @if (item.ID.ToString() != idClaim.Value)
+                                                {
+                                                    @Html.Raw(" | ")
+                                                    <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+                                                }
                                             </td>
                                         </tr>
                                     }
@@ -85,5 +94,5 @@
 </div>
 
 @section style{
-    <link rel="stylesheet" href="~/css/StyleSheet.css"/>
+    <link rel="stylesheet" href="~/css/StyleSheet.css" />
 }

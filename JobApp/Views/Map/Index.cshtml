@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Jobs Map";
     Layout = LayoutDecision.LocateLayout(User);
 }
 
@@ -40,6 +40,6 @@
         new google.maps.Marker({
             position: { lat: job.lat, lng: job.lon },
             map,
-            title: "Hello World!",
+            title: "Job Marker",
         });
     }</script>

@@ -317,6 +317,15 @@ namespace JobApp.Controllers
                 return NotFound();
             }
 
+            var identity = (ClaimsIdentity)User.Identity;
+            IEnumerable<Claim> claims = identity.Claims;
+            Claim idClaim = claims.Where(claim => claim.Type == "Id").First();
+
+            if (id.ToString() == idClaim.Value)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             var admin = await _context.Admin
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (admin == null)
