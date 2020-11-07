@@ -3,11 +3,13 @@
 @{
     ViewData["Title"] = "Index";
     Layout = LayoutDecision.LocateLayout(User);
+    var date = DateTime.Now.ToString("dd/MM/yyyy");
+
 }
 
 <style>
     .bar {
-        fill: #9c27b0;
+        fill: rgba(255, 255, 255, 0.8);
     }
     /* Lighten the axis lines */
     #x-axis path, #y-axis line, #y-axis path {
@@ -26,14 +28,38 @@
     #x-axis text {
         font-weight: 600;
     }
-
 </style>
 
-<svg id="chart"></svg>
+
+<div class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-chart">
+                    <div class="card-header card-header-success">
+                        <svg id="chart"></svg>
+                    </div>
+                    <div class="card-body">
+                        <h4 class="card-title">
+                            Job Published By Locations
+                        </h4>
+                    </div>
+                    <div class="card-footer">
+                        <div class="stats">
+                            <i class="material-icons">access_time</i> updated at @date
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
 <script src="https://d3js.org/d3.v4.min.js"></script>
 
-<script>
-    function transferToGraphObject(data) {
+<script>function transferToGraphObject(data) {
         return data.map(obj => {
             return {
                 name: obj.city,
@@ -51,7 +77,7 @@
 
                 var data = transferToGraphObject(data)
 
-                // Set the dimensions of our chart to be displayed 
+                // Set the dimensions of our chart to be displayed
                 var barsWidth = 500,
                     barsHeight = 400,
                     axisMargin = 100;
@@ -61,7 +87,7 @@
 
 
                 // Select the chart element on the page so we can reference it in code
-                // Also set the width and height attributes of the chart SVG 
+                // Also set the width and height attributes of the chart SVG
                 var chart = d3.select('#chart')
                     .attr('width', chartWidth + 100)
                     .attr('height', chartHeight);
@@ -129,5 +155,4 @@
                     .attr('transform', 'rotate(45)');
             }
         }
-    )
-</script>
+    )</script>
