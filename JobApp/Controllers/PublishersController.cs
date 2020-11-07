@@ -31,6 +31,32 @@ namespace JobApp.Controllers
             return View(x);
         }
 
+        [Authorize(Roles = "Publisher")]
+        [HttpGet]
+        public async Task<List<PublishedJobByCountry>> GetPublishedJobsByCountry()
+        {
+            Publisher publisher = (await GetPublisher());
+
+            var jobCities = publisher.PostedJobs.SelectMany(job => job.JobCities).ToList();
+
+            return jobCities.GroupBy(cityJob => cityJob.CityName).Select(key => new PublishedJobByCountry
+            {
+                City = key.Key,
+                Count = key.Count()
+            }).ToList();
+        }
+
+        private async Task<Publisher> GetPublisher()
+        {
+            var identity = (ClaimsIdentity)User.Identity;
+            IEnumerable<Claim> claims = identity.Claims;
+            Claim idClaim = claims.Where(claim => claim.Type == "Id").First();
+
+            var publishers = await _context.Publisher.Include(p => p.PostedJobs).ThenInclude(i => i.JobCities).Where(pub => pub.ID.ToString().Equals(idClaim.Value)).ToListAsync();
+
+            return publishers.First();
+        }
+
         [Authorize(Roles = "Admin")]
         // GET: Publishers
         public async Task<IActionResult> List(string search)
