@@ -37,7 +37,8 @@
                         <div class="ct-chart" id="websiteViewsChart"></div>
                     </div>
                     <div class="card-body">
-                        <h4 class="card-title">New Jobs Seeker did not see yet: @Html.Raw(newJobNumber)
+                        <h4 class="card-title">
+                            New Jobs Seeker did not see yet: @Html.Raw(newJobNumber)
                         </h4>
                         <a href="jobs/lookingforjobs" class="card-category">Click here to see the new jobs</a>
                     </div>
@@ -67,3 +68,11 @@
         </div>
     </div>
 </div>
+
+<p>Hottest jobs cattegories are: </p>
+@{
+    foreach (var job in ViewBag.jobCategiries)
+    {
+        <p>@job.Name</p>
+    }
+ }

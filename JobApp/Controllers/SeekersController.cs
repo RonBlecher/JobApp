@@ -13,6 +13,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using System.IO;
 using Microsoft.AspNetCore.Http;
+using ServiceReference1;
+using Job = JobApp.Models.Job;
 
 namespace JobApp.Controllers
 {
@@ -42,6 +44,9 @@ namespace JobApp.Controllers
 
             ViewData["New Jobs"] = FindNewJobs(seekers.First());
 
+            JobWSSoapClient jobWSSoapClient = new JobWSSoapClient(JobWSSoapClient.EndpointConfiguration.JobWSSoap);
+            var jobCategories = await jobWSSoapClient.GetJobCategoriesAsync();
+            ViewBag.jobCategiries = jobCategories.GetJobCategoriesResult.Take(5);
             return View(seekers.First());
         }
 

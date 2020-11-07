@@ -9,6 +9,7 @@ using JobApp.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using JobApp.Twitter;
+using Job = JobApp.Models.Job;
 
 namespace JobApp.Controllers
 {
