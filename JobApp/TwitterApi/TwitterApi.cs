@@ -28,10 +28,10 @@ namespace JobApp.Twitter
 
 		public TwitterApi()
 		{
-			this.consumerKey = "consumer key";
-			this.consumerKeySecret = "consumer secret key";
-			this.accessToken = "access token";
-			this.accessTokenSecret = "access token secret";
+			this.consumerKey = Environment.GetEnvironmentVariable("CONSUMER_KEY");
+			this.consumerKeySecret = Environment.GetEnvironmentVariable("CONSUMER_KEY_SECRET");
+			this.accessToken = Environment.GetEnvironmentVariable("ACCESS_TOKEN");
+			this.accessTokenSecret = Environment.GetEnvironmentVariable("ACCESS_TOKEN_SECRET");
 
 			sigHasher = new HMACSHA1(new ASCIIEncoding().GetBytes(string.Format("{0}&{1}", this.consumerKeySecret, this.accessTokenSecret)));
 		}
