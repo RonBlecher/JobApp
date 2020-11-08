@@ -184,13 +184,21 @@ namespace JobApp.Controllers
             Claim idClaim = claims.Where(claim => claim.Type == "Id").First();
 
             jobViewModel.PublisherId = Convert.ToInt32(idClaim.Value);
+            Publisher publisher = await _context.Publisher.FirstAsync(p => p.ID == jobViewModel.PublisherId);
 
             Job job = new Job();
 
             if (ModelState.IsValid)
             {
                 var twitter = new TwitterApi();
-                var messagePost = "Job: " + jobViewModel.Title + "\nDescription: " + jobViewModel.Description;
+                string messagePost = string.Format(
+                    "Job: {0}\n" +
+                    "Description: {1}\n" +
+                    "Publisher: {2}\n" +
+                    "Skills: {3}\n" +
+                    "Cities: {4}",
+                    jobViewModel.Title, jobViewModel.Description, publisher.Name,
+                    String.Join(", ", jobViewModel.JobSkillsId.ToArray()), String.Join(", ", jobViewModel.JobCities.ToArray()));
                 var response = await twitter.Tweet(messagePost);
 
                 job = await jobViewModelToJobConverter.Convert(jobViewModel);
