@@ -277,6 +277,8 @@ namespace JobApp.Controllers
                 {
                     _context.Update(publisher);
                     await _context.SaveChangesAsync();
+                    UpdateIdentityClaim(publisher);
+                    
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -302,6 +304,11 @@ namespace JobApp.Controllers
                 }
             }
             return View(publisherEdit);
+        }
+
+        private void UpdateIdentityClaim(Publisher publisher)
+        {
+            SignIn(publisher);
         }
 
         // GET: Publishers/Delete/5

@@ -404,6 +404,7 @@ namespace JobApp.Controllers
                 {
                     _context.Update(seeker);
                     await _context.SaveChangesAsync();
+                    UpdateIdentityClaim(seeker);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -447,6 +448,11 @@ namespace JobApp.Controllers
             }).OrderBy(r => r.RegionName).ToListAsync();
 
             return View(new SeekerRegionViewModel { RegionCheckBoxItems = allRegions });
+        }
+
+        private void UpdateIdentityClaim(Seeker seeker)
+        {
+            SignIn(seeker);
         }
 
         [HttpPost]
