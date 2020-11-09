@@ -291,6 +291,7 @@ namespace JobApp.Controllers
                 {
                     _context.Update(admin);
                     await _context.SaveChangesAsync();
+                    UpdateIdentityClaim(admin);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -306,6 +307,11 @@ namespace JobApp.Controllers
                 return RedirectToAction(nameof(List));
             }
             return View(adminEdit);
+        }
+
+        private void UpdateIdentityClaim(Admin admin)
+        {
+            SignIn(admin);
         }
 
         // GET: Admins/Delete/5
