@@ -287,11 +287,19 @@ namespace JobApp.Controllers
                     return View(adminEdit);
                 }
 
+                var identity = (ClaimsIdentity)User.Identity;
+                IEnumerable<Claim> claims = identity.Claims;
+                Claim idClaim = claims.Where(claim => claim.Type == "Id").First();
+
                 try
                 {
                     _context.Update(admin);
                     await _context.SaveChangesAsync();
-                    UpdateIdentityClaim(admin);
+
+                    if (admin.ID.ToString() == idClaim.Value)
+                    {
+                        UpdateIdentityClaim(admin);
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
