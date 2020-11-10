@@ -152,8 +152,9 @@ aside#a1 {
 }
 
 p#p1 {
-   text-shadow: 0 0 3px #618ab3, 0 0 5px #3f4a54;
-   font-size:x-large;
+    text-shadow: 0 0 3px #618ab3, 0 0 5px #3f4a54;
+    font-size: x-large;
+    margin-left: 35px;
 }
 
 .cardStyle {
@@ -164,5 +165,29 @@ p#p1 {
 }
 .card.text-white.bg-dark.mb-3 {
     max-width: 25rem;
+}
+
+@font-face {
+    font-family: myFirstFont;
+    src: url(sansation_bold.woff),
+}
+
+th {
+    font-family: myFirstFont;
+    font-size:20px;
+}
+
+td {
+    font-size: 15px;
+}
+
+.card {
+    border: 2px solid rgba(0,0,0,.125);
+    border-bottom-left-radius: 2.25rem;
+    border-bottom-right-radius: 2.25rem;
+}
+
+.card.text-white.bg-dark.mb-3 {
+    border-radius: 2.25rem;
 }
 
