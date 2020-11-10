@@ -107,6 +107,7 @@ namespace JobApp.Controllers
      
         public IActionResult Login(string email, string password)
         {
+
             var identity = (ClaimsIdentity)User.Identity;
             if (identity.IsAuthenticated)
             {
@@ -121,6 +122,7 @@ namespace JobApp.Controllers
             var publishers = _context.Publisher.Where(publisher => publisher.Email == email && publisher.Password == password).ToList();
             if (publishers != null && publishers.Count() == 1)
             {
+                System.Threading.Thread.Sleep(3000);
                 SignIn(publishers.First());
                 return RedirectToAction("Index");
             }

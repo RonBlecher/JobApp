@@ -15,6 +15,7 @@ using System.IO;
 using Microsoft.AspNetCore.Http;
 using ServiceReference1;
 using Job = JobApp.Models.Job;
+using System.Threading;
 
 namespace JobApp.Controllers
 {
@@ -157,8 +158,9 @@ namespace JobApp.Controllers
         }
 
 
-        public IActionResult Login(string email, string password)
-        {
+        public IActionResult Login(string email, string password) {
+
+
             var identity = (ClaimsIdentity)User.Identity;
             if(identity.IsAuthenticated)
             {
@@ -174,6 +176,7 @@ namespace JobApp.Controllers
             var seekers = _context.Seeker.Where(seeker => seeker.Email == email && seeker.Password == password).ToList();
             if (seekers != null && seekers.Count() == 1)
             {
+                System.Threading.Thread.Sleep(3000);
                 SignIn(seekers.First());
                 return RedirectToAction("Index");
             }

@@ -19,12 +19,39 @@
     <!--===============================================================================================-->
     <link rel="stylesheet" type="text/css" href="~/login/css/util.css">
     <link rel="stylesheet" type="text/css" href="~/login/css/main.css">
+
+    <style>
+        div#spinner {
+            display: none;
+            width: 100px;
+            height: 100px;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            text-align: center;
+            padding: 10px;
+            font: normal 16px Tahoma, Geneva, sans-serif;
+            margin-left: -50px;
+            margin-top: -50px;
+            z-index: 2;
+        }
+
+        .spinner-img {
+            width: 100px;
+            height: 100px;
+        }
+    </style>
+
 }
 
 @{
     ViewData["Title"] = "Admin Login";
     Layout = "_Layout_login";
 }
+
+<div id="spinner">
+    <img class="spinner-img" src="~/spinner.gif" />
+</div>
 
 <div class="limiter">
     <div class="container-login100">
@@ -51,7 +78,7 @@
                 </div>
 
                 <div class="container-login100-form-btn p-t-10">
-                    <input type="submit" class="login100-form-btn" value="Login" />
+                    <input onClick="showProgress()" type="submit" class="login100-form-btn" value="Login" />
                 </div>
 
                 <div class="text-center w-full p-t-25 p-b-230">
@@ -64,6 +91,23 @@
         </div>
     </div>
 </div>
+
+
+<script type="text/javascript">var spinnerVisible = false;
+    function showProgress() {
+        if (!spinnerVisible) {
+            $("div#spinner").fadeIn("fast");
+            spinnerVisible = true;
+        }
+    };
+    function hideProgress() {
+        if (spinnerVisible) {
+            var spinner = $("div#spinner");
+            spinner.stop();
+            spinner.fadeOut("fast");
+            spinnerVisible = false;
+        }
+    };</script>
 
 @section loginScripts
 {
