@@ -69,10 +69,14 @@
     </div>
 </div>
 
-<p>Hottest jobs cattegories are: </p>
-@{
-    foreach (var job in ViewBag.jobCategiries)
-    {
-        <p>@job.Name</p>
-    }
- }
+<p id="p1" >Hottest jobs cattegories are: </p>
+
+<div class="card text-white bg-dark mb-3">
+    <div class="card-body">
+            @foreach (var job in ViewBag.jobCategiries)
+            {
+            <p class="card-text cardStyle">@job.Name</p>
+            }
+    </div>
+</div>
+

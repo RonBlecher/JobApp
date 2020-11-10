@@ -1,5 +1,4 @@
 ﻿
-
 /* Footer */
 @import url('https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
 
@@ -110,9 +109,60 @@ section {
     font-size:20px;
 }
 
-
 #map {
     z-index: 2;
     height: calc(100vh - 70px);
     margin-top: 70px;
 }
+
+h1 {
+    text-shadow: 0 0 3px #007bff, 0 0 5px #deb5b5
+}
+
+div.card-icon {
+    width: 80px;
+    height: 100px;
+    transition: width 1s;
+}
+    div.card-icon:hover {
+        width: 100px;
+    }
+
+div h4 {
+   text-shadow: 0 0 3px #618ab3, 0 0 5px #d9e2ea;
+}
+
+h3 {
+    color: red;
+    font-weight: bold;
+    text-decoration: underline;
+    font-size: 23px;
+    padding-top: 10px;
+}
+
+aside#a1 {
+    color: darkblue;
+    width: 30%;
+    padding-left: 15px;
+    margin-left: 15px;
+    float: right;
+    font-style: italic;
+    background-color: #e1e4fd;
+    font-weight: bold;
+}
+
+p#p1 {
+   text-shadow: 0 0 3px #618ab3, 0 0 5px #3f4a54;
+   font-size:x-large;
+}
+
+.cardStyle {
+    font-size: 20px;
+    font-style: italic;
+    font-family: serif;
+    
+}
+.card.text-white.bg-dark.mb-3 {
+    max-width: 25rem;
+}
+
