@@ -131,7 +131,6 @@ namespace JobApp.Controllers
             var admins = _context.Admin.Where(admin => admin.Email == email && admin.Password == password).ToList();
             if (admins != null && admins.Count() == 1)
             {
-                System.Threading.Thread.Sleep(3000);
                 SignIn(admins.First());
                 return RedirectToAction("Index");
             }

@@ -23,4 +23,16 @@ namespace JobApp.Models
 
         public ICollection<CityJob> CityJobs { get; set; }
     }
+
+    public class CityListView
+    {
+        [Display(Name = "City")]
+        public string Name { get; set; }
+
+        [Display(Name = "Region")]
+        public string RegionName { get; set; }
+
+        [Display(Name = "Jobs Number")]
+        public int CityJobsNum { get; set; }
+    }
 }

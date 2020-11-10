@@ -1,4 +1,4 @@
-﻿@model IEnumerable<JobApp.Models.Skill>
+﻿@model IEnumerable<JobApp.Models.SkillListView>
 
 @{
     ViewData["Title"] = "Skills List";
@@ -29,6 +29,9 @@
                                         <th>
                                             @Html.DisplayNameFor(model => model.Name)
                                         </th>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.SkillJobsNum)
+                                        </th>
                                         <th></th>
                                     </tr>
                                 </thead>
@@ -38,6 +41,9 @@
                                         <tr>
                                             <td>
                                                 @Html.DisplayFor(modelItem => item.Name)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.SkillJobsNum)
                                             </td>
                                             <td>
                                                 <a asp-action="Details" asp-route-id="@item.Name">Details</a> |

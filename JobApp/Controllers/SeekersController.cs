@@ -53,14 +53,14 @@ namespace JobApp.Controllers
 
         private int FindNewJobs(Seeker currentSeeker)
         {
-            List<Job> matchedJobs = GetNewJobs(currentSeeker);
-            return matchedJobs.Count;
+            List<Job> matchedJobs = GetNewJobs(currentSeeker).GetAwaiter().GetResult();
+            return matchedJobs.Count();
         }
 
         [HttpGet]
         public async Task<List<JobMonthCount>> GetCvAppliedPerMonth()
         {
-            Seeker seeker = (await GetSeeker());
+            Seeker seeker = await GetSeeker();
 
             return seeker.SeekerJobs.GroupBy(seekerJob => seekerJob.SubmitDate.Month).Select(key => new JobMonthCount
             {
@@ -72,7 +72,7 @@ namespace JobApp.Controllers
         [HttpGet]
         public async Task<List<JobMonthCount>> GetSeekerNewJobs()
         {
-            List<Job> newJobs = GetNewJobs(await GetSeeker());
+            List<Job> newJobs = await GetNewJobs(await GetSeeker());
 
             return newJobs.GroupBy(job => job.LastEdited.Month).Select(key => new JobMonthCount
             {
@@ -176,7 +176,6 @@ namespace JobApp.Controllers
             var seekers = _context.Seeker.Where(seeker => seeker.Email == email && seeker.Password == password).ToList();
             if (seekers != null && seekers.Count() == 1)
             {
-                System.Threading.Thread.Sleep(3000);
                 SignIn(seekers.First());
                 return RedirectToAction("Index");
             }

@@ -27,7 +27,18 @@ namespace JobApp.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Skill.ToListAsync());
+            var skillsView = await (
+                from s in _context.Skill
+                join js in _context.JobSkill on s.Name equals js.SkillName into x1
+
+                from x2 in x1.DefaultIfEmpty()
+                group x2 by s.Name into grouped
+                select new SkillListView
+                {
+                    Name = grouped.Key,
+                    SkillJobsNum = _context.JobSkill.Count(js => js.SkillName == grouped.Key)
+                }).ToListAsync();
+            return View(skillsView);
         }
 
         // GET: Skills/Details/5

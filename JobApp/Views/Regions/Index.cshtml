@@ -1,4 +1,4 @@
-﻿@model IEnumerable<JobApp.Models.Region>
+﻿@model IEnumerable<JobApp.Models.RegionListView>
 
 @{
     ViewData["Title"] = "Regions List";
@@ -18,8 +18,8 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header card-header-primary">
-                        <h4 class="card-title">Jobs</h4>
-                        <p class="card-category"> All jobs information</p>
+                        <h4 class="card-title">Regions</h4>
+                        <p class="card-category"> All regions information</p>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -29,21 +29,33 @@
                                         <th>
                                             @Html.DisplayNameFor(model => model.Name)
                                         </th>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.Cities)
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.RegionJobsNum)
+                                        </th>
                                         <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach (var item in Model)
                                     {
-                                        <tr>
-                                            <td>
-                                                @Html.DisplayFor(modelItem => item.Name)
-                                            </td>
-                                            <td>
-                                                <a asp-action="Details" asp-route-id="@item.Name">Details</a> |
-                                                <a asp-action="Delete" asp-route-id="@item.Name">Delete</a>
-                                            </td>
-                                        </tr>
+                                    <tr>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Name)
+                                        </td>
+                                        <td>
+                                            @Html.ListBox("Region Cities", new SelectList(item.Cities))
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.RegionJobsNum)
+                                        </td>
+                                        <td>
+                                            <a asp-action="Details" asp-route-id="@item.Name">Details</a> |
+                                            <a asp-action="Delete" asp-route-id="@item.Name">Delete</a>
+                                        </td>
+                                    </tr>
                                     }
                                 </tbody>
                             </table>

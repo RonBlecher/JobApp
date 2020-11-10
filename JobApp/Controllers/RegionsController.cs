@@ -27,7 +27,23 @@ namespace JobApp.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Region.Include(r => r.Cities).ToListAsync());
+            var regionsView = await (
+                from r in _context.Region
+                join cj in _context.CityJob.Include(jc => jc.City)
+                on r.Name equals cj.City.RegionName into res
+                from cj in res.DefaultIfEmpty()
+                select new RegionListView
+                {
+                    Name = r.Name,
+                    Cities = r.Cities.Select(c => c.Name).ToList(),
+                    RegionJobsNum = _context.CityJob
+                                     .Include(jc => jc.City)
+                                     .Where(jc => r.Name == jc.City.RegionName)
+                                     .Select(jc => new { jc.CityName })
+                                     .Distinct()
+                                     .Count()
+                }).ToListAsync();
+            return View(regionsView);
         }
 
         // GET: Regions/Details/5

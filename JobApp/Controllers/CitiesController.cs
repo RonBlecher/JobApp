@@ -24,7 +24,17 @@ namespace JobApp.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.City.ToListAsync());
+            var citiesView = await (
+                from c in _context.City
+                join cj in _context.CityJob on c.Name equals cj.CityName into res
+                from cj in res.DefaultIfEmpty()
+                select new CityListView
+                {
+                    Name = c.Name,
+                    RegionName = c.RegionName,
+                    CityJobsNum = _context.CityJob.Count(cj => cj.CityName == c.Name)
+                }).Distinct().ToListAsync();
+            return View(citiesView);
         }
 
         // GET: Cities/Details/5

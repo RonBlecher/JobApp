@@ -1,4 +1,4 @@
-﻿@model IEnumerable<JobApp.Models.City>
+﻿@model IEnumerable<JobApp.Models.CityListView>
 
 @{
     ViewData["Title"] = "Cities List";
@@ -32,6 +32,9 @@
                                         <th>
                                             @Html.DisplayNameFor(model => model.RegionName)
                                         </th>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.CityJobsNum)
+                                        </th>
                                         <th></th>
                                     </tr>
                                 </thead>
@@ -44,6 +47,9 @@
                                             </td>
                                             <td>
                                                 @Html.DisplayFor(modelItem => item.RegionName)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.CityJobsNum)
                                             </td>
                                             <td>
                                                 <a asp-action="Edit" asp-route-id="@item.Name">Edit</a> |

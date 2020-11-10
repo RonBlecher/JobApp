@@ -18,4 +18,13 @@ namespace JobApp.Models
 
         public ICollection<JobSkill> SkillJobs { get; set; }
     }
+
+    public class SkillListView
+    {
+        [Display(Name = "Skill")]
+        public string Name { get; set; }
+
+        [Display(Name = "Jobs Number")]
+        public int SkillJobsNum { get; set; }
+    }
 }
