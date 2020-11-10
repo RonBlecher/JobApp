@@ -81,15 +81,15 @@ namespace JobApp.Controllers
             }).ToList();
         }
 
-        private List<Job> GetNewJobs(Seeker currentSeeker)
+        private async Task<List<Job>> GetNewJobs(Seeker currentSeeker)
         {
             List<string> seekSkills = new List<string>();
-            _context.SeekerSkill.Where(sk => sk.SeekerID == currentSeeker.ID).ForEachAsync(sk => seekSkills.Add(sk.SkillName));
+            await _context.SeekerSkill.Where(sk => sk.SeekerID == currentSeeker.ID).ForEachAsync(sk => seekSkills.Add(sk.SkillName));
 
             List<string> seekRegions = new List<string>();
-            _context.SeekerRegion.Where(sr => sr.SeekerID == currentSeeker.ID).ForEachAsync(sr => seekRegions.Add(sr.RegionName));
+            await _context.SeekerRegion.Where(sr => sr.SeekerID == currentSeeker.ID).ForEachAsync(sr => seekRegions.Add(sr.RegionName));
 
-            List<Job> newJobs = _context.Job
+            List<Job> newJobs = await _context.Job
                 .Include(j => j.Publisher)
                 .Include(j => j.JobSeekers).ThenInclude(js => js.Seeker)
                 .Include(j => j.JobSkills).ThenInclude(js => js.Skill)
@@ -98,7 +98,7 @@ namespace JobApp.Controllers
                 .Where(j => j.JobSkills.Any(js => seekSkills.Contains(js.SkillName)))
                 .Where(j => j.JobCities.Any(jc => seekRegions.Contains(jc.City.RegionName)))
                 .OrderByDescending(j => j.LastEdited)
-                .ToList();
+                .ToListAsync();
 
             return newJobs;
         }
