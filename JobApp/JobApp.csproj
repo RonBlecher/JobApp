@@ -30,7 +30,6 @@
     <Folder Include="wwwroot\scss\" />
     <Folder Include="wwwroot\vendor\" />
     <Folder Include="wwwroot\login\" />
-    <Folder Include="Views\Map\" />
     <Folder Include="wwwroot\error\" />
     <Folder Include="wwwroot\noPermission\" />
     <Folder Include="wwwroot\noPermission\css\" />

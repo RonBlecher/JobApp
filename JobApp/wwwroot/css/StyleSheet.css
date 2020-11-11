@@ -191,3 +191,10 @@ td {
     border-radius: 2.25rem;
 }
 
+p#video {
+    font-weight: bold;
+    margin-left: 36px;
+    font-style: italic;
+    margin-top: 20px;
+    font-size: larger;
+}

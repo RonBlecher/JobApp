@@ -61,5 +61,10 @@ namespace JobApp.Controllers
         {
             return View();
         }
+
+        public ActionResult Video()
+        {
+            return View();
+        }
     }
 }

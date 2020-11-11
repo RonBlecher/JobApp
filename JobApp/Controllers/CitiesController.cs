@@ -187,5 +187,10 @@ namespace JobApp.Controllers
         {
             return _context.City.Any(e => e.Name == id);
         }
+
+        public ActionResult Video()
+        {
+            return View();
+        }
     }
 }

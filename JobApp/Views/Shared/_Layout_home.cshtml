@@ -14,6 +14,7 @@
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link rel="preload" href="~/video/video.mp4" as="video/mp4">
     @RenderSection("stylesLogin", false)
     <link rel="stylesheet" href="~/css/StyleSheet.css" />
     <title>@ViewBag.Title</title>
@@ -36,7 +37,7 @@
                         <li><a href=""><i class="fa fa-angle-double-right"></i>About</a></li>
                         <li><a href=""><i class="fa fa-angle-double-right"></i>FAQ</a></li>
                         <li><a href=""><i class="fa fa-angle-double-right"></i>Get Started</a></li>
-                        <li><a href=""><i class="fa fa-angle-double-right"></i>Videos</a></li>
+                        <li><a href=""><i class="fa fa-angle-double-right"></i>@Html.ActionLink("videos", "video")</a></li>
                     </ul>
                 </div>
                 <div class="col-xs-12 col-sm-4 col-md-4">

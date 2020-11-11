@@ -367,5 +367,10 @@ namespace JobApp.Controllers
         {
             return _context.Publisher.Any(p => p.Email == email);
         }
+
+        public ActionResult Video()
+        {
+            return View();
+        }
     }
 }
