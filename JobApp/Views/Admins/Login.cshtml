@@ -1,5 +1,5 @@
 ﻿@section stylesLogin {
-    <title>Login V12</title>
+    <title>Login</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!--===============================================================================================-->
@@ -41,8 +41,9 @@
             height: 100px;
         }
     </style>
-
 }
+
+@model JobApp.Models.Login
 
 @{
     ViewData["Title"] = "Admin Login";
@@ -68,6 +69,7 @@
                         <i class="fa fa-user"></i>
                     </span>
                 </div>
+                @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
 
                 <div class="wrap-input100 validate-input m-b-10" data-validate="Password is required">
                     <input class="password input100" type="password" name="password" placeholder="Password">
@@ -76,6 +78,7 @@
                         <i class="fa fa-lock"></i>
                     </span>
                 </div>
+                @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
 
                 <div class="container-login100-form-btn p-t-10">
                     <input onClick="showProgress()" type="submit" class="login100-form-btn" value="Login" />
@@ -93,9 +96,9 @@
 </div>
 
 
-<script type="text/javascript">var spinnerVisible = false;
+<script type="text/javascript">
+    var spinnerVisible = false;
     function showProgress() {
-        debugger
         if (!spinnerVisible && $(".email").val() != "" && $(".password").val() != "") {
             $("div#spinner").fadeIn("fast");
             spinnerVisible = true;
@@ -108,7 +111,8 @@
             spinner.fadeOut("fast");
             spinnerVisible = false;
         }
-    };</script>
+    };
+</script>
 
 @section loginScripts
 {
@@ -122,4 +126,3 @@
     <!--===============================================================================================-->
     <script src="~/login/js/main.js"></script>
 }
-

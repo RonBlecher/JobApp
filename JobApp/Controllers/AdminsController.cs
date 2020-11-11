@@ -114,9 +114,19 @@ namespace JobApp.Controllers
             return RedirectToAction("Index", "home");
         }
 
-        // GET: /<controller>/ 
-        public IActionResult Login(string email, string password)
+        public IActionResult Login()
         {
+            return View();
+        }
+
+        [HttpPost] 
+        public IActionResult Login(Login login)
+        {
+            if (login == null)
+            {
+                return NotFound();
+            }
+
             var identity = (ClaimsIdentity)User.Identity;
             if (identity.IsAuthenticated)
             {
@@ -128,13 +138,15 @@ namespace JobApp.Controllers
                 }
             }
 
-            var admins = _context.Admin.Where(admin => admin.Email == email && admin.Password == password).ToList();
+            var admins = _context.Admin.Where(admin => admin.Email == login.Email && admin.Password == login.Password).ToList();
             if (admins != null && admins.Count() == 1)
             {
                 SignIn(admins.First());
                 return RedirectToAction("Index");
             }
 
+            ModelState.AddModelError("Email", "Wrong Email or Password");
+            ModelState.AddModelError("Password", "Wrong Email or Password");
             return View();
         }
 

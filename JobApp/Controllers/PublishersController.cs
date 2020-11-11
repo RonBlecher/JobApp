@@ -104,9 +104,19 @@ namespace JobApp.Controllers
             }
             return View(publisher);
         }
-     
-        public IActionResult Login(string email, string password)
+
+        public IActionResult Login()
         {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Login(Login login)
+        {
+            if (login == null)
+            {
+                return NotFound();
+            }
 
             var identity = (ClaimsIdentity)User.Identity;
             if (identity.IsAuthenticated)
@@ -119,13 +129,15 @@ namespace JobApp.Controllers
                 }
             }
 
-            var publishers = _context.Publisher.Where(publisher => publisher.Email == email && publisher.Password == password).ToList();
+            var publishers = _context.Publisher.Where(publisher => publisher.Email == login.Email && publisher.Password == login.Password).ToList();
             if (publishers != null && publishers.Count() == 1)
             {
                 SignIn(publishers.First());
                 return RedirectToAction("Index");
             }
 
+            ModelState.AddModelError("Email", "Wrong Email or Password");
+            ModelState.AddModelError("Password", "Wrong Email or Password");
             return View();
         }
 
@@ -141,10 +153,7 @@ namespace JobApp.Controllers
 
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-            var authProperites = new AuthenticationProperties
-            {
- 
-            };
+            var authProperites = new AuthenticationProperties { };
 
             await HttpContext.SignInAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme,
@@ -274,12 +283,20 @@ namespace JobApp.Controllers
                     return View(publisherEdit);
                 }
 
+                var identity = (ClaimsIdentity)User.Identity;
+                IEnumerable<Claim> claims = identity.Claims;
+                Claim idClaim = claims.Where(claim => claim.Type == "Id").First();
+                Claim role = claims.Where(claim => claim.Type == ClaimTypes.Role).First();
+
                 try
                 {
                     _context.Update(publisher);
                     await _context.SaveChangesAsync();
-                    UpdateIdentityClaim(publisher);
-                    
+
+                    if (publisher.ID.ToString() == idClaim.Value)
+                    {
+                        UpdateIdentityClaim(publisher);
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -292,9 +309,7 @@ namespace JobApp.Controllers
                         throw;
                     }
                 }
-                var identity = (ClaimsIdentity)User.Identity;
-                IEnumerable<Claim> claims = identity.Claims;
-                Claim role = claims.Where(claim => claim.Type == ClaimTypes.Role).First();
+
                 if (role.Value == "Publisher")
                 {
                     return RedirectToAction(nameof(Index));

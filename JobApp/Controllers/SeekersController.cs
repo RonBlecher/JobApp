@@ -43,7 +43,7 @@ namespace JobApp.Controllers
                 .Include(s => s.SeekerSkills).ThenInclude(sk => sk.Skill)
                 .ToListAsync();
 
-            ViewData["New Jobs"] = FindNewJobs(seekers.First());
+            ViewData["New Jobs"] = await FindNewJobs(seekers.First());
 
             JobWSSoapClient jobWSSoapClient = new JobWSSoapClient(JobWSSoapClient.EndpointConfiguration.JobWSSoap);
             var jobCategories = await jobWSSoapClient.GetJobCategoriesAsync();
@@ -51,9 +51,9 @@ namespace JobApp.Controllers
             return View(seekers.First());
         }
 
-        private int FindNewJobs(Seeker currentSeeker)
+        private async Task<int> FindNewJobs(Seeker currentSeeker)
         {
-            List<Job> matchedJobs = GetNewJobs(currentSeeker).GetAwaiter().GetResult();
+            List<Job> matchedJobs = await GetNewJobs(currentSeeker);
             return matchedJobs.Count();
         }
 
@@ -157,12 +157,21 @@ namespace JobApp.Controllers
             return View();
         }
 
+        public IActionResult Login()
+        {
+            return View();
+        }
 
-        public IActionResult Login(string email, string password) {
-
+        [HttpPost]
+        public IActionResult Login(Login login)
+        {
+            if (login == null)
+            {
+                return NotFound();
+            }
 
             var identity = (ClaimsIdentity)User.Identity;
-            if(identity.IsAuthenticated)
+            if (identity.IsAuthenticated)
             {
                 IEnumerable<Claim> claims = identity.Claims;
                 Claim role = claims.Where(claim => claim.Type == ClaimTypes.Role).First();
@@ -170,16 +179,17 @@ namespace JobApp.Controllers
                 {
                     return RedirectToAction("Index");
                 }
-
             }
 
-            var seekers = _context.Seeker.Where(seeker => seeker.Email == email && seeker.Password == password).ToList();
+            var seekers = _context.Seeker.Where(seeker => seeker.Email == login.Email && seeker.Password == login.Password).ToList();
             if (seekers != null && seekers.Count() == 1)
             {
                 SignIn(seekers.First());
                 return RedirectToAction("Index");
             }
 
+            ModelState.AddModelError("Email", "Wrong Email or Password");
+            ModelState.AddModelError("Password", "Wrong Email or Password");
             return View();
         }
 
@@ -195,10 +205,7 @@ namespace JobApp.Controllers
 
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-            var authProperites = new AuthenticationProperties
-            {
-
-            };
+            var authProperites = new AuthenticationProperties { };
 
             await HttpContext.SignInAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme,
@@ -402,11 +409,20 @@ namespace JobApp.Controllers
                     }
                 }
 
+                var identity = (ClaimsIdentity)User.Identity;
+                IEnumerable<Claim> claims = identity.Claims;
+                Claim idClaim = claims.Where(claim => claim.Type == "Id").First();
+                Claim role = claims.Where(claim => claim.Type == ClaimTypes.Role).First();
+
                 try
                 {
                     _context.Update(seeker);
                     await _context.SaveChangesAsync();
-                    UpdateIdentityClaim(seeker);
+
+                    if (seeker.ID.ToString() == idClaim.Value)
+                    {
+                        UpdateIdentityClaim(seeker);
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -419,9 +435,7 @@ namespace JobApp.Controllers
                         throw;
                     }
                 }
-                var identity = (ClaimsIdentity)User.Identity;
-                IEnumerable<Claim> claims = identity.Claims;
-                Claim role = claims.Where(claim => claim.Type == ClaimTypes.Role).First();
+
                 if (role.Value == "Seeker")
                 {
                     return RedirectToAction(nameof(Index));
@@ -432,6 +446,11 @@ namespace JobApp.Controllers
                 }
             }
             return View(seekerEdit);
+        }
+
+        private void UpdateIdentityClaim(Seeker seeker)
+        {
+            SignIn(seeker);
         }
 
         // GET
@@ -450,11 +469,6 @@ namespace JobApp.Controllers
             }).OrderBy(r => r.RegionName).ToListAsync();
 
             return View(new SeekerRegionViewModel { RegionCheckBoxItems = allRegions });
-        }
-
-        private void UpdateIdentityClaim(Seeker seeker)
-        {
-            SignIn(seeker);
         }
 
         [HttpPost]
