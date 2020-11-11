@@ -56,13 +56,13 @@
 <div class="limiter">
     <div class="container-login100">
         <div class="wrap-login100 p-b-30">
-            <form asp-action="Login" class="login100-form validate-form">
+            <form id="myForm" asp-action="Login" class="login100-form validate-form">
                 <span class="login100-form-title p-t-20 p-b-45">
                     Publisher Login
                 </span>
 
                 <div class="wrap-input100 validate-input m-b-10" data-validate="Email is required">
-                    <input class="input100" type="email" name="email" placeholder="Email">
+                    <input class="email input100" type="email" name="email" placeholder="Email">
                     <span class="focus-input100"></span>
                     <span class="symbol-input100">
                         <i class="fa fa-user"></i>
@@ -70,7 +70,7 @@
                 </div>
 
                 <div class="wrap-input100 validate-input m-b-10" data-validate="Password is required">
-                    <input class="input100" type="password" name="password" placeholder="Password">
+                    <input class="password input100" type="password" name="password" placeholder="Password">
                     <span class="focus-input100"></span>
                     <span class="symbol-input100">
                         <i class="fa fa-lock"></i>
@@ -94,7 +94,7 @@
 
 <script type="text/javascript">var spinnerVisible = false;
     function showProgress() {
-        if (!spinnerVisible) {
+        if (!spinnerVisible && $(".email").val() != "" && $(".password").val() != "") {
             $("div#spinner").fadeIn("fast");
             spinnerVisible = true;
         }
