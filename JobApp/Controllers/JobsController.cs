@@ -416,10 +416,5 @@ namespace JobApp.Controllers
         {
             return _context.Job.Any(e => e.ID == id);
         }
-
-        public ActionResult Video()
-        {
-            return View();
-        }
     }
 }

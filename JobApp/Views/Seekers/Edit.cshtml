@@ -29,7 +29,7 @@
                 {
                     <a id="cvFileLink">No file selected</a>
                 }
-                <button id="btnRemove" style="position:relative; left:10%" onclick="removeCV('@Model.CVObj')" disabled="@(Model.CV == null)">Remove CV</button>
+                <button id="btnRemove" style="position:absolute; left:80%" onclick="removeCV('@Model.CVObj')" disabled="@(Model.CV == null)">Remove CV</button>
             </div>
             <hr />
             <div class="form-group">
@@ -87,6 +87,7 @@
         }
         else {
             cvLink.textContent = "No file selected";
+            removeButton.disabled = true;
         }
         cvLink.removeAttribute("href");
     }

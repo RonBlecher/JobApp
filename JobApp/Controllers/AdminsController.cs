@@ -383,10 +383,5 @@ namespace JobApp.Controllers
         {
             return _context.Admin.Any(a => a.Email == email);
         }
-
-        public ActionResult Video()
-        {
-            return View();
-        }
     }
 }

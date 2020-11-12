@@ -1,17 +1,20 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authorization;
 
 public class LayoutDecision
 {
     public static string LocateLayout(ClaimsPrincipal User)
     {
-        string layout = "";
+        string layout = "_Layout_home";
+        ClaimsIdentity identity = (ClaimsIdentity)User.Identity;
 
-        var identity = (ClaimsIdentity) User.Identity;
+        // check if user is not signed in
+        if (identity.IsAuthenticated == false)
+        {
+            return layout;
+        }
+
         IEnumerable<Claim> claims = identity.Claims;
         Claim roleClaim = claims.Where(claim => claim.Type == ClaimTypes.Role).First();
 

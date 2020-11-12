@@ -184,10 +184,5 @@ namespace JobApp.Controllers
         {
             return _context.Region.Any(e => e.Name == id);
         }
-
-        public ActionResult Video()
-        {
-            return View();
-        }
     }
 }

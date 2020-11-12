@@ -608,10 +608,5 @@ namespace JobApp.Controllers
         {
             return _context.SeekerSkill.Any(sk => sk.SeekerID == seekerID && sk.SkillName == skillName);
         }
-
-        public ActionResult Video()
-        {
-            return View();
-        }
     }
 }
