@@ -29,6 +29,7 @@
                 {
                     <a id="cvFileLink">No file selected</a>
                 }
+                <button id="btnRemove" style="position:relative; left:10%" onclick="removeCV('@Model.CVObj')" disabled="@(Model.CV == null)">Remove CV</button>
             </div>
             <hr />
             <div class="form-group">
@@ -74,15 +75,27 @@
 }
 
 <script type="text/javascript">
+    var cvLink = document.getElementById("cvFileLink");
+    var fileInput = document.getElementById("inputGroupFile");
+    var removeButton = document.getElementById("btnRemove");
+
     function fileUploaded() {
-        var cvLink = document.getElementById("cvFileLink");
-        var inputFiles = document.getElementById("inputGroupFile").files;
+        var inputFiles = fileInput.files;
         if (inputFiles.length > 0) {
             cvLink.textContent = inputFiles[0].name;
+            removeButton.disabled = false;
         }
         else {
             cvLink.textContent = "No file selected";
         }
+        cvLink.removeAttribute("href");
+    }
+
+    function removeCV(cvObj) {
+        cvObj = null;
+        fileInput.value = null;
+        removeButton.disabled = true;
+        cvLink.textContent = "No file selected";
         cvLink.removeAttribute("href");
     }
 </script>

@@ -408,6 +408,11 @@ namespace JobApp.Controllers
                         seeker.CVFileName = seekerEdit.CVObj.FileName;
                     }
                 }
+                else
+                {
+                    seeker.CV = null;
+                    seeker.CVFileName = null;
+                }
 
                 var identity = (ClaimsIdentity)User.Identity;
                 IEnumerable<Claim> claims = identity.Claims;
