@@ -21,10 +21,17 @@
                         <h4 class="card-title">Regions</h4>
                         <p class="card-category"> All regions information</p>
                     </div>
+                    <div class="card-header card-header-primary">
+                        <div class="form-group">
+                            <label class="control-label">Search:</label>
+                            <input id="searchInput" class="form-control" />
+                            <span class="text-danger"></span>
+                        </div>
+                    </div>
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table">
-                                <thead>
+                                <thead class="text-primary">
                                     <tr>
                                         <th>
                                             @Html.DisplayNameFor(model => model.Name)
@@ -38,24 +45,24 @@
                                         <th></th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="regionTable">
                                     @foreach (var item in Model)
                                     {
-                                    <tr>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.Name)
-                                        </td>
-                                        <td>
-                                            @Html.ListBox("Region Cities", new SelectList(item.Cities))
-                                        </td>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.RegionJobsNum)
-                                        </td>
-                                        <td>
-                                            <a asp-action="Details" asp-route-id="@item.Name">Details</a> |
-                                            <a asp-action="Delete" asp-route-id="@item.Name">Delete</a>
-                                        </td>
-                                    </tr>
+                                        <tr>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Name)
+                                            </td>
+                                            <td>
+                                                @Html.ListBox("Region Cities", new SelectList(item.Cities))
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.RegionJobsNum)
+                                            </td>
+                                            <td>
+                                                <a asp-action="Details" asp-route-id="@item.Name">Details</a> |
+                                                <a asp-action="Delete" asp-route-id="@item.Name">Delete</a>
+                                            </td>
+                                        </tr>
                                     }
                                 </tbody>
                             </table>
@@ -66,3 +73,14 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(function () {
+        $("#searchInput").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("#regionTable tr").filter(function () {
+                $(this).toggle($(this).find('td:not(:last-child)').text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+</script>

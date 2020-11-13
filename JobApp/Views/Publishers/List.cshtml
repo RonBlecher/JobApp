@@ -2,7 +2,6 @@
 
 @{
     ViewData["Title"] = "Publishers List";
-    ViewData["Model"] = "Publishers";
     Layout = LayoutDecision.LocateLayout(User);
 }
 
@@ -23,8 +22,6 @@
                     </div>
                     <div class="card-header card-header-primary">
                         <form asp-action="Search" id="myForm">
-                            <div class="text-danger"></div>
-                            <input type="hidden" />
                             <div class="form-group">
                                 <label class="control-label">Search By Name:</label>
                                 <input id="searchName" name="name" class="form-control" />
@@ -84,58 +81,18 @@
     </div>
 </div>
 
-<script src="~/js/core/jquery.min.js"></script>
-
 <script>
-    function delay(callback, ms) {
-        var timer = 0;
-        return function () {
-            var context = this, args = arguments;
-            clearTimeout(timer);
-            timer = setTimeout(function () {
-                callback.apply(context, args);
-            }, ms || 0);
-        };
-    }
-
-
-    // Example usage:
-
-    $('#searchName,#searchEmail').keyup(delay(function (e) {
-        console.log('Time elapsed!', this.value);
-
+    $('#searchName,#searchEmail').keyup(function (e) {
         let form = $('#myForm');
         let url = form.attr('action');
-        let jsonForm = form.serializeArray();
-
 
         $.ajax(
             {
                 url: url,
                 data: form.serialize(),
                 success: (data) => {
-                    var newDoc = document.open("text/html", "replace");
-                    newDoc.write(data);
-                    newDoc.close();
-                    let newForm = $('#myForm');
-                    function populate(frm, data) {
-                        $.each(data, function (key, value) {
-                            $('[name=' + key + ']', frm).val(value);
-                        });
-                    }
-                    populate('#myForm', objectifyForm(jsonForm));
-
+                    $('tbody').html(data);
                 }
             });
-    }, 750));
-
-
-    function objectifyForm(formArray) {
-        //serialize data function
-        var returnArray = {};
-        for (var i = 0; i < formArray.length; i++) {
-            returnArray[formArray[i]['name']] = formArray[i]['value'];
-        }
-        return returnArray;
-    }
+    });
 </script>

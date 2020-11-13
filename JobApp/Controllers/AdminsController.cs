@@ -104,8 +104,10 @@ namespace JobApp.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> List()
         {
-            var x = await _context.Admin.ToListAsync();
-            return View(x);
+            var admins = await _context.Admin.ToListAsync();
+            ViewData["SearchName"] = "";
+            ViewData["SearchEmail"] = "";
+            return View(admins);
         }
 
         public async Task<IActionResult> Logout()
@@ -173,11 +175,16 @@ namespace JobApp.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Search(string name, string email)
         {
-            var results = from admin in _context.Admin
-                          where name != null ? admin.Name.ToLower().Contains(name.ToLower()) : true ||
-                            email != null ? admin.Email.ToLower().Contains(email.ToLower()) : true
-                          select admin;
-            return View("List", await results.ToListAsync());
+            var admins = await (
+                from admin in _context.Admin
+                where ((name != null) ? admin.Name.ToLower().Contains(name.ToLower()) : true) &&
+                      ((email != null) ? admin.Email.ToLower().Contains(email.ToLower()) : true)
+                select admin)
+                .ToListAsync();
+
+            ViewData["SearchName"] = name;
+            ViewData["SearchEmail"] = email;
+            return View("List", admins);
         }
 
         // GET: Admins/Details/5

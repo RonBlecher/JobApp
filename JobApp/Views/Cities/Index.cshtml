@@ -2,7 +2,6 @@
 
 @{
     ViewData["Title"] = "Cities List";
-    ViewData["Model"] = "Cities";
     Layout = LayoutDecision.LocateLayout(User);
 }
 
@@ -21,6 +20,13 @@
                         <h4 class="card-title">Cities</h4>
                         <p class="card-category"> All cities information</p>
                     </div>
+                    <div class="card-header card-header-primary">
+                        <div class="form-group">
+                            <label class="control-label">Search:</label>
+                            <input id="searchInput" class="form-control" />
+                            <span class="text-danger"></span>
+                        </div>
+                    </div>
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table">
@@ -38,7 +44,7 @@
                                         <th></th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="cityTable">
                                     @foreach (var item in Model)
                                     {
                                         <tr>
@@ -67,3 +73,14 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(function () {
+        $("#searchInput").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("#cityTable tr").filter(function () {
+                $(this).toggle($(this).find('td:not(:last-child)').text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+</script>

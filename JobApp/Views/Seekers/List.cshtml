@@ -2,7 +2,6 @@
 
 @{
     ViewData["Title"] = "Seekers List";
-    ViewData["Model"] = "Seekers";
     Layout = LayoutDecision.LocateLayout(User);
 }
 
@@ -20,6 +19,20 @@
                     <div class="card-header card-header-primary">
                         <h4 class="card-title">Seekers</h4>
                         <p class="card-category"> All Seekers information</p>
+                    </div>
+                    <div class="card-header card-header-primary">
+                        <form asp-action="Search" id="myForm">
+                            <div class="form-group">
+                                <label class="control-label">Search By Name:</label>
+                                <input id="searchName" name="name" class="form-control" />
+                                <span class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Search By Email:</label>
+                                <input id="searchEmail" name="email" class="form-control" />
+                                <span class="text-danger"></span>
+                            </div>
+                        </form>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -44,32 +57,32 @@
                                 <tbody>
                                     @foreach (var item in Model)
                                     {
-                                    <tr>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.Name)
-                                        </td>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.Email)
-                                        </td>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.PhoneNum)
-                                        </td>
-                                        <td>
-                                            @if (item.CV != null)
-                                            {
-                                                <a>@Html.ActionLink(item.CVFileName, "DownloadCV", new { id = item.ID })</a>
-                                            }
-                                            else
-                                            {
-                                                @Html.Raw("No File");
-                                            }
-                                        </td>
-                                        <td>
-                                            <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                                            <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                                            <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
-                                        </td>
-                                    </tr>
+                                        <tr>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Name)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Email)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.PhoneNum)
+                                            </td>
+                                            <td>
+                                                @if (item.CV != null)
+                                                {
+                                                    <a>@Html.ActionLink(item.CVFileName, "DownloadCV", new { id = item.ID })</a>
+                                                }
+                                                else
+                                                {
+                                                    @Html.Raw("No File");
+                                                }
+                                            </td>
+                                            <td>
+                                                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
+                                                <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
+                                                <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+                                            </td>
+                                        </tr>
                                     }
                                 </tbody>
                             </table>
@@ -80,3 +93,19 @@
         </div>
     </div>
 </div>
+
+<script>
+    $('#searchName,#searchEmail').keyup(function (e) {
+        let form = $('#myForm');
+        let url = form.attr('action');
+
+        $.ajax(
+            {
+                url: url,
+                data: form.serialize(),
+                success: (data) => {
+                    $('tbody').html(data);
+                }
+            });
+    });
+</script>

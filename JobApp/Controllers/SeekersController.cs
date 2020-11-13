@@ -120,19 +120,25 @@ namespace JobApp.Controllers
 
         // GET: Seekers
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> List(string search)
+        public async Task<IActionResult> List()
         {
             var seekers = await _context.Seeker
                 .Include(s => s.SeekerJobs)
                 .Include(s => s.SeekerSkills)
                 .ToListAsync();
-            if (!string.IsNullOrEmpty(search))
-            {
-                seekers = seekers.Where(seeker => String.Compare(seeker.Name, search,
-                    comparisonType: StringComparison.OrdinalIgnoreCase) == 0).ToList();
-            }
-
             return View(seekers);
+        }
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Search(string name, string email)
+        {
+            var seekers = await (
+                from seeker in _context.Seeker
+                where ((name != null) ? seeker.Name.ToLower().Contains(name.ToLower()) : true) &&
+                      ((email != null) ? seeker.Email.ToLower().Contains(email.ToLower()) : true)
+                select seeker).ToListAsync();
+
+            return PartialView(seekers);
         }
 
         [HttpPost]

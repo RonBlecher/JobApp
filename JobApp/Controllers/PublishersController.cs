@@ -57,30 +57,25 @@ namespace JobApp.Controllers
             return publishers.First();
         }
 
-        [Authorize(Roles = "Admin")]
         // GET: Publishers
-        public async Task<IActionResult> List(string search)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> List()
         {
             var publishers = await _context.Publisher.Include(p => p.PostedJobs).ToListAsync();
-            if (!string.IsNullOrEmpty(search))
-            {
-                publishers = publishers.Where(publisher => String.Compare(publisher.Name, search,
-                    comparisonType: StringComparison.OrdinalIgnoreCase) == 0).ToList();
-            }
-
             return View(publishers);
         }
 
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Search(string name, string email)
         {
-            var results = from publisher in _context.Publisher
-                          where name != null ? publisher.Name.ToLower().Contains(name.ToLower()) : true ||
-                              email != null ? publisher.Email.ToLower().Contains(email.ToLower()) : true
-                          select publisher;
-            var publishers = await results.Include(p => p.PostedJobs).ToListAsync();
+            var publishers = await (
+                from publisher in _context.Publisher
+                where ((name != null) ? publisher.Name.ToLower().Contains(name.ToLower()) : true) &&
+                      ((email != null) ? publisher.Email.ToLower().Contains(email.ToLower()) : true)
+                select publisher
+                ).Include(p => p.PostedJobs).ToListAsync();
 
-            return View("List", publishers);
+            return PartialView(publishers);
         }
 
         public IActionResult Register()

@@ -21,10 +21,17 @@
                         <h4 class="card-title">Skills</h4>
                         <p class="card-category"> All skills information</p>
                     </div>
+                    <div class="card-header card-header-primary">
+                        <div class="form-group">
+                            <label class="control-label">Search:</label>
+                            <input id="searchInput" class="form-control" />
+                            <span class="text-danger"></span>
+                        </div>
+                    </div>
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table">
-                                <thead>
+                                <thead class="text-primary">
                                     <tr>
                                         <th>
                                             @Html.DisplayNameFor(model => model.Name)
@@ -35,7 +42,7 @@
                                         <th></th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="skillTable">
                                     @foreach (var item in Model)
                                     {
                                         <tr>
@@ -60,3 +67,14 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(function () {
+        $("#searchInput").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("#skillTable tr").filter(function () {
+                $(this).toggle($(this).find('td:not(:last-child)').text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+</script>
