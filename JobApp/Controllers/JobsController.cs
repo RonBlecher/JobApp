@@ -241,7 +241,7 @@ namespace JobApp.Controllers
             Claim idClaim = claims.Where(claim => claim.Type == "Id").First();
             Claim role = claims.Where(claim => claim.Type == ClaimTypes.Role).First();
 
-            if (role.Value == "Admin" || idClaim.Value == job.PublisherId.ToString())
+            if (role.Value == "Admin" || (role.Value == "Publisher" && idClaim.Value == job.PublisherId.ToString()))
             {
                 Publisher publisher = await _context.Publisher.FirstAsync(p => p.ID == job.PublisherId);
                 List<Skill> skills = await _context.Skill.ToListAsync();
@@ -386,7 +386,7 @@ namespace JobApp.Controllers
             Claim idClaim = claims.Where(claim => claim.Type == "Id").First();
             Claim role = claims.Where(claim => claim.Type == ClaimTypes.Role).First();
 
-            if (role.Value == "Admin" || idClaim.Value == job.PublisherId.ToString())
+            if (role.Value == "Admin" || (role.Value == "Publisher" && idClaim.Value == job.PublisherId.ToString()))
             {
                 return View(job);
             }

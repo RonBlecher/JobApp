@@ -309,13 +309,14 @@ namespace JobApp.Controllers
                 var identity = (ClaimsIdentity)User.Identity;
                 IEnumerable<Claim> claims = identity.Claims;
                 Claim idClaim = claims.Where(claim => claim.Type == "Id").First();
+                Claim role = claims.Where(claim => claim.Type == ClaimTypes.Role).First();
 
                 try
                 {
                     _context.Update(admin);
                     await _context.SaveChangesAsync();
 
-                    if (admin.ID.ToString() == idClaim.Value)
+                    if (role.Value == "Admin" && admin.ID.ToString() == idClaim.Value)
                     {
                         UpdateIdentityClaim(admin);
                     }

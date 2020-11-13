@@ -217,7 +217,7 @@ namespace JobApp.Controllers
                 return RedirectToAction("Error", "Home");
             }
 
-            if (idClaim.Value != id.ToString() && role.Value != "Admin")
+            if ((role.Value == "Publisher" && idClaim.Value != id.ToString()) || role.Value == "Seeker")
             {
                 return RedirectToAction("NoPermission", "Home");
             }
@@ -288,7 +288,7 @@ namespace JobApp.Controllers
                     _context.Update(publisher);
                     await _context.SaveChangesAsync();
 
-                    if (publisher.ID.ToString() == idClaim.Value)
+                    if (role.Value == "Publisher" && publisher.ID.ToString() == idClaim.Value)
                     {
                         UpdateIdentityClaim(publisher);
                     }
