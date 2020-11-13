@@ -47,7 +47,7 @@ namespace JobApp.Controllers
 
             JobWSSoapClient jobWSSoapClient = new JobWSSoapClient(JobWSSoapClient.EndpointConfiguration.JobWSSoap);
             var jobCategories = await jobWSSoapClient.GetJobCategoriesAsync();
-            ViewBag.jobCategiries = jobCategories.GetJobCategoriesResult.Take(5);
+            ViewBag.jobCategiries = jobCategories.GetJobCategoriesResult.Take(10);
             return View(seekers.First());
         }
 
