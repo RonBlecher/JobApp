@@ -97,7 +97,9 @@
 <script type="text/javascript">
     var spinnerVisible = false;
     function showProgress() {
-        if (!spinnerVisible && $(".email").val() != "" && $(".password").val() != "") {
+        var email = $(".email").val();
+        var mailFormat = @Html.Raw(@"/^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9-]+\.[a-zA-Z]{2,15}$/");
+        if (!spinnerVisible && email.match(mailFormat) && $(".password").val() != "") {
             $("div#spinner").fadeIn("fast");
             spinnerVisible = true;
         }
