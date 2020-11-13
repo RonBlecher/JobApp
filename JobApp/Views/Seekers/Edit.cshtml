@@ -15,6 +15,7 @@
         <form asp-action="Edit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
+                <input asp-for="CVRemoved" type="hidden" />
                 <label asp-for="CVObj" class="control-label"></label>
                 <div class="custom-file">
                     <label class="custom-file-label" for="inputGroupFile">Upload New</label>
@@ -95,6 +96,7 @@
     function removeCV(cvObj) {
         cvObj = null;
         fileInput.value = null;
+        document.getElementById("CVRemoved").value = "true";
         removeButton.disabled = true;
         cvLink.textContent = "No file selected";
         cvLink.removeAttribute("href");

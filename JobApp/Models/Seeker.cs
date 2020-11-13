@@ -33,5 +33,7 @@ namespace JobApp.Models
 
         [Display(Name = "CV File")]
         public IFormFile CVObj { get; set; }
+
+        public bool CVRemoved { get; set; }
     }
 }

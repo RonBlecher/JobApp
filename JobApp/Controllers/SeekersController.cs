@@ -345,6 +345,7 @@ namespace JobApp.Controllers
             {
                 return RedirectToAction("Error", "Home");
             }
+
             SeekerEditModel seekerEdit = new SeekerEditModel
             {
                 ID = seeker.ID,
@@ -352,7 +353,8 @@ namespace JobApp.Controllers
                 Email = seeker.Email,
                 PhoneNum = seeker.PhoneNum,
                 CV = seeker.CV,
-                CVFileName = seeker.CVFileName
+                CVFileName = seeker.CVFileName,
+                CVRemoved = false
             };
             return View(seekerEdit);
         }
@@ -362,7 +364,7 @@ namespace JobApp.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("CVObj,ID,Name,Email,PhoneNum,OldPassword,NewPassword")] SeekerEditModel seekerEdit)
+        public async Task<IActionResult> Edit(int id, [Bind("CVObj,CVRemoved,ID,Name,Email,PhoneNum,OldPassword,NewPassword")] SeekerEditModel seekerEdit)
         {
             if (id != seekerEdit.ID)
             {
@@ -409,12 +411,12 @@ namespace JobApp.Controllers
                     using (MemoryStream ms = new MemoryStream())
                     {
                         seekerEdit.CVObj.CopyTo(ms);
-                        // update SEEKER cv file, overcomes clicking cancel button bug in OpenFileDialog 
+                        
                         seeker.CV = ms.ToArray();
                         seeker.CVFileName = seekerEdit.CVObj.FileName;
                     }
                 }
-                else
+                else if (seekerEdit.CVRemoved)
                 {
                     seeker.CV = null;
                     seeker.CVFileName = null;
