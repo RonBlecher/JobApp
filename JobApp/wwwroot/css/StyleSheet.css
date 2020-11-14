@@ -208,3 +208,7 @@ div.multiCol {
 .search-flex {
     display: flex;
 }
+
+p.card-category {
+    padding-bottom: 4px
+}
