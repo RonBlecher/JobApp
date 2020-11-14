@@ -42,23 +42,8 @@ namespace JobApp.Controllers
         [Authorize(Roles = "Seeker")]
         public async Task<IActionResult> LookingForJobs()
         {
-            var identity = (ClaimsIdentity)User.Identity;
-            IEnumerable<Claim> claims = identity.Claims;
-            Claim idClaim = claims.Where(claim => claim.Type == "Id").First();
-
-            Seeker seeker = await _context.Seeker.FirstAsync(s => s.ID.ToString() == idClaim.Value);
-            List<Job> appliedJobs = await _context.SeekerJob
-                .Where(js => js.SeekerID.ToString() == idClaim.Value)
-                .OrderByDescending(js => js.SubmitDate)
-                .Select(js => js.Job)
-                .ToListAsync();
-            appliedJobs.ForEach(j =>
-            {
-                j.Publisher = _context.Publisher.First(p => p.ID == j.PublisherId);
-                j.JobSeekers = _context.SeekerJob.Where(sj => sj.SeekerID == seeker.ID).Include(sj => sj.Seeker).ToList();
-                j.JobSkills = _context.JobSkill.Where(js => js.JobID == j.ID).Include(js => js.Skill).ToList();
-                j.JobCities = _context.CityJob.Where(cj => cj.JobID == j.ID).Include(cj => cj.City).ToList();
-            });
+            Seeker seeker = await GetCurrentLoginSeeker();
+            List<Job> appliedJobs = await GetAppliedJobs();
 
             ViewData["Seeker"] = seeker;
             ViewData["AppliedJobs"] = appliedJobs;
@@ -122,13 +107,13 @@ namespace JobApp.Controllers
             ViewData["SearchFromDate"] = fromDate;
             ViewData["SearchToDate"] = toDate;
 
-            List<Job> allJobs = await _context.Job.Include(j => j.Publisher)
+            List<Job> allJobs = await _context.Job
+                .Include(j => j.Publisher)
                 .Include(j => j.JobSeekers).ThenInclude(js => js.Seeker)
                 .Include(j => j.JobSkills).ThenInclude(js => js.Skill)
                 .Include(j => j.JobCities).ThenInclude(jc => jc.City)
                 .OrderByDescending(j => j.LastEdited)
                 .ToListAsync();
-
 
             var filteredJobs = 
                 from job in allJobs
@@ -168,7 +153,6 @@ namespace JobApp.Controllers
                 return job.LastEdited <= DateTimeToDate;
             }
             return true;
-
         }
 
         private async Task<List<Job>> GetAppliedJobs()

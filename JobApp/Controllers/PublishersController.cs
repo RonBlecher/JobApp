@@ -80,6 +80,13 @@ namespace JobApp.Controllers
 
         public IActionResult Register()
         {
+            var identity = (ClaimsIdentity)User.Identity;
+            if (identity.IsAuthenticated)
+            {
+                Claim role = identity.Claims.Where(claim => claim.Type == ClaimTypes.Role).First();
+                string controllerName = LayoutDecision.GetControllerName(role);
+                return RedirectToAction("Index", controllerName);
+            }
             return View();
         }
 
@@ -102,6 +109,13 @@ namespace JobApp.Controllers
 
         public IActionResult Login()
         {
+            var identity = (ClaimsIdentity)User.Identity;
+            if (identity.IsAuthenticated)
+            {
+                Claim role = identity.Claims.Where(claim => claim.Type == ClaimTypes.Role).First();
+                string controllerName = LayoutDecision.GetControllerName(role);
+                return RedirectToAction("Index", controllerName);
+            }
             return View();
         }
 

@@ -28,7 +28,7 @@
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table">
-                                <thead>
+                                <thead class="text-primary">
                                     <tr>
                                         <th>
                                             @Html.DisplayNameFor(model => model.Title)
@@ -54,46 +54,46 @@
                                 <tbody>
                                     @foreach (var item in Model)
                                     {
-                                    <tr>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.Title)
-                                        </td>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.Description)
-                                        </td>
-                                        <td>
-                                            @foreach (var skill in item.JobSkills)
-                                            {
-                                                <div>
-                                                    @Html.DisplayFor(modelItem => skill.SkillName)
-                                                </div>
-                                            }
-                                        </td>
-                                        <td>
-                                            @foreach (var city in item.JobCities)
-                                            {
-                                                <div>
-                                                    @Html.DisplayFor(modelItem => city.CityName)
-                                                </div>
-                                            }
-                                        </td>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.Publisher.Name)
-                                        </td>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.LastEdited)
-                                        </td>
-                                        <td>
-                                            @if (seeker.CV != null && item.JobSeekers.Where(jobSeeker => jobSeeker.SeekerID == seeker.ID).ToList().Count() == 0)
-                                            {
-                                                <a asp-action="ApplyCV" asp-route-id="@item.ID">Apply CV</a>
-                                            }
-                                            else
-                                            {
-                                                @Html.Raw("Can't apply")
-                                            }
-                                        </td>
-                                    </tr>
+                                        <tr>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Title)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Description)
+                                            </td>
+                                            <td>
+                                                @foreach (var skill in item.JobSkills)
+                                                {
+                                                    <div>
+                                                        @Html.DisplayFor(modelItem => skill.SkillName)
+                                                    </div>
+                                                }
+                                            </td>
+                                            <td>
+                                                @foreach (var city in item.JobCities)
+                                                {
+                                                    <div>
+                                                        @Html.DisplayFor(modelItem => city.CityName)
+                                                    </div>
+                                                }
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Publisher.Name)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.LastEdited)
+                                            </td>
+                                            <td>
+                                                @if (seeker.CV != null && item.JobSeekers.Where(jobSeeker => jobSeeker.SeekerID == seeker.ID).ToList().Count() == 0)
+                                                {
+                                                    <a asp-action="ApplyCV" asp-route-id="@item.ID">Apply CV</a>
+                                                }
+                                                else
+                                                {
+                                                    @Html.Raw("Can't apply")
+                                                }
+                                            </td>
+                                        </tr>
                                     }
                                 </tbody>
                             </table>
@@ -121,7 +121,7 @@
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table">
-                                <thead>
+                                <thead class="text-primary">
                                     <tr>
                                         <th>
                                             @Html.DisplayNameFor(model => model.Title)
