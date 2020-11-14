@@ -47,7 +47,7 @@
             </div>
             <div class="sidebar-wrapper">
                 <ul class="nav">
-                    <li class="nav-item -seekers-index">
+                    <li class="nav-item -seekers-index -seekers">
                         <a class="nav-link" href="/seekers/index">
                             <i class="material-icons">dashboard</i>
                             <p>Dashboard</p>
@@ -59,13 +59,13 @@
                             <p>Edit my profile</p>
                         </a>
                     </li>
-                    <li class="nav-item -seekers-MySkills">
+                    <li class="nav-item -seekers-myskills">
                         <a class="nav-link" href="/seekers/MySkills">
                             <i class="material-icons">build</i>
                             <p>My Job Skills</p>
                         </a>
                     </li>
-                    <li class="nav-item -seekers-MyRegions">
+                    <li class="nav-item -seekers-myregions">
                         <a class="nav-link" href="/seekers/MyRegions">
                             <i class="material-icons">time_to_leave</i>
                             <p>My Job Search Regions</p>
@@ -375,7 +375,8 @@
 
     <script>
         $(document).ready(function () {
-            var pathname = window.location.pathname
+            debugger
+            var pathname = window.location.pathname.toLowerCase()
             $(`.${pathname.replaceAll('/', '-')}`).addClass('active').siblings().removeClass('active')
         });
     </script>
