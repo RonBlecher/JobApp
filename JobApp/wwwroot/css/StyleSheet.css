@@ -212,3 +212,8 @@ div.multiCol {
 p.card-category {
     padding-bottom: 4px
 }
+
+#myImg {
+    width: 70px;
+    height: 70px;
+}

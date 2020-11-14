@@ -23,7 +23,6 @@
     <Folder Include="wwwroot\assets\" />
     <Folder Include="wwwroot\demo\" />
     <Folder Include="wwwroot\fonts\" />
-    <Folder Include="wwwroot\images\" />
     <Folder Include="wwwroot\img\" />
     <Folder Include="wwwroot\js\" />
     <Folder Include="wwwroot\lib\" />
