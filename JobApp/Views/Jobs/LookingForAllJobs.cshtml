@@ -30,23 +30,23 @@
                             <div class="search-flex">
                                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                                 <div class="form-group">
-                                    <label class="control-label">Search By Name:</label>
-                                    <input name="name" class="form-control" value="@(ViewData["SearchSkill"])" />
+                                    <label class="control-label">Search By Skill:</label>
+                                    <input name="skill" class="form-control" value="@(ViewData["SearchSkill"])" />
                                     <span class="text-danger"></span>
                                 </div>
                                 <div class="form-group" style="top:auto">
-                                    <label class="control-label">Search By Email:</label>
-                                    <input name="email" class="form-control" value="@(ViewData["SearchCity"])" />
+                                    <label class="control-label">Search By City:</label>
+                                    <input name="city" class="form-control" value="@(ViewData["SearchCity"])" />
                                     <span class="text-danger"></span>
                                 </div>
                                 <div class="form-group" style="top:auto">
-                                    <label class="control-label">Search By Email:</label>
-                                    <input name="fromDate" class="form-control" value="@(ViewData["FromDate"])" />
+                                    <label class="control-label">Search By Start Date:</label>
+                                    <input  type="text" id="datepickerFromDate" name="fromDate" class="form-control" value="@(ViewData["SearchFromDate"])" />
                                     <span class="text-danger"></span>
                                 </div>
                                 <div class="form-group" style="top:auto">
-                                    <label class="control-label">Search By Email:</label>
-                                    <input name="toDate" class="form-control" value="@(ViewData["ToDate"])" />
+                                    <label class="control-label">Search By End Date:</label>
+                                    <input type="text" id="datepickerToDate" name="toDate" class="form-control" value="@(ViewData["SearchToDate"])" />
                                     <span class="text-danger"></span>
                                 </div>
                             </div>
@@ -217,7 +217,21 @@
 </div>
 
 <style>
-    .form-group{
+    .form-group {
         padding-right: 25px;
     }
 </style>
+
+
+
+
+@section Scripts {
+<script>
+    $(document).ready(function () {
+        console.log("ready!");
+        $("#datepickerFromDate").datepicker();
+        $("#datepickerToDate").datepicker();
+    });
+
+</script>
+}

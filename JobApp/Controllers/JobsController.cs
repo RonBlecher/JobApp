@@ -88,23 +88,8 @@ namespace JobApp.Controllers
         [Authorize(Roles = "Seeker")]
         public async Task<IActionResult> LookingForAllJobs()
         {
-            var identity = (ClaimsIdentity)User.Identity;
-            IEnumerable<Claim> claims = identity.Claims;
-            Claim idClaim = claims.Where(claim => claim.Type == "Id").First();
-
-            Seeker seeker = await _context.Seeker.FirstAsync(s => s.ID.ToString() == idClaim.Value);
-            List<Job> appliedJobs = await _context.SeekerJob
-                .Where(js => js.SeekerID.ToString() == idClaim.Value)
-                .OrderByDescending(js => js.SubmitDate)
-                .Select(js => js.Job)
-                .ToListAsync();
-            appliedJobs.ForEach(j =>
-            {
-                j.Publisher = _context.Publisher.First(p => p.ID == j.PublisherId);
-                j.JobSeekers = _context.SeekerJob.Where(sj => sj.SeekerID == seeker.ID).Include(sj => sj.Seeker).ToList();
-                j.JobSkills = _context.JobSkill.Where(js => js.JobID == j.ID).Include(js => js.Skill).ToList();
-                j.JobCities = _context.CityJob.Where(cj => cj.JobID == j.ID).Include(cj => cj.City).ToList();
-            });
+            Seeker seeker = await GetCurrentLoginSeeker();
+            List<Job> appliedJobs = await GetAppliedJobs();
 
             ViewData["Seeker"] = seeker;
             ViewData["AppliedJobs"] = appliedJobs;
@@ -124,19 +109,94 @@ namespace JobApp.Controllers
             return View(jobs);
         }
 
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Search(string name, string email)
+        [Authorize(Roles = "Seeker")]
+        public async Task<IActionResult> Search(string skill, string city, string fromDate, string toDate)
         {
-            var admins = await (
-                from admin in _context.Admin
-                where ((name != null) ? admin.Name.ToLower().Contains(name.ToLower()) : true) &&
-                      ((email != null) ? admin.Email.ToLower().Contains(email.ToLower()) : true)
-                select admin)
+            Seeker seeker = await GetCurrentLoginSeeker();
+            List<Job> appliedJobs = await GetAppliedJobs();
+
+            ViewData["Seeker"] = seeker;
+            ViewData["AppliedJobs"] = appliedJobs;
+            ViewData["SearchSkill"] = skill;
+            ViewData["SearchCity"] = city;
+            ViewData["SearchFromDate"] = fromDate;
+            ViewData["SearchToDate"] = toDate;
+
+            List<Job> allJobs = await _context.Job.Include(j => j.Publisher)
+                .Include(j => j.JobSeekers).ThenInclude(js => js.Seeker)
+                .Include(j => j.JobSkills).ThenInclude(js => js.Skill)
+                .Include(j => j.JobCities).ThenInclude(jc => jc.City)
+                .OrderByDescending(j => j.LastEdited)
                 .ToListAsync();
 
-            ViewData["SearchName"] = name;
-            ViewData["SearchEmail"] = email;
-            return View("List", admins);
+
+            var filteredJobs = 
+                from job in allJobs
+                where isJobContainsSkill(skill, job) && isJobContainsCity(city, job) && RangeOfDate(fromDate, toDate, job)
+                select job;
+
+            return View("LookingForAllJobs", filteredJobs);
+        }
+
+        private Boolean isJobContainsSkill(string skill, Job job)
+        {
+            return (skill != null) ? job.JobSkills.Where(jobSkill => jobSkill.Skill.Name.ToLower().Contains(skill.ToLower())).Count() > 0 : true;
+        }
+
+        private Boolean isJobContainsCity(string city, Job job)
+        {
+            return (city != null) ? job.JobCities.Where(jobCity => jobCity.CityName.ToLower().Contains(city.ToLower())).Count() > 0 : true;
+        }
+
+        private Boolean RangeOfDate(string fromDate, string toDate, Job job)
+        {
+            if (fromDate != null && toDate != null) {
+
+                DateTime DateTimeFromDate = DateTime.Parse(fromDate);
+                DateTime DateTimeToDate = DateTime.Parse(toDate);
+
+                return job.LastEdited >= DateTimeFromDate && job.LastEdited <= DateTimeToDate;
+            }
+            else if (fromDate != null && toDate == null)
+            {
+                DateTime DateTimeFromDate = DateTime.Parse(fromDate);
+                return job.LastEdited >= DateTimeFromDate;
+            }
+            else if (fromDate == null && toDate != null)
+            {
+                DateTime DateTimeToDate = DateTime.Parse(toDate);
+                return job.LastEdited <= DateTimeToDate;
+            }
+            return true;
+
+        }
+
+        private async Task<List<Job>> GetAppliedJobs()
+        {
+            Seeker seeker = await GetCurrentLoginSeeker();
+            List<Job> appliedJobs = await _context.SeekerJob
+                .Where(js => js.SeekerID.ToString() == seeker.ID.ToString())
+                .OrderByDescending(js => js.SubmitDate)
+                .Select(js => js.Job)
+                .ToListAsync();
+            appliedJobs.ForEach(j =>
+            {
+                j.Publisher = _context.Publisher.First(p => p.ID == j.PublisherId);
+                j.JobSeekers = _context.SeekerJob.Where(sj => sj.SeekerID == seeker.ID).Include(sj => sj.Seeker).ToList();
+                j.JobSkills = _context.JobSkill.Where(js => js.JobID == j.ID).Include(js => js.Skill).ToList();
+                j.JobCities = _context.CityJob.Where(cj => cj.JobID == j.ID).Include(cj => cj.City).ToList();
+            });
+
+            return appliedJobs;
+        }
+
+        private async Task<Seeker> GetCurrentLoginSeeker()
+        {
+            var identity = (ClaimsIdentity)User.Identity;
+            IEnumerable<Claim> claims = identity.Claims;
+            Claim idClaim = claims.Where(claim => claim.Type == "Id").First();
+
+            return await _context.Seeker.FirstAsync(s => s.ID.ToString() == idClaim.Value);
         }
 
         [HttpGet]
@@ -474,3 +534,5 @@ namespace JobApp.Controllers
         }
     }
 }
+
+
