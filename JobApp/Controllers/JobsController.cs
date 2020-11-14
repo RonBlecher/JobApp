@@ -25,7 +25,7 @@ namespace JobApp.Controllers
         }
 
         // GET: Jobs
-        [Authorize(Roles="Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             List<Job> jobs = await _context.Job
@@ -229,6 +229,7 @@ namespace JobApp.Controllers
         }
 
         // GET: Jobs/Details/5
+        [Authorize(Roles = "Admin, Publisher")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -246,6 +247,15 @@ namespace JobApp.Controllers
             if (job == null)
             {
                 return NotFound();
+            }
+
+            var identity = (ClaimsIdentity)User.Identity;
+            IEnumerable<Claim> claims = identity.Claims;
+            Claim idClaim = claims.Where(claim => claim.Type == "Id").First();
+            Claim role = claims.Where(claim => claim.Type == ClaimTypes.Role).First();
+            if (role.Value == "Publisher" && job.PublisherId.ToString() != idClaim.Value)
+            {
+                return RedirectToAction("NoPermission", "Home");
             }
 
             return View(job);
@@ -317,6 +327,7 @@ namespace JobApp.Controllers
         }
 
         // GET: Jobs/Edit/5
+        [Authorize(Roles = "Admin, Publisher")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -360,6 +371,7 @@ namespace JobApp.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, Publisher")]
         public async Task<IActionResult> Edit(int id, [Bind("ID, Title, Description, JobSkillsId, PublisherId, JobCities, Lon, Lat")] JobViewModel jobViewModel)
         {
             if (id != jobViewModel.ID)
@@ -467,6 +479,7 @@ namespace JobApp.Controllers
         }
 
         // GET: Jobs/Delete/5
+        [Authorize(Roles = "Admin, Publisher")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -496,6 +509,7 @@ namespace JobApp.Controllers
         // POST: Jobs/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, Publisher")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var job = await _context.Job.FindAsync(id);
@@ -518,5 +532,3 @@ namespace JobApp.Controllers
         }
     }
 }
-
-

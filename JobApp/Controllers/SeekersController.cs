@@ -15,7 +15,6 @@ using System.IO;
 using Microsoft.AspNetCore.Http;
 using ServiceReference1;
 using Job = JobApp.Models.Job;
-using System.Threading;
 
 namespace JobApp.Controllers
 {
@@ -58,6 +57,7 @@ namespace JobApp.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Seeker")]
         public async Task<List<JobMonthCount>> GetCvAppliedPerMonth()
         {
             Seeker seeker = await GetSeeker();
@@ -70,6 +70,7 @@ namespace JobApp.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Seeker")]
         public async Task<List<JobMonthCount>> GetSeekerNewJobs()
         {
             List<Job> newJobs = await GetNewJobs(await GetSeeker());
@@ -233,6 +234,7 @@ namespace JobApp.Controllers
                 authProperites);
         }
 
+        [Authorize(Roles = "Admin, Publisher, Seeker")]
         public async Task<IActionResult> DownloadCV(int? id)
         {
             var identity = (ClaimsIdentity)User.Identity;
@@ -263,6 +265,7 @@ namespace JobApp.Controllers
         }
 
         // GET: Seekers/Details/5
+        [Authorize(Roles = "Admin, Publisher, Seeker")]
         public async Task<IActionResult> Details(int? id)
         {
             var identity = (ClaimsIdentity)User.Identity;
@@ -337,6 +340,7 @@ namespace JobApp.Controllers
         }
 
         // GET: Seekers/Edit/5
+        [Authorize(Roles = "Admin, Seeker")]
         public async Task<IActionResult> Edit(int? id)
         {
             var identity = (ClaimsIdentity)User.Identity;
@@ -349,7 +353,7 @@ namespace JobApp.Controllers
                 return RedirectToAction("Error", "Home");
             }
 
-            if ((role.Value == "Seeker" && idClaim.Value != id.ToString()) || role.Value == "Publisher")
+            if (role.Value == "Seeker" && idClaim.Value != id.ToString())
             {
                 return RedirectToAction("NoPermission", "Home");
             }
@@ -378,6 +382,7 @@ namespace JobApp.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, Seeker")]
         public async Task<IActionResult> Edit(int id, [Bind("CVObj,CVRemoved,ID,Name,Email,PhoneNum,OldPassword,NewPassword")] SeekerEditModel seekerEdit)
         {
             if (id != seekerEdit.ID)

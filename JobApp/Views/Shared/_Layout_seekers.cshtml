@@ -1,7 +1,4 @@
 ﻿@using System.Security.Claims;
-@using Microsoft.AspNetCore.Authentication;
-@using Microsoft.AspNetCore.Authentication.Cookies;
-@using Microsoft.AspNetCore.Authorization;
 
 @{
     var identity = (ClaimsIdentity)User.Identity;
@@ -154,7 +151,7 @@
                                     ctx.fillStyle = grd;
                                     ctx.fillRect(0, 0, 450, 330);
                                     ctx.font = "20px Arial";
-                                    ctx.strokeText("GOOG LUCK FROM JOB APP :)", 20, 50);
+                                    ctx.strokeText("GOOD LUCK FROM JOB APP :)", 20, 50);
                                 </script>
                             </div>
 
@@ -399,7 +396,6 @@
 
     <script>
         $(document).ready(function () {
-            debugger
             var pathname = window.location.pathname.toLowerCase()
             $(`.${pathname.replaceAll('/', '-')}`).addClass('active').siblings().removeClass('active')
         });

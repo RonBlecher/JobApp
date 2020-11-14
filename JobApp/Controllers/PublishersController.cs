@@ -219,6 +219,7 @@ namespace JobApp.Controllers
         }
 
         // GET: Publishers/Edit/5
+        [Authorize(Roles = "Admin, Publisher")]
         public async Task<IActionResult> Edit(int? id)
         {
             var identity = (ClaimsIdentity)User.Identity;
@@ -231,7 +232,7 @@ namespace JobApp.Controllers
                 return RedirectToAction("Error", "Home");
             }
 
-            if ((role.Value == "Publisher" && idClaim.Value != id.ToString()) || role.Value == "Seeker")
+            if (role.Value == "Publisher" && idClaim.Value != id.ToString())
             {
                 return RedirectToAction("NoPermission", "Home");
             }
@@ -256,6 +257,7 @@ namespace JobApp.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, Publisher")]
         public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Email,PhoneNum,OldPassword,NewPassword")] PublisherEditModel publisherEdit)
         {
             if (id != publisherEdit.ID)
@@ -364,7 +366,7 @@ namespace JobApp.Controllers
             var publisher = await _context.Publisher.FindAsync(id);
             _context.Publisher.Remove(publisher);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(List));
         }
 
         private bool PublisherExists(int id)

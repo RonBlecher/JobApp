@@ -110,12 +110,6 @@ namespace JobApp.Controllers
             return View(admins);
         }
 
-        public async Task<IActionResult> Logout()
-        {
-            await HttpContext.SignOutAsync();
-            return RedirectToAction("Index", "home");
-        }
-
         public IActionResult Login()
         {
             var identity = (ClaimsIdentity)User.Identity;
@@ -386,7 +380,7 @@ namespace JobApp.Controllers
             var admin = await _context.Admin.FindAsync(id);
             _context.Admin.Remove(admin);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(List));
         }
 
         private bool AdminExists(int id)
