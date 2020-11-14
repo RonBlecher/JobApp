@@ -83,6 +83,62 @@ namespace JobApp.Controllers
             return View(jobs);
         }
 
+
+        // GET: Jobs
+        [Authorize(Roles = "Seeker")]
+        public async Task<IActionResult> LookingForAllJobs()
+        {
+            var identity = (ClaimsIdentity)User.Identity;
+            IEnumerable<Claim> claims = identity.Claims;
+            Claim idClaim = claims.Where(claim => claim.Type == "Id").First();
+
+            Seeker seeker = await _context.Seeker.FirstAsync(s => s.ID.ToString() == idClaim.Value);
+            List<Job> appliedJobs = await _context.SeekerJob
+                .Where(js => js.SeekerID.ToString() == idClaim.Value)
+                .OrderByDescending(js => js.SubmitDate)
+                .Select(js => js.Job)
+                .ToListAsync();
+            appliedJobs.ForEach(j =>
+            {
+                j.Publisher = _context.Publisher.First(p => p.ID == j.PublisherId);
+                j.JobSeekers = _context.SeekerJob.Where(sj => sj.SeekerID == seeker.ID).Include(sj => sj.Seeker).ToList();
+                j.JobSkills = _context.JobSkill.Where(js => js.JobID == j.ID).Include(js => js.Skill).ToList();
+                j.JobCities = _context.CityJob.Where(cj => cj.JobID == j.ID).Include(cj => cj.City).ToList();
+            });
+
+            ViewData["Seeker"] = seeker;
+            ViewData["AppliedJobs"] = appliedJobs;
+            ViewData["SearchSkill"] = "";
+            ViewData["SearchCity"] = "";
+            ViewData["FromDate"] = "";
+            ViewData["ToDate"] = "";
+
+            List<Job> jobs = await _context.Job
+                .Include(j => j.Publisher)
+                .Include(j => j.JobSeekers).ThenInclude(js => js.Seeker)
+                .Include(j => j.JobSkills).ThenInclude(js => js.Skill)
+                .Include(j => j.JobCities).ThenInclude(jc => jc.City)
+                .OrderByDescending(j => j.LastEdited)
+                .ToListAsync();
+
+            return View(jobs);
+        }
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Search(string name, string email)
+        {
+            var admins = await (
+                from admin in _context.Admin
+                where ((name != null) ? admin.Name.ToLower().Contains(name.ToLower()) : true) &&
+                      ((email != null) ? admin.Email.ToLower().Contains(email.ToLower()) : true)
+                select admin)
+                .ToListAsync();
+
+            ViewData["SearchName"] = name;
+            ViewData["SearchEmail"] = email;
+            return View("List", admins);
+        }
+
         [HttpGet]
         [Authorize(Roles = "Seeker, Admin")]
         public async Task<List<Job>> AllPublishedJobs()
