@@ -37,4 +37,27 @@ public class LayoutDecision
         }
         return layout;
     }
+
+    public static string GetControllerName(Claim role)
+    {
+        string controllerName = "";
+        switch (role.Value)
+        {
+            case "Seeker":
+                controllerName = "seekers";
+                break;
+
+            case "Publisher":
+                controllerName = "publishers";
+                break;
+
+            case "Admin":
+                controllerName = "admins";
+                break;
+
+            default:
+                break;
+        }
+        return controllerName;
+    }
 }

@@ -16,6 +16,7 @@
         <h3>Please upload CV file to apply for jobs</h3>
     </aside>
 }
+
 <div class="content2">
     <div class="container-fluid">
         <div class="row">
@@ -56,7 +57,7 @@
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table">
-                                <thead>
+                                <thead class="text-primary">
                                     <tr>
                                         <th>
                                             @Html.DisplayNameFor(model => model.Title)
@@ -112,13 +113,23 @@
                                                 @Html.DisplayFor(modelItem => item.LastEdited)
                                             </td>
                                             <td>
-                                                @if (seeker.CV != null && item.JobSeekers.Where(jobSeeker => jobSeeker.SeekerID == seeker.ID).ToList().Count() == 0)
-                                                {
-                                                    <a asp-action="ApplyCV" asp-route-id="@item.ID">Apply CV</a>
-                                                }
-                                                else
-                                                {
-                                                    @Html.Raw("Can't apply")
+                                                @{
+                                                    bool applied = item.JobSeekers.Where(jobSeeker => jobSeeker.SeekerID == seeker.ID).ToList().Count() > 0;
+                                                    if (seeker.CV != null && !applied)
+                                                    {
+                                                        <a asp-action="ApplyCV" asp-route-id="@item.ID">Apply CV</a>
+                                                    }
+                                                    else
+                                                    {
+                                                        @if (applied)
+                                                        {
+                                                            @Html.Raw("Already applied")
+                                                        }
+                                                        else
+                                                        {
+                                                            @Html.Raw("Can't apply")
+                                                        }
+                                                    }
                                                 }
                                             </td>
                                         </tr>
@@ -149,7 +160,7 @@
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table">
-                                <thead>
+                                <thead class="text-primary">
                                     <tr>
                                         <th>
                                             @Html.DisplayNameFor(model => model.Title)
@@ -222,9 +233,6 @@
     }
 </style>
 
-
-
-
 @section Scripts {
 <script>
     $(document).ready(function () {
@@ -232,6 +240,5 @@
         $("#datepickerFromDate").datepicker();
         $("#datepickerToDate").datepicker();
     });
-
 </script>
 }

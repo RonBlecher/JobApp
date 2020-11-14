@@ -46,44 +46,44 @@
                                 <tbody>
                                     @foreach (var item in Model)
                                     {
-                                    <tr>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.Title)
-                                        </td>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.Description)
-                                        </td>
-                                        <td>
-                                            @if (item.JobSkills != null)
-                                            {
-                                                @foreach (var skill in item.JobSkills)
+                                        <tr>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Title)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Description)
+                                            </td>
+                                            <td>
+                                                @if (item.JobSkills != null)
                                                 {
-                                                    <div>
-                                                        @Html.DisplayFor(modelItem => skill.SkillName)
-                                                    </div>
+                                                    @foreach (var skill in item.JobSkills)
+                                                    {
+                                                        <div>
+                                                            @Html.DisplayFor(modelItem => skill.SkillName)
+                                                        </div>
+                                                    }
                                                 }
-                                            }
-                                        </td>
-                                        <td>
-                                            @if (item.JobCities != null)
-                                            {
-                                                @foreach (var jobCity in item.JobCities)
+                                            </td>
+                                            <td>
+                                                @if (item.JobCities != null)
                                                 {
-                                                    <div>
-                                                        @Html.DisplayFor(modelItem => jobCity.CityName)
-                                                    </div>
+                                                    @foreach (var jobCity in item.JobCities)
+                                                    {
+                                                        <div>
+                                                            @Html.DisplayFor(modelItem => jobCity.CityName)
+                                                        </div>
+                                                    }
                                                 }
-                                            }
-                                        </td>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.LastEdited)
-                                        </td>
-                                        <td>
-                                            <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                                            <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                                            <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
-                                        </td>
-                                    </tr>
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.LastEdited)
+                                            </td>
+                                            <td>
+                                                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
+                                                <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
+                                                <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+                                            </td>
+                                        </tr>
                                     }
                                 </tbody>
                             </table>

@@ -1,8 +1,14 @@
-﻿@model JobApp.Models.PublisherEditModel
+﻿@using System.Security.Claims;
+
+@model JobApp.Models.PublisherEditModel
 
 @{
     ViewData["Title"] = "Publisher Profile Edit";
     Layout = LayoutDecision.LocateLayout(User);
+
+    var identity = (ClaimsIdentity)User.Identity;
+    IEnumerable<Claim> claims = identity.Claims;
+    Claim role = claims.Where(claim => claim.Type == ClaimTypes.Role).First();
 }
 
 <h1>Edit</h1>
@@ -47,9 +53,12 @@
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+@if (role.Value == "Admin")
+{
+    <div>
+        <a asp-action="List">Back to List</a>
+    </div>
+}
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
