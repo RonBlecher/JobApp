@@ -47,43 +47,43 @@
             </div>
             <div class="sidebar-wrapper">
                 <ul class="nav">
-                    <li class="nav-item active  ">
+                    <li class="nav-item -seekers-index">
                         <a class="nav-link" href="/seekers/index">
                             <i class="material-icons">dashboard</i>
                             <p>Dashboard</p>
                         </a>
                     </li>
-                    <li class="nav-item ">
+                    <li class="nav-item -seekers-edit-@seekerId">
                         <a class="nav-link" href="/seekers/edit/@seekerId">
                             <i class="material-icons">person</i>
                             <p>Edit my profile</p>
                         </a>
                     </li>
-                    <li class="nav-item ">
+                    <li class="nav-item -seekers-MySkills">
                         <a class="nav-link" href="/seekers/MySkills">
                             <i class="material-icons">build</i>
                             <p>My Job Skills</p>
                         </a>
                     </li>
-                    <li class="nav-item ">
+                    <li class="nav-item -seekers-MyRegions">
                         <a class="nav-link" href="/seekers/MyRegions">
                             <i class="material-icons">time_to_leave</i>
                             <p>My Job Search Regions</p>
                         </a>
                     </li>
-                    <li class="nav-item ">
+                    <li class="nav-item -jobs-lookingforjobs">
                         <a class="nav-link" href="/jobs/lookingforjobs">
                             <i class="material-icons">library_books</i>
                             <p>Customised Jobs For You</p>
                         </a>
                     </li>
-                    <li class="nav-item ">
+                    <li class="nav-item -jobs-lookingforalljobs">
                         <a class="nav-link" href="/jobs/lookingforalljobs">
                             <i class="material-icons">library_books</i>
                             <p>Looking For All Jobs</p>
                         </a>
                     </li>
-                    <li class="nav-item ">
+                    <li class="nav-item -map-seeker">
                         <a class="nav-link" href="/map/seeker">
                             <i class="material-icons">location_ons</i>
                             <p>Jobs By Location</p>
@@ -373,11 +373,14 @@
 
         });</script>
 
-    <script>$("#nav li").click(function (e) {
-            debugger
-            $('#nav li.active').removeClass('active');
-            $(e.className).removeClass('active');
+
+
+    <script>$(document).ready(function () {
+            var pathname = window.location.pathname
+            $(`.${pathname.replaceAll('/', '-')}`).addClass('active').siblings().removeClass('active')
         });</script>
+
+
     @RenderSection("Scripts", required: false)
 </body>
 

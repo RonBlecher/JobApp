@@ -46,55 +46,55 @@
             </div>
             <div class="sidebar-wrapper">
                 <ul class="nav">
-                    <li class="nav-item">
+                    <li class="nav-item -admins-index">
                         <a class="nav-link" href="/admins/index">
                             <i class="material-icons">dashboard</i>
                             <p>Dashboard</p>
                         </a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item -admins-list">
                         <a class="nav-link" href="/admins/list">
                             <i class="material-icons">person</i>
                             <p>Admins</p>
                         </a>
                     </li>
-                    <li class="nav-item ">
+                    <li class="nav-item -publishers-list">
                         <a class="nav-link" href="/publishers/list">
                             <i class="material-icons">assignment_ind</i>
                             <p>Publishers</p>
                         </a>
                     </li>
-                    <li class="nav-item ">
+                    <li class="nav-item -seekers-list">
                         <a class="nav-link" href="/seekers/list">
                             <i class="material-icons">find_in_page</i>
                             <p>Seekers</p>
                         </a>
                     </li>
-                    <li class="nav-item ">
+                    <li class="nav-item -regions-index">
                         <a class="nav-link" href="/regions/index">
                             <i class="material-icons">place</i>
                             <p>Regions</p>
                         </a>
                     </li>
-                    <li class="nav-item ">
+                    <li class="nav-item -cities-index">
                         <a class="nav-link" href="/cities/index">
                             <i class="material-icons">roofing</i>
                             <p>Cities</p>
                         </a>
                     </li>
-                    <li class="nav-item ">
+                    <li class="nav-item -skills-index">
                         <a class="nav-link" href="/skills/index">
                             <i class="material-icons">military_tech</i>
                             <p>Skills</p>
                         </a>
                     </li>
-                    <li class="nav-item ">
+                    <li class="nav-item -jobs-index">
                         <a class="nav-link" href="/jobs/index">
                             <i class="material-icons">work</i>
                             <p>Jobs</p>
                         </a>
                     </li>
-                    <li class="nav-item ">
+                    <li class="nav-item -map-admin">
                         <a class="nav-link" href="/map/admin">
                             <i class="material-icons">location_ons</i>
                             <p>Maps</p>
@@ -388,6 +388,15 @@
             md.initDashboardPageCharts();
 
         });</script>
+
+
+    <script>
+        $(document).ready(function () {
+            var pathname = window.location.pathname
+            $(`.${pathname.replaceAll('/', '-')}`).addClass('active').siblings().removeClass('active')
+        });
+      
+    </script>
     @RenderSection("Scripts", required: false)
 
 

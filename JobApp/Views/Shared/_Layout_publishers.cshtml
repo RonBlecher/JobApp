@@ -45,37 +45,37 @@
             </div>
             <div class="sidebar-wrapper">
                 <ul class="nav">
-                    <li class="nav-item active  ">
+                    <li class="nav-item -publishers-index">
                         <a class="nav-link" href="/publishers/index">
                             <i class="material-icons">dashboard</i>
                             <p>Dashboard</p>
                         </a>
                     </li>
-                    <li class="nav-item ">
+                    <li class="nav-item -publishers-edit-@publisherId">
                         <a class="nav-link" href="/publishers/edit/@publisherId">
                             <i class="material-icons">person</i>
                             <p>Edit my profile</p>
                         </a>
                     </li>
-                    <li class="nav-item ">
+                    <li class="nav-item -jobs-create">
                         <a class="nav-link" href="/jobs/create">
                             <i class="material-icons">publish</i>
                             <p>Publish Job</p>
                         </a>
                     </li>
                     @*<li class="nav-item ">
-                        <a class="nav-link" href="/jobs/MyPublishedJobs/@publisherId">
-                            <i class="material-icons">library_books</i>
-                            <p>My Published Jobs json</p>
-                        </a>
-                    </li>*@
-                    <li class="nav-item ">
+                            <a class="nav-link" href="/jobs/MyPublishedJobs/@publisherId">
+                                <i class="material-icons">library_books</i>
+                                <p>My Published Jobs json</p>
+                            </a>
+                        </li>*@
+                    <li class="nav-item -jobs-MyPublishedJobsView">
                         <a class="nav-link" href="/jobs/MyPublishedJobsView">
                             <i class="material-icons">library_books</i>
                             <p>My Published Jobs View</p>
                         </a>
                     </li>
-                    <li class="nav-item ">
+                    <li class="nav-item -map-index">
                         <a class="nav-link" href="/map/index">
                             <i class="material-icons">location_ons</i>
                             <p>Jobs By Location</p>
@@ -190,8 +190,7 @@
     <script src="~/js/material-dashboard.js?v=2.1.2" type="text/javascript"></script>
     <!-- Material Dashboard DEMO methods, don't include it in your project! -->
     <script src="~/demo/demo.js"></script>
-    <script>
-    $(document).ready(function () {
+    <script>$(document).ready(function () {
             $().ready(function () {
                 $sidebar = $('.sidebar');
 
@@ -360,12 +359,20 @@
                 });
             });
         });</script>
-    <script>
-    $(document).ready(function () {
+    <script>$(document).ready(function () {
             // Javascript method's body can be found in assets/js/demos.js
             md.initDashboardPageCharts();
 
         });</script>
+
+
+    <script>
+        $(document).ready(function () {
+            var pathname = window.location.pathname
+            $(`.${pathname.replaceAll('/', '-')}`).addClass('active').siblings().removeClass('active')
+        });
+    </script>
+
     @RenderSection("Scripts", required: false)
 </body>
 
