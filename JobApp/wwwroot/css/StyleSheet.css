@@ -216,4 +216,29 @@ p.card-category {
 #myImg {
     width: 70px;
     height: 70px;
+    margin-top: 0px;
 }
+
+img {
+    display: inline-block;
+    vertical-align: middle;
+    max-width: 100%;
+    height: auto;
+    margin-top: 50px;
+}
+
+a#apic {
+    transition: color 0.15s ease;
+    font-weight: bold;
+    font-family: cursive;
+    margin-left: 30px;
+    text-decoration:underline;
+}
+
+p#ppic {
+    font-family: system-ui;
+    font-style: italic;
+    font-weight:bold;
+}
+
+
